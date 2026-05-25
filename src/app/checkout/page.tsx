@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Container,
@@ -19,6 +19,7 @@ import {
   Breadcrumbs,
   Link as MuiLink,
   Alert,
+  Snackbar,
 } from "@mui/material";
 import {
   ArrowBack,
@@ -29,8 +30,8 @@ import {
 } from "@mui/icons-material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PixPayment from "@/components/PixPayment";
 import { useCart } from "@/lib/CartContext";
-import { ItemCarrinho } from "@/types";
 
 interface FormData {
   nome: string;
@@ -40,6 +41,14 @@ interface FormData {
   numero: string;
   bairro: string;
   cidade: string;
+}
+
+interface PixData {
+  qrCode: string;
+  payload: string;
+  chave: string;
+  amount: number;
+  expiration: string;
 }
 
 const initialForm: FormData = {
@@ -54,29 +63,76 @@ const initialForm: FormData = {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, total } = useCart();
   const [form, setForm] = useState<FormData>(initialForm);
-  const [paymentMethod, setPaymentMethod] = useState<"pix" | "card" | "boleto">("pix");
+  const [paymentMethod, setPaymentMethod] = useState<"pix" | "card" | "boleto">(
+    "pix"
+  );
   const [submitted, setSubmitted] = useState(false);
 
-  // If cart is empty and not submitted, show empty state
+  // PIX states
+  const [pixOpen, setPixOpen] = useState(false);
+  const [pixData, setPixData] = useState<PixData | null>(null);
+  const [pixLoading, setPixLoading] = useState(false);
+  const [pixError, setPixError] = useState("");
+
   const isEmpty = items.length === 0 && !submitted;
 
   const updateField = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handlePixPayment = useCallback(async () => {
+    setPixLoading(true);
+    setPixError("");
+    setPixOpen(true);
+
+    try {
+      const response = await fetch("/api/pix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: total,
+          nome: form.nome || "CarCrew Cliente",
+          cidade: form.cidade || "SaoPaulo",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao gerar PIX");
+      }
+
+      setPixData(data);
+    } catch (error) {
+      setPixError(
+        error instanceof Error ? error.message : "Erro ao gerar PIX"
+      );
+      setPixOpen(false);
+    } finally {
+      setPixLoading(false);
+    }
+  }, [total, form.nome, form.cidade]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simula envio do pedido
-    await new Promise((r) => setTimeout(r, 500));
-    clearCart();
-    setSubmitted(true);
-    window.scrollTo(0, 0);
+
+    if (paymentMethod === "pix") {
+      // Gera PIX e mostra QR Code
+      await handlePixPayment();
+    } else {
+      // Cartão ou Boleto — simula pedido
+      await new Promise((r) => setTimeout(r, 500));
+      setSubmitted(true);
+      window.scrollTo(0, 0);
+    }
   };
 
   const maxParcelas = 12;
   const valorParcela = total / maxParcelas;
+
+  const formValido = form.nome && form.telefone && form.endereco && form.numero && form.bairro && form.cidade;
 
   // Estado vazio
   if (isEmpty) {
@@ -108,7 +164,7 @@ export default function CheckoutPage() {
     );
   }
 
-  // Tela de confirmação
+  // Tela de confirmação (cartão/boleto)
   if (submitted) {
     return (
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -180,11 +236,7 @@ export default function CheckoutPage() {
             </Box>
             <Typography variant="body2" sx={{ color: "#666", mt: 1 }}>
               Pagamento via:{" "}
-              {paymentMethod === "pix"
-                ? "PIX"
-                : paymentMethod === "card"
-                ? "Cartão"
-                : "Boleto"}
+              {paymentMethod === "card" ? "Cartão" : "Boleto"}
             </Typography>
           </Paper>
           <Button
@@ -210,7 +262,6 @@ export default function CheckoutPage() {
       <Header />
 
       <Container maxWidth="lg" sx={{ mt: 3, mb: 6, flex: 1 }}>
-        {/* Breadcrumb */}
         <Breadcrumbs sx={{ mb: 3, fontSize: "0.85rem" }}>
           <MuiLink
             component="button"
@@ -241,7 +292,10 @@ export default function CheckoutPage() {
           Voltar
         </Button>
 
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 4, color: "#1A1A1A" }}>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 700, mb: 4, color: "#1A1A1A" }}
+        >
           Finalizar Compra
         </Typography>
 
@@ -330,13 +384,32 @@ export default function CheckoutPage() {
 
                 <Grid container spacing={2}>
                   {[
-                    { key: "pix", label: "PIX", icon: <Pix />, desc: "Pagamento instantâneo" },
-                    { key: "card", label: "Cartão", icon: <CreditCard />, desc: "Até 12x sem juros" },
-                    { key: "boleto", label: "Boleto", icon: <AccountBalance />, desc: "Vence em 3 dias" },
+                    {
+                      key: "pix",
+                      label: "PIX",
+                      icon: <Pix />,
+                      desc: "Pagamento instantâneo",
+                    },
+                    {
+                      key: "card",
+                      label: "Cartão",
+                      icon: <CreditCard />,
+                      desc: "Até 12x sem juros",
+                    },
+                    {
+                      key: "boleto",
+                      label: "Boleto",
+                      icon: <AccountBalance />,
+                      desc: "Vence em 3 dias",
+                    },
                   ].map((opt) => (
                     <Grid size={{ xs: 12, sm: 4 }} key={opt.key}>
                       <Paper
-                        onClick={() => setPaymentMethod(opt.key as typeof paymentMethod)}
+                        onClick={() =>
+                          setPaymentMethod(
+                            opt.key as typeof paymentMethod
+                          )
+                        }
                         sx={{
                           p: 2,
                           textAlign: "center",
@@ -353,8 +426,13 @@ export default function CheckoutPage() {
                           },
                         }}
                       >
-                        <Box sx={{ color: "#E65100", mb: 1 }}>{opt.icon}</Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        <Box sx={{ color: "#E65100", mb: 1 }}>
+                          {opt.icon}
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: 600 }}
+                        >
                           {opt.label}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#999" }}>
@@ -366,11 +444,18 @@ export default function CheckoutPage() {
                 </Grid>
               </Paper>
 
+              {pixError && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                  {pixError}
+                </Alert>
+              )}
+
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 size="large"
+                disabled={!formValido}
                 sx={{
                   mt: 3,
                   backgroundColor: "#E65100",
@@ -379,6 +464,10 @@ export default function CheckoutPage() {
                   fontWeight: 600,
                   py: 1.5,
                   fontSize: "1.1rem",
+                  "&.Mui-disabled": {
+                    backgroundColor: "#ccc",
+                    color: "#999",
+                  },
                 }}
               >
                 {paymentMethod === "pix"
@@ -405,24 +494,38 @@ export default function CheckoutPage() {
 
                 <List disablePadding>
                   {items.map((item) => (
-                    <ListItem key={item.produto.id} disableGutters sx={{ gap: 1 }}>
+                    <ListItem
+                      key={item.produto.id}
+                      disableGutters
+                      sx={{ gap: 1 }}
+                    >
                       <ListItemAvatar>
                         <Avatar
                           variant="rounded"
                           src={item.produto.imgUrl}
-                          sx={{ width: 56, height: 56, bgcolor: "#1A1A1A" }}
+                          sx={{
+                            width: 56,
+                            height: 56,
+                            bgcolor: "#1A1A1A",
+                          }}
                         />
                       </ListItemAvatar>
                       <ListItemText
                         primary={
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: 500 }}
+                          >
                             {item.produto.nome.substring(0, 50)}
                           </Typography>
                         }
                         secondary={`Qtd: ${item.quantidade}`}
                       />
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        R$ {(item.produto.preco * item.quantidade).toFixed(2)}
+                        R${" "}
+                        {(
+                          item.produto.preco * item.quantidade
+                        ).toFixed(2)}
                       </Typography>
                     </ListItem>
                   ))}
@@ -486,6 +589,14 @@ export default function CheckoutPage() {
       </Container>
 
       <Footer />
+
+      {/* Modal PIX */}
+      <PixPayment
+        open={pixOpen}
+        onClose={() => setPixOpen(false)}
+        pixData={pixData}
+        loading={pixLoading}
+      />
     </Box>
   );
 }
