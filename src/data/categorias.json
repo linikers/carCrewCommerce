@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "slug": "amortecedores",
+    "nome": "Amortecedores",
+    "icone": "🔧",
+    "descricao": "Amortecedores originais e similares para diversos veículos",
+    "ordem": 1
+  },
+  {
+    "id": 2,
+    "slug": "calco-antirruido",
+    "nome": "Calço Antirruído",
+    "icone": "🔇",
+    "descricao": "Calços e coxins para eliminação de ruídos na suspensão",
+    "ordem": 2
+  },
+  {
+    "id": 3,
+    "slug": "ponta-de-eixo",
+    "nome": "Ponta de Eixo",
+    "icone": "⚙️",
+    "descricao": "Suportes e componentes de ponta de eixo reforçados",
+    "ordem": 3
+  },
+  {
+    "id": 4,
+    "slug": "bolsa-de-ar",
+    "nome": "Bolsa de Ar",
+    "icone": "💨",
+    "descricao": "Bolsa de ar para sistemas de suspensão pneumática",
+    "ordem": 4
+  },
+  {
+    "id": 5,
+    "slug": "acessorio-instalacao",
+    "nome": "Acessórios para Instalação",
+    "icone": "🔩",
+    "descricao": "Kits, chicotes e acessórios para instalação",
+    "ordem": 5
+  },
+  {
+    "id": 6,
+    "slug": "mola-suspensao",
+    "nome": "Molas",
+    "icone": "🔄",
+    "descricao": "Molas helicoidais para suspensão automotiva",
+    "ordem": 6
+  }
+]

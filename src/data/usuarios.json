@@ -1,16 +1,16 @@
 [
   {
-    "nome": "Admin",
+    "nome": "Admin CarCrew",
     "email": "admin@carcrew.com.br",
-    "senha": "admin123",
+    "senha": "admin1234",
     "admin": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
   {
-    "nome": "liniker",
+    "nome": "Liniker",
     "email": "linikers@hotmail.com",
     "senha": "admin1234",
-    "admin": false,
+    "admin": true,
     "criadoEm": "2026-05-25T17:54:29.574Z"
   }
 ]
