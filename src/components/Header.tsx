@@ -1,5 +1,7 @@
 "use client";
 
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   AppBar,
   Box,
@@ -17,6 +19,9 @@ import {
   ListItemIcon,
   Collapse,
   Divider,
+  Avatar,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -43,6 +48,7 @@ export default function Header({
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -130,14 +136,8 @@ export default function Header({
 
             {/* Ícones direita */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <IconButton
-                sx={{
-                  color: "#1A1A1A",
-                  display: { xs: "none", sm: "inline-flex" },
-                }}
-              >
-                <Person />
-              </IconButton>
+              {/* User menu */}
+              <UserMenu />
 
               <IconButton onClick={onCartOpen} sx={{ color: "#1A1A1A" }}>
                 <Badge
@@ -276,14 +276,16 @@ export default function Header({
 
             <Divider />
 
-            <ListItemButton>
+            <ListItemButton onClick={() => router.push("/conta")}>
               <ListItemIcon>
                 <Person />
               </ListItemIcon>
               <ListItemText primary="Minha Conta" />
             </ListItemButton>
 
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => router.push("https://wa.me/5544991528386")}
+            >
               <ListItemIcon>
                 <WhatsApp />
               </ListItemIcon>
@@ -296,5 +298,62 @@ export default function Header({
         </Box>
       </Drawer>
     </>
+  );
+}
+
+// Componente de menu do usuário (login / avatar)
+function UserMenu() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  if (session?.user) {
+    return (
+      <>
+        <IconButton
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+          sx={{ display: { xs: "none", sm: "inline-flex" } }}
+        >
+          <Avatar
+            src={session.user.image || undefined}
+            sx={{
+              width: 32,
+              height: 32,
+              bgcolor: "#E65100",
+              fontSize: 14,
+              fontWeight: 600,
+            }}
+          >
+            {session.user.name?.charAt(0)?.toUpperCase() || "U"}
+          </Avatar>
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          <MenuItem onClick={() => { setAnchorEl(null); router.push("/conta"); }}>
+            Minha Conta
+          </MenuItem>
+          <MenuItem onClick={() => { setAnchorEl(null); signOut(); }}>
+            Sair
+          </MenuItem>
+        </Menu>
+      </>
+    );
+  }
+
+  return (
+    <IconButton
+      onClick={() => router.push("/login")}
+      sx={{
+        color: "#1A1A1A",
+        display: { xs: "none", sm: "inline-flex" },
+      }}
+    >
+      <Person />
+    </IconButton>
   );
 }
