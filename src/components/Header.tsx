@@ -334,6 +334,14 @@ function UserMenu() {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
+          {session?.user?.admin && (
+            <MenuItem
+              onClick={() => { setAnchorEl(null); router.push("/admin"); }}
+              sx={{ color: "#E65100", fontWeight: 600, borderBottom: "1px solid", borderColor: "divider", mb: 0.5 }}
+            >
+              Painel Admin
+            </MenuItem>
+          )}
           <MenuItem onClick={() => { setAnchorEl(null); router.push("/conta"); }}>
             Minha Conta
           </MenuItem>
