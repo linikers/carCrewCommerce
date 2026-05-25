@@ -5,5 +5,12 @@
     "senha": "admin123",
     "admin": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
+  },
+  {
+    "nome": "liniker",
+    "email": "linikers@hotmail.com",
+    "senha": "admin1234",
+    "admin": false,
+    "criadoEm": "2026-05-25T17:54:29.574Z"
   }
 ]
