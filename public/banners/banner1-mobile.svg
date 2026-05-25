@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="350" viewBox="0 0 400 350">
+  <rect width="400" height="350" fill="#1A1A1A"/>
+  <text x="30" y="120" font-size="28" font-weight="700" fill="#fff" font-family="sans-serif">Peças para</text>
+  <text x="30" y="160" font-size="28" font-weight="700" fill="#E65100" font-family="sans-serif">Suspensão</text>
+  <text x="30" y="240" font-size="14" fill="#aaa" font-family="sans-serif">Amortecedores, molas e</text>
+  <text x="30" y="265" font-size="14" fill="#aaa" font-family="sans-serif">calços de qualidade</text>
+  <rect x="30" y="290" width="150" height="40" rx="8" fill="#E65100"/>
+  <text x="105" y="316" text-anchor="middle" font-size="14" font-weight="600" fill="#fff" font-family="sans-serif">VER PRODUTOS</text>
+</svg>

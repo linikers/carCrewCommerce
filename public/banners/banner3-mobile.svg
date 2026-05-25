@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="350" viewBox="0 0 400 350">
+  <rect width="400" height="350" fill="#25D366"/>
+  <text x="30" y="130" font-size="32" font-weight="700" fill="#fff" font-family="sans-serif">Dúvidas?</text>
+  <text x="30" y="175" font-size="28" font-weight="700" fill="#1A1A1A" font-family="sans-serif">WhatsApp</text>
+  <text x="30" y="250" font-size="14" fill="#fff" opacity="0.8" font-family="sans-serif">Respondemos rápido</text>
+  <rect x="30" y="290" width="160" height="40" rx="8" fill="#1A1A1A"/>
+  <text x="110" y="316" text-anchor="middle" font-size="14" font-weight="600" fill="#fff" font-family="sans-serif">FALAR AGORA</text>
+</svg>

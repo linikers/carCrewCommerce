@@ -24,26 +24,16 @@ import {
   Logout,
   Close,
   Store,
+  ViewCarousel,
 } from "@mui/icons-material";
 
 const menuItems = [
   { label: "Dashboard", icon: <Dashboard />, path: "/admin" },
   { label: "Produtos", icon: <Inventory2 />, path: "/admin/produtos" },
   { label: "Categorias", icon: <Category />, path: "/admin/categorias" },
-  {
-    label: "Pedidos",
-    icon: <ShoppingBag />,
-    path: "/admin/pedidos",
-    disabled: true,
-    tag: "Em breve",
-  },
-  {
-    label: "Clientes",
-    icon: <People />,
-    path: "/admin/clientes",
-    disabled: true,
-    tag: "Em breve",
-  },
+  { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners" },
+  { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos", disabled: true, tag: "Em breve" },
+  { label: "Clientes", icon: <People />, path: "/admin/clientes", disabled: true, tag: "Em breve" },
 ];
 
 interface AdminSidebarProps {
