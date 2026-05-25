@@ -16,6 +16,7 @@
     "@serwist/next": "^9.5.11",
     "@serwist/sw": "^9.5.11",
     "next": "16.2.6",
+    "next-auth": "^4.24.14",
     "qrcode": "^1.5.4",
     "qrcode-pix": "^5.0.0",
     "react": "19.2.4",
