@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "titulo": "Peças para Suspensão Automotiva",
+    "subtitulo": "Amortecedores, molas, calços e muito mais com a qualidade CarCrew",
+    "imgDesktop": "/banners/banner1-desktop.svg",
+    "imgMobile": "/banners/banner1-mobile.svg",
+    "link": "/produto/1",
+    "corFundo": "#1A1A1A",
+    "corTexto": "#ffffff",
+    "ativo": true,
+    "ordem": 1
+  },
+  {
+    "id": 2,
+    "titulo": "Pague em até 12x sem juros",
+    "subtitulo": "Parcele suas compras no cartão de crédito",
+    "imgDesktop": "/banners/banner2-desktop.svg",
+    "imgMobile": "/banners/banner2-mobile.svg",
+    "link": "/checkout",
+    "corFundo": "#E65100",
+    "corTexto": "#ffffff",
+    "ativo": true,
+    "ordem": 2
+  },
+  {
+    "id": 3,
+    "titulo": "Dúvidas? Fale no WhatsApp",
+    "subtitulo": "Respondemos em até 5 minutos",
+    "imgDesktop": "/banners/banner3-desktop.svg",
+    "imgMobile": "/banners/banner3-mobile.svg",
+    "link": "https://wa.me/5544991528386",
+    "corFundo": "#25D366",
+    "corTexto": "#ffffff",
+    "ativo": true,
+    "ordem": 3
+  }
+]

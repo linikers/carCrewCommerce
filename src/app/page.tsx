@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -8,7 +8,11 @@ import {
   Card,
   CardContent,
   Chip,
+  IconButton,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -26,6 +30,29 @@ export default function Home() {
   );
 
   const { items, totalItens, addToCart, removeFromCart, clearCart } = useCart();
+
+  // Banners
+  const [banners, setBanners] = useState<any[]>([]);
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  useEffect(() => {
+    fetch("/api/admin/banners")
+      .then((r) => r.json())
+      .then((data) => setBanners(data.filter((b: any) => b.ativo)))
+      .catch(() => {});
+  }, []);
+
+  const bannerAnterior = () => setBannerIndex((i) => (i === 0 ? banners.length - 1 : i - 1));
+  const bannerProximo = () => setBannerIndex((i) => (i === banners.length - 1 ? 0 : i + 1));
+
+  // Auto-play
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => bannerProximo(), 5000);
+    return () => clearInterval(timer);
+  }, [banners.length, bannerIndex]);
 
   // Filtro por busca + categoria
   const filteredProdutos = produtos.filter((p) => {
@@ -52,38 +79,104 @@ export default function Home() {
         }}
       />
 
-      {/* Banner */}
-      <Box
-        sx={{
-          backgroundColor: "#1A1A1A",
-          color: "#ffffff",
-          py: { xs: 4, md: 6 },
-          textAlign: "center",
-        }}
-      >
-        <Container maxWidth="lg">
-          <Typography
-            variant="h3"
+      {/* Banner carrossel dinâmico */}
+      {banners.length > 0 && (
+        <Box
+          sx={{
+            position: "relative",
+            backgroundColor: banners[bannerIndex]?.corFundo || "#1A1A1A",
+            color: banners[bannerIndex]?.corTexto || "#fff",
+            overflow: "hidden",
+            minHeight: { xs: 200, md: 350 },
+            display: "flex",
+            alignItems: "center",
+            transition: "background-color 0.5s ease",
+          }}
+        >
+          {/* Imagem de fundo */}
+          <Box
+            component="img"
+            src={isMobile ? banners[bannerIndex]?.imgMobile : banners[bannerIndex]?.imgDesktop}
+            alt={banners[bannerIndex]?.titulo}
             sx={{
-              fontWeight: 700,
-              fontSize: { xs: "1.5rem", md: "2.5rem" },
-              mb: 1,
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              inset: 0,
             }}
-          >
-            Peças para{" "}
-            <Box component="span" sx={{ color: "#E65100" }}>
-              Suspensão Automotiva
+          />
+
+          {/* Setas */}
+          {banners.length > 1 && (
+            <>
+              <IconButton
+                onClick={bannerAnterior}
+                sx={{
+                  position: "absolute",
+                  left: { xs: 4, md: 16 },
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: banners[bannerIndex]?.corTexto || "#fff",
+                  bgcolor: "rgba(0,0,0,0.2)",
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.4)" },
+                  zIndex: 2,
+                }}
+              >
+                <ArrowBackIos fontSize="small" />
+              </IconButton>
+              <IconButton
+                onClick={bannerProximo}
+                sx={{
+                  position: "absolute",
+                  right: { xs: 4, md: 16 },
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: banners[bannerIndex]?.corTexto || "#fff",
+                  bgcolor: "rgba(0,0,0,0.2)",
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.4)" },
+                  zIndex: 2,
+                }}
+              >
+                <ArrowForwardIos fontSize="small" />
+              </IconButton>
+            </>
+          )}
+
+          {/* Indicadores */}
+          {banners.length > 1 && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 16,
+                left: "50%",
+                transform: "translateX(-50%)",
+                display: "flex",
+                gap: 1,
+                zIndex: 2,
+              }}
+            >
+              {banners.map((_, i) => (
+                <Box
+                  key={i}
+                  onClick={() => setBannerIndex(i)}
+                  sx={{
+                    width: i === bannerIndex ? 24 : 10,
+                    height: 10,
+                    borderRadius: 5,
+                    backgroundColor:
+                      i === bannerIndex
+                        ? banners[bannerIndex]?.corTexto || "#fff"
+                        : "rgba(255,255,255,0.4)",
+                    cursor: "pointer",
+                    transition: "all 0.3s",
+                  }}
+                />
+              ))}
             </Box>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ color: "#aaa", maxWidth: 600, mx: "auto", mb: 3 }}
-          >
-            Amortecedores, molas, calços, ponta de eixo e tudo que você precisa
-            para sua suspensão. Qualidade e confiança.
-          </Typography>
-        </Container>
-      </Box>
+          )}
+        </Box>
+      )}
 
       {/* Info strip */}
       <Box sx={{ backgroundColor: "#f5f5f5", py: 3 }}>
