@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Box,
   Container,
@@ -20,7 +19,6 @@ import { useCart } from "@/lib/CartContext";
 import { CategoriaSlug } from "@/types";
 
 export default function Home() {
-  const router = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(
