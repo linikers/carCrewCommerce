@@ -26,6 +26,8 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     await signIn("google", { callbackUrl: "/" });
+    // Se for admin, o redirect será tratado pelo callback do NextAuth
+    // Por simplicidade, redireciona sempre pra home
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -43,7 +45,18 @@ export default function LoginPage() {
       if (result?.error) {
         setError("Email ou senha inválidos");
       } else {
-        router.push("/");
+        // Verifica se é admin e redireciona
+        try {
+          const res = await fetch("/api/auth/session");
+          const session = await res.json();
+          if (session?.user?.admin) {
+            router.push("/admin");
+          } else {
+            router.push("/");
+          }
+        } catch {
+          router.push("/");
+        }
       }
     } catch {
       setError("Erro ao fazer login");
