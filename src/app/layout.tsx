@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import MuiProvider from "@/lib/MuiProvider";
+import { CartProvider } from "@/lib/CartContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,7 +48,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body>
-        <MuiProvider>{children}</MuiProvider>
+        <MuiProvider>
+          <CartProvider>{children}</CartProvider>
+        </MuiProvider>
       </body>
     </html>
   );
