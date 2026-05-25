@@ -1,0 +1,58 @@
+import { Produto } from "@/types";
+
+export const produtos: Produto[] = [
+  {
+    id: 1,
+    nome: "Amortecedor Dianteiro — Montana / Vectra / Astra",
+    descricao: "Amortecedor original ou similar, compatível com Chevrolet Montana, Vectra e Astra.",
+    preco: 397.90,
+    imgUrl: "/produtos/amortecedor1.jpg",
+    category: "amortecedores",
+    parcelamento: 12,
+  },
+  {
+    id: 2,
+    nome: "Suporte Ponta de Eixo Parafusada e Reforçada",
+    descricao: "Suporte de ponta de eixo reforçado para maior durabilidade. Compatível com diversos modelos.",
+    preco: 997.90,
+    imgUrl: "/produtos/ponta-eixo1.jpg",
+    category: "ponta-de-eixo",
+    parcelamento: 12,
+  },
+  {
+    id: 3,
+    nome: "Calço Antirruído Universal",
+    descricao: "Calço de borracha para eliminar ruídos na suspensão. Fácil instalação.",
+    preco: 49.90,
+    imgUrl: "/produtos/calco1.jpg",
+    category: "calco-antirruido",
+    parcelamento: 6,
+  },
+  {
+    id: 4,
+    nome: "Bolsa de Ar para Suspensão Pneumática",
+    descricao: "Bolsa de ar reforçada para sistemas de suspensão a ar. Alta resistência.",
+    preco: 667.00,
+    imgUrl: "/produtos/bolsa-ar1.jpg",
+    category: "bolsa-de-ar",
+    parcelamento: 12,
+  },
+  {
+    id: 5,
+    nome: "Kit Instalação Suspensão a Ar",
+    descricao: "Kit completo com chicote elétrico, central de distribuição e conexões.",
+    preco: 667.00,
+    imgUrl: "/produtos/kit-instalacao1.jpg",
+    category: "acessorio-instalacao",
+    parcelamento: 12,
+  },
+  {
+    id: 6,
+    nome: "Mola Helicoidal Dianteira",
+    descricao: "Mola helicoidal original para suspensão dianteira. Compatível com diversos modelos.",
+    preco: 297.50,
+    imgUrl: "/produtos/mola1.jpg",
+    category: "mola-suspensao",
+    parcelamento: 10,
+  },
+];
