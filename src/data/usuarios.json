@@ -10,7 +10,7 @@
     "nome": "Liniker",
     "email": "linikers@hotmail.com",
     "senha": "admin1234",
-    "admin": true,
+    "admin": false,
     "criadoEm": "2026-05-25T17:54:29.574Z"
   }
 ]
