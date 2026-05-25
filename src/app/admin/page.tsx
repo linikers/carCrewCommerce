@@ -130,6 +130,28 @@ export default function AdminDashboard() {
               </Typography>
             </Paper>
           </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Paper
+              onClick={() => router.push("/admin/produtos")}
+              sx={{
+                p: 3,
+                borderRadius: 3,
+                textAlign: "center",
+                cursor: "pointer",
+                border: "2px solid #ddd",
+                transition: "all 0.2s",
+                "&:hover": { borderColor: "#E65100", bgcolor: "#fff5f0" },
+              }}
+            >
+              <Inventory2 sx={{ fontSize: 40, color: "#1A1A1A", mb: 1 }} />
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Gerenciar Produtos
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#666" }}>
+                Listar, editar e excluir produtos
+              </Typography>
+            </Paper>
+          </Grid>
         </Grid>
       </Container>
     </Box>

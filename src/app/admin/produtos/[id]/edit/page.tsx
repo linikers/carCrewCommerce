@@ -1,0 +1,185 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Alert,
+  Breadcrumbs,
+  Link as MuiLink,
+  Switch,
+  FormControlLabel,
+  CircularProgress,
+} from "@mui/material";
+import { ArrowBack, Save } from "@mui/icons-material";
+import Header from "@/components/Header";
+
+const categorias = [
+  { value: "amortecedores", label: "Amortecedores" },
+  { value: "calco-antirruido", label: "Calço Antirruído" },
+  { value: "ponta-de-eixo", label: "Ponta de Eixo" },
+  { value: "bolsa-de-ar", label: "Bolsa de Ar" },
+  { value: "acessorio-instalacao", label: "Acessórios" },
+  { value: "mola-suspensao", label: "Molas" },
+];
+
+export default function EditarProduto() {
+  const router = useRouter();
+  const params = useParams();
+  const id = params.id;
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({
+    nome: "",
+    descricao: "",
+    preco: "",
+    imgUrl: "",
+    category: "acessorio-instalacao",
+    parcelamento: "12",
+    estoque: "0",
+    ativo: true,
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/admin/produtos/${id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) {
+          setError("Produto não encontrado");
+          return;
+        }
+        setForm({
+          nome: data.nome,
+          descricao: data.descricao,
+          preco: String(data.preco),
+          imgUrl: data.imgUrl,
+          category: data.category,
+          parcelamento: String(data.parcelamento),
+          estoque: String(data.estoque),
+          ativo: data.ativo,
+        });
+        setLoading(false);
+      })
+      .catch(() => setError("Erro ao carregar"));
+  }, [id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const res = await fetch(`/api/admin/produtos/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          preco: parseFloat(form.preco),
+          parcelamento: parseInt(form.parcelamento),
+          estoque: parseInt(form.estoque),
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Erro ao salvar");
+        return;
+      }
+
+      setSuccess(true);
+      setTimeout(() => router.push("/admin/produtos"), 1500);
+    } catch {
+      setError("Erro de conexão");
+    }
+  };
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Header />
+      <Container maxWidth="md" sx={{ flex: 1, py: 4 }}>
+        <Breadcrumbs sx={{ mb: 2, fontSize: "0.85rem" }}>
+          <MuiLink component="button" onClick={() => router.push("/admin")} underline="hover" sx={{ color: "#666" }}>Admin</MuiLink>
+          <MuiLink component="button" onClick={() => router.push("/admin/produtos")} underline="hover" sx={{ color: "#666" }}>Produtos</MuiLink>
+          <Typography variant="body2" sx={{ color: "#E65100" }}>Editar</Typography>
+        </Breadcrumbs>
+
+        <Button startIcon={<ArrowBack />} onClick={() => router.back()}
+          sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#E65100" } }}>
+          Voltar
+        </Button>
+
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 4 }}>Editar Produto</Typography>
+
+        {loading ? (
+          <Box sx={{ textAlign: "center", py: 8 }}><CircularProgress sx={{ color: "#E65100" }} /></Box>
+        ) : success ? (
+          <Alert severity="success">Produto atualizado com sucesso! Redirecionando...</Alert>
+        ) : error && !form.nome ? (
+          <Alert severity="error">{error}</Alert>
+        ) : (
+          <Paper sx={{ p: 4, borderRadius: 3 }}>
+            <form onSubmit={handleSubmit}>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12 }}>
+                  <TextField fullWidth label="Nome do Produto" required value={form.nome}
+                    onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <TextField fullWidth label="Descrição" multiline rows={3} value={form.descricao}
+                    onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <TextField fullWidth label="Preço (R$)" required type="number" value={form.preco}
+                    onChange={(e) => setForm({ ...form, preco: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <TextField fullWidth label="Parcelamento" type="number" value={form.parcelamento}
+                    onChange={(e) => setForm({ ...form, parcelamento: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <TextField fullWidth label="Estoque" type="number" value={form.estoque}
+                    onChange={(e) => setForm({ ...form, estoque: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField fullWidth select label="Categoria" value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                    {categorias.map((cat) => (
+                      <MenuItem key={cat.value} value={cat.value}>{cat.label}</MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField fullWidth label="URL da Imagem" value={form.imgUrl}
+                    onChange={(e) => setForm({ ...form, imgUrl: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <FormControlLabel control={
+                    <Switch checked={form.ativo} onChange={(e) => setForm({ ...form, ativo: e.target.checked })} />
+                  } label="Produto ativo" />
+                </Grid>
+              </Grid>
+
+              {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+
+              <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
+                <Button type="submit" variant="contained" startIcon={<Save />}
+                  sx={{ backgroundColor: "#E65100", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
+                  Salvar Alterações
+                </Button>
+                <Button variant="outlined" onClick={() => router.push("/admin/produtos")}
+                  sx={{ textTransform: "none" }}>Cancelar</Button>
+              </Box>
+            </form>
+          </Paper>
+        )}
+      </Container>
+    </Box>
+  );
+}
