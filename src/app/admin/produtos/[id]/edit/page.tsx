@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { ArrowBack, Save } from "@mui/icons-material";
 import Header from "@/components/Header";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 const categorias = [
   { value: "amortecedores", label: "Amortecedores" },
@@ -101,9 +102,8 @@ export default function EditarProduto() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header />
-      <Container maxWidth="md" sx={{ flex: 1, py: 4 }}>
+    <AdminLayout>
+      <Container maxWidth="md" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Breadcrumbs sx={{ mb: 2, fontSize: "0.85rem" }}>
           <MuiLink component="button" onClick={() => router.push("/admin")} underline="hover" sx={{ color: "#666" }}>Admin</MuiLink>
           <MuiLink component="button" onClick={() => router.push("/admin/produtos")} underline="hover" sx={{ color: "#666" }}>Produtos</MuiLink>
@@ -180,6 +180,6 @@ export default function EditarProduto() {
           </Paper>
         )}
       </Container>
-    </Box>
+    </AdminLayout>
   );
 }

@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 import { Add, Edit, Delete, ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import Header from "@/components/Header";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Categoria {
   id: number;
@@ -111,9 +112,8 @@ export default function AdminCategorias() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header />
-      <Container maxWidth="lg" sx={{ flex: 1, py: 4 }}>
+    <AdminLayout>
+      <Container maxWidth="lg" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>Categorias</Typography>
@@ -208,6 +208,6 @@ export default function AdminCategorias() {
           <Button onClick={excluir} color="error" variant="contained">Excluir</Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </AdminLayout>
   );
 }

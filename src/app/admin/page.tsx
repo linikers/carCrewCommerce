@@ -21,6 +21,7 @@ import {
   Category,
 } from "@mui/icons-material";
 import Header from "@/components/Header";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -55,9 +56,8 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header />
-      <Container maxWidth="lg" sx={{ flex: 1, py: 4 }}>
+    <AdminLayout>
+      <Container maxWidth="lg" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
@@ -67,14 +67,6 @@ export default function AdminDashboard() {
               Bem-vindo, {session?.user?.name}
             </Typography>
           </Box>
-          <Button
-            variant="outlined"
-            startIcon={<Logout />}
-            onClick={() => router.push("/")}
-            sx={{ textTransform: "none", color: "#666", borderColor: "#ddd" }}
-          >
-            Sair do Admin
-          </Button>
         </Box>
 
         {/* Stats */}
@@ -177,6 +169,6 @@ export default function AdminDashboard() {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+    </AdminLayout>
   );
 }

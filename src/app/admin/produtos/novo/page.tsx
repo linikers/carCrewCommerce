@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { ArrowBack, Save } from "@mui/icons-material";
 import Header from "@/components/Header";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 const categorias = [
   { value: "amortecedores", label: "Amortecedores" },
@@ -76,9 +77,8 @@ export default function NovoProduto() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header />
-      <Container maxWidth="md" sx={{ flex: 1, py: 4 }}>
+    <AdminLayout>
+      <Container maxWidth="md" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Breadcrumbs sx={{ mb: 2, fontSize: "0.85rem" }}>
           <MuiLink component="button" onClick={() => router.push("/admin")} underline="hover" sx={{ color: "#666" }}>
             Admin
@@ -150,6 +150,6 @@ export default function NovoProduto() {
           </Paper>
         )}
       </Container>
-    </Box>
+    </AdminLayout>
   );
 }
