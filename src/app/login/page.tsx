@@ -26,8 +26,6 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     await signIn("google", { callbackUrl: "/" });
-    // Se for admin, o redirect será tratado pelo callback do NextAuth
-    // Por simplicidade, redireciona sempre pra home
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -44,19 +42,27 @@ export default function LoginPage() {
 
       if (result?.error) {
         setError("Email ou senha inválidos");
-      } else {
-        // Verifica se é admin e redireciona
+        setLoading(false);
+        return;
+      }
+
+      // Busca sessão com retry para evitar race condition
+      let session: any = null;
+      for (let i = 0; i < 5; i++) {
         try {
           const res = await fetch("/api/auth/session");
-          const session = await res.json();
-          if (session?.user?.admin) {
-            router.push("/admin");
-          } else {
-            router.push("/");
+          if (res.ok) {
+            session = await res.json();
+            if (session?.user) break;
           }
-        } catch {
-          router.push("/");
-        }
+        } catch {}
+        await new Promise((r) => setTimeout(r, 200));
+      }
+
+      if (session?.user?.admin) {
+        router.push("/admin");
+      } else {
+        router.push("/");
       }
     } catch {
       setError("Erro ao fazer login");
@@ -83,7 +89,6 @@ export default function LoginPage() {
             Faça login para acessar sua conta
           </Typography>
 
-          {/* Google Login */}
           <Button
             fullWidth
             variant="outlined"
@@ -109,7 +114,6 @@ export default function LoginPage() {
             </Typography>
           </Divider>
 
-          {/* Email Login */}
           <form onSubmit={handleEmailLogin}>
             <TextField
               fullWidth
