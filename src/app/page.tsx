@@ -16,49 +16,18 @@ import CartDrawer from "@/components/CartDrawer";
 import ProductCard from "@/components/ProductCard";
 import { produtos } from "@/lib/produtos";
 import { categorias } from "@/lib/categorias";
-import { Produto, ItemCarrinho, CategoriaSlug } from "@/types";
+import { useCart } from "@/lib/CartContext";
+import { CategoriaSlug } from "@/types";
 
 export default function Home() {
   const router = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<ItemCarrinho[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(null);
+  const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(
+    null
+  );
 
-  const addToCart = (produto: Produto) => {
-    setCartItems((prev) => {
-      const existing = prev.find(
-        (item) => item.produto.id === produto.id
-      );
-      if (existing) {
-        return prev.map((item) =>
-          item.produto.id === produto.id
-            ? { ...item, quantidade: item.quantidade + 1 }
-            : item
-        );
-      }
-      return [...prev, { produto, quantidade: 1 }];
-    });
-  };
-
-  const removeFromCart = (item: ItemCarrinho) => {
-    setCartItems((prev) => {
-      const existing = prev.find(
-        (i) => i.produto.id === item.produto.id
-      );
-      if (existing && existing.quantidade <= 1) {
-        return prev.filter((i) => i.produto.id !== item.produto.id);
-      }
-      return prev.map((i) =>
-        i.produto.id === item.produto.id
-          ? { ...i, quantidade: i.quantidade - 1 }
-          : i
-      );
-    });
-  };
-
-  const clearCart = () => setCartItems([]);
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantidade, 0);
+  const { items, totalItens, addToCart, removeFromCart, clearCart } = useCart();
 
   // Filtro por busca + categoria
   const filteredProdutos = produtos.filter((p) => {
@@ -77,7 +46,7 @@ export default function Home() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header
-        cartItemCount={cartCount}
+        cartItemCount={totalItens}
         onCartOpen={() => setCartOpen(true)}
         onSearch={(term) => {
           setSearchTerm(term);
@@ -85,7 +54,7 @@ export default function Home() {
         }}
       />
 
-      {/* Banner destaque */}
+      {/* Banner */}
       <Box
         sx={{
           backgroundColor: "#1A1A1A",
@@ -156,7 +125,7 @@ export default function Home() {
         </Container>
       </Box>
 
-      {/* Categorias — clicáveis para filtrar */}
+      {/* Categorias */}
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Typography
           variant="h5"
@@ -184,7 +153,9 @@ export default function Home() {
                     textAlign: "center",
                     cursor: "pointer",
                     transition: "all 0.2s ease",
-                    border: isActive ? "2px solid #E65100" : "2px solid transparent",
+                    border: isActive
+                      ? "2px solid #E65100"
+                      : "2px solid transparent",
                     backgroundColor: isActive ? "#fff5f0" : "#fff",
                     "&:hover": {
                       borderColor: "#E65100",
@@ -213,11 +184,12 @@ export default function Home() {
           })}
         </Box>
 
-        {/* Chips de filtro ativo */}
         {categoriaAtiva && (
           <Box sx={{ mt: 2 }}>
             <Chip
-              label={`${categorias.find((c) => c.slug === categoriaAtiva)?.nome} — ${filteredProdutos.length} produto(s)`}
+              label={`${
+                categorias.find((c) => c.slug === categoriaAtiva)?.nome
+              } — ${filteredProdutos.length} produto(s)`}
               onDelete={() => setCategoriaAtiva(null)}
               sx={{
                 backgroundColor: "#E65100",
@@ -258,9 +230,7 @@ export default function Home() {
 
         {filteredProdutos.length === 0 ? (
           <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
-            <Typography variant="h6">
-              Nenhum produto encontrado
-            </Typography>
+            <Typography variant="h6">Nenhum produto encontrado</Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
               Tente buscar por outro termo ou limpe os filtros
             </Typography>
@@ -285,10 +255,7 @@ export default function Home() {
                   },
                 }}
               >
-                <ProductCard
-                  produto={produto}
-                  onAddToCart={addToCart}
-                />
+                <ProductCard produto={produto} onAddToCart={addToCart} />
               </Box>
             ))}
           </Box>
@@ -300,7 +267,8 @@ export default function Home() {
       <CartDrawer
         open={cartOpen}
         onClose={() => setCartOpen(false)}
-        items={cartItems}
+        items={items}
+        total={items.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0)}
         onAdd={(item) => addToCart(item.produto)}
         onRemove={removeFromCart}
         onClear={clearCart}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   Drawer,
   Box,
@@ -17,6 +18,7 @@ import {
   Close as CloseIcon,
   Add,
   Remove,
+  ShoppingCartOutlined as CartIcon,
 } from "@mui/icons-material";
 import { ItemCarrinho } from "@/types";
 
@@ -24,6 +26,7 @@ interface CartDrawerProps {
   open: boolean;
   onClose: () => void;
   items: ItemCarrinho[];
+  total: number;
   onAdd: (item: ItemCarrinho) => void;
   onRemove: (item: ItemCarrinho) => void;
   onClear: () => void;
@@ -33,16 +36,18 @@ export default function CartDrawer({
   open,
   onClose,
   items,
+  total,
   onAdd,
   onRemove,
   onClear,
 }: CartDrawerProps) {
-  const total = items.reduce(
-    (sum, item) => sum + item.produto.preco * item.quantidade,
-    0
-  );
-
+  const router = useRouter();
   const totalItens = items.reduce((sum, item) => sum + item.quantidade, 0);
+
+  const handleCheckout = () => {
+    onClose();
+    router.push("/checkout");
+  };
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -102,9 +107,7 @@ export default function CartDrawer({
               color: "#999",
             }}
           >
-            <ShoppingCartOutlinedIcon
-              sx={{ fontSize: 64, mb: 2, color: "#ddd" }}
-            />
+            <CartIcon sx={{ fontSize: 64, mb: 2, color: "#ddd" }} />
             <Typography variant="body1" sx={{ mb: 1 }}>
               Seu carrinho está vazio
             </Typography>
@@ -131,7 +134,7 @@ export default function CartDrawer({
                   <Avatar
                     variant="rounded"
                     src={item.produto.imgUrl}
-                    sx={{ width: 64, height: 64 }}
+                    sx={{ width: 64, height: 64, bgcolor: "#1A1A1A" }}
                   />
                 </ListItemAvatar>
                 <ListItemText
@@ -165,7 +168,11 @@ export default function CartDrawer({
                   </IconButton>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 600, minWidth: 20, textAlign: "center" }}
+                    sx={{
+                      fontWeight: 600,
+                      minWidth: 20,
+                      textAlign: "center",
+                    }}
                   >
                     {item.quantidade}
                   </Typography>
@@ -216,6 +223,7 @@ export default function CartDrawer({
               fullWidth
               variant="contained"
               size="large"
+              onClick={handleCheckout}
               sx={{
                 mt: 1,
                 backgroundColor: "#E65100",
@@ -233,6 +241,3 @@ export default function CartDrawer({
     </Drawer>
   );
 }
-
-// Workaround pra import inline de ícone
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
