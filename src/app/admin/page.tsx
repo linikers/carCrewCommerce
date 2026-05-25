@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Logout,
   Add,
+  Category,
 } from "@mui/icons-material";
 import Header from "@/components/Header";
 
@@ -110,23 +111,45 @@ export default function AdminDashboard() {
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Paper
-              onClick={() => router.push("/admin/produtos/novo")}
+              onClick={() => router.push("/admin/produtos")}
               sx={{
                 p: 3,
                 borderRadius: 3,
                 textAlign: "center",
                 cursor: "pointer",
-                border: "2px dashed #ddd",
+                border: "2px solid #ddd",
                 transition: "all 0.2s",
                 "&:hover": { borderColor: "#E65100", bgcolor: "#fff5f0" },
               }}
             >
-              <Add sx={{ fontSize: 40, color: "#E65100", mb: 1 }} />
+              <Inventory2 sx={{ fontSize: 40, color: "#1A1A1A", mb: 1 }} />
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Novo Produto
+                Gerenciar Produtos
               </Typography>
               <Typography variant="body2" sx={{ color: "#666" }}>
-                Adicionar produto ao catálogo
+                Listar, editar e excluir produtos
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Paper
+              onClick={() => router.push("/admin/categorias")}
+              sx={{
+                p: 3,
+                borderRadius: 3,
+                textAlign: "center",
+                cursor: "pointer",
+                border: "2px solid #ddd",
+                transition: "all 0.2s",
+                "&:hover": { borderColor: "#E65100", bgcolor: "#fff5f0" },
+              }}
+            >
+              <Category sx={{ fontSize: 40, color: "#1A1A1A", mb: 1 }} />
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Categorias
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#666" }}>
+                Gerenciar categorias de produtos
               </Typography>
             </Paper>
           </Grid>
