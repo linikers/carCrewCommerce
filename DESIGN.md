@@ -1,14 +1,14 @@
 ---
 version: alpha
 name: CarCrew Suspensões
-description: Loja de peças para suspensão automotiva. Visual profissional, mecânico e confiável.
+description: Loja de peças para suspensão automotiva. Visual profissional, mecânico, com personalidade laranja e preto.
 colors:
-  primary: "#164773"
-  secondary: "#CCEA8D"
-  tertiary: "#e8e8e8"
-  neutral: "#f5f5f5"
+  primary: "#E65100"
+  secondary: "#1A1A1A"
+  tertiary: "#333333"
+  neutral: "#FAFAFA"
   surface: "#ffffff"
-  text: "#164773"
+  text: "#1A1A1A"
   textSecondary: "#555555"
   error: "#d32f2f"
   success: "#2e7d32"
@@ -60,13 +60,13 @@ components:
     padding: 12px
     fontWeight: 600
   button-primary-hover:
-    backgroundColor: "#0d2a47"
+    backgroundColor: "#BF360C"
     textColor: "#ffffff"
     rounded: "{rounded.md}"
     padding: 12px
   button-secondary:
     backgroundColor: "{colors.secondary}"
-    textColor: "{colors.primary}"
+    textColor: "#ffffff"
     rounded: "{rounded.md}"
     padding: 12px
   button-whatsapp:
@@ -91,7 +91,7 @@ components:
 
 **CarCrew Suspensões** é uma loja de peças para suspensão automotiva. O design deve transmitir **confiança, profissionalismo e solidez** — características essenciais para o público de oficinas mecânicas e entusiastas automotivos.
 
-O visual é limpo e direto, com hierarquia clara de informações. Nada de enfeites desnecessários. O foco está nos produtos e na facilidade de compra.
+O visual é limpo e direto, com hierarquia clara de informações. Laranja (#E65100) como cor principal — remete a energia, velocidade e robustez mecânica. Preto (#1A1A1A) para contraste e sofisticação.
 
 ### Voice & Tone
 
@@ -110,12 +110,12 @@ O visual é limpo e direto, com hierarquia clara de informações. Nada de enfei
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| `primary` | `#164773` | Headers, buttons, links, nav — a cor da marca |
-| `secondary` | `#CCEA8D` | CTAs secundários, badges de desconto, destaques |
-| `tertiary` | `#e8e8e8` | Fundo do header, áreas secundárias |
-| `neutral` | `#f5f5f5` | Fundo da página, seções alternadas |
+| `primary` | `#E65100` | Headers, buttons, links, CTAs — a cor da marca |
+| `secondary` | `#1A1A1A` | Texto principal, elementos escuros, footer |
+| `tertiary` | `#333333` | Subtítulos, áreas secundárias |
+| `neutral` | `#FAFAFA` | Fundo da página |
 | `surface` | `#ffffff` | Cards, modais, formulários |
-| `text` | `#164773` | Títulos e texto principal |
+| `text` | `#1A1A1A` | Títulos e texto principal |
 | `textSecondary` | `#555555` | Descrições, labels |
 | `whatsapp` | `#25D366` | Botão de WhatsApp (verde característico) |
 
@@ -157,12 +157,12 @@ O visual é limpo e direto, com hierarquia clara de informações. Nada de enfei
 ## Components
 
 ### Button Primary
-- Fundo `#164773`, texto branco, border-radius 8px
-- Hover: fundo `#0d2a47`
+- Fundo `#E65100` (laranja), texto branco, border-radius 8px
+- Hover: fundo `#BF360C` (laranja escuro)
 - Usado para: "Comprar", "Finalizar Compra", "Adicionar ao Carrinho"
 
 ### Button Secondary
-- Fundo `#CCEA8D`, texto `#164773`
+- Fundo `#1A1A1A` (preto), texto branco
 - Usado para: "Ver mais", "Continuar comprando", CTAs secundários
 
 ### Button WhatsApp
@@ -183,9 +183,10 @@ O visual é limpo e direto, com hierarquia clara de informações. Nada de enfei
 - Busca no centro
 - Ícone de conta + carrinho à direita
 - Nav de categorias abaixo
+- Detalhes laranja nos elementos interativos
 
 ### Footer
-- Fundo `#164773`, texto branco
+- Fundo `#1A1A1A` (preto), texto branco
 - Informações da loja, links, redes sociais
 - Selos de segurança e formas de pagamento
 
