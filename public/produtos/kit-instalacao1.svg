@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#1A1A1A"/>
+  <rect x="80" y="100" width="240" height="100" rx="8" fill="none" stroke="#E65100" stroke-width="4"/>
+  <circle cx="140" cy="150" r="20" fill="#E65100"/>
+  <circle cx="200" cy="150" r="20" fill="none" stroke="#E65100" stroke-width="3"/>
+  <rect x="240" y="135" width="40" height="30" rx="4" fill="#E65100"/>
+  <text x="200" y="270" text-anchor="middle" fill="#fff" font-size="14" font-family="sans-serif">Kit Instalação</text>
+</svg>

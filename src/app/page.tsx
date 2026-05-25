@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Container,
-  Grid,
   Typography,
   Card,
   CardContent,
+  Chip,
 } from "@mui/material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -15,12 +16,14 @@ import CartDrawer from "@/components/CartDrawer";
 import ProductCard from "@/components/ProductCard";
 import { produtos } from "@/lib/produtos";
 import { categorias } from "@/lib/categorias";
-import { Produto, ItemCarrinho } from "@/types";
+import { Produto, ItemCarrinho, CategoriaSlug } from "@/types";
 
 export default function Home() {
+  const router = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<ItemCarrinho[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(null);
 
   const addToCart = (produto: Produto) => {
     setCartItems((prev) => {
@@ -55,22 +58,31 @@ export default function Home() {
   };
 
   const clearCart = () => setCartItems([]);
-
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantidade, 0);
 
-  // Filtro por busca
-  const filteredProdutos = searchTerm
-    ? produtos.filter((p) =>
-        p.nome.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : produtos;
+  // Filtro por busca + categoria
+  const filteredProdutos = produtos.filter((p) => {
+    const matchSearch =
+      !searchTerm ||
+      p.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.descricao.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchCategoria = !categoriaAtiva || p.category === categoriaAtiva;
+    return matchSearch && matchCategoria;
+  });
+
+  const toggleCategoria = (slug: CategoriaSlug) => {
+    setCategoriaAtiva(categoriaAtiva === slug ? null : slug);
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header
         cartItemCount={cartCount}
         onCartOpen={() => setCartOpen(true)}
-        onSearch={setSearchTerm}
+        onSearch={(term) => {
+          setSearchTerm(term);
+          setCategoriaAtiva(null);
+        }}
       />
 
       {/* Banner destaque */}
@@ -124,7 +136,10 @@ export default function Home() {
             ].map((item) => (
               <Box
                 key={item.titulo}
-                sx={{ textAlign: "center", flex: { xs: "1 1 100%", sm: "1 1 30%" } }}
+                sx={{
+                  textAlign: "center",
+                  flex: { xs: "1 1 100%", sm: "1 1 30%" },
+                }}
               >
                 <Typography
                   variant="subtitle1"
@@ -141,7 +156,7 @@ export default function Home() {
         </Container>
       </Box>
 
-      {/* Categorias */}
+      {/* Categorias — clicáveis para filtrar */}
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Typography
           variant="h5"
@@ -150,76 +165,138 @@ export default function Home() {
           Categorias
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-          {categorias.map((cat) => (
-            <Box
-              key={cat.slug}
-              sx={{ flex: { xs: "1 1 calc(50% - 8px)", sm: "1 1 calc(25% - 8px)", md: "1 1 calc(16.66% - 10px)" } }}
-            >
-              <Card
+          {categorias.map((cat) => {
+            const isActive = categoriaAtiva === cat.slug;
+            return (
+              <Box
+                key={cat.slug}
                 sx={{
-                  textAlign: "center",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    borderColor: "#E65100",
-                    boxShadow: "0 4px 12px rgba(230,81,0,0.15)",
+                  flex: {
+                    xs: "1 1 calc(50% - 8px)",
+                    sm: "1 1 calc(25% - 8px)",
+                    md: "1 1 calc(16.66% - 10px)",
                   },
                 }}
               >
-                <CardContent sx={{ py: 2 }}>
-                  <Typography variant="h4" sx={{ mb: 1 }}>
-                    {cat.icone}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 500, fontSize: "0.8rem" }}
-                  >
-                    {cat.nome}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-          ))}
+                <Card
+                  onClick={() => toggleCategoria(cat.slug)}
+                  sx={{
+                    textAlign: "center",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    border: isActive ? "2px solid #E65100" : "2px solid transparent",
+                    backgroundColor: isActive ? "#fff5f0" : "#fff",
+                    "&:hover": {
+                      borderColor: "#E65100",
+                      boxShadow: "0 4px 12px rgba(230,81,0,0.15)",
+                    },
+                  }}
+                >
+                  <CardContent sx={{ py: 2 }}>
+                    <Typography variant="h4" sx={{ mb: 1 }}>
+                      {cat.icone}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: isActive ? 700 : 500,
+                        fontSize: "0.8rem",
+                        color: isActive ? "#E65100" : "#1A1A1A",
+                      }}
+                    >
+                      {cat.nome}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Box>
+            );
+          })}
         </Box>
+
+        {/* Chips de filtro ativo */}
+        {categoriaAtiva && (
+          <Box sx={{ mt: 2 }}>
+            <Chip
+              label={`${categorias.find((c) => c.slug === categoriaAtiva)?.nome} — ${filteredProdutos.length} produto(s)`}
+              onDelete={() => setCategoriaAtiva(null)}
+              sx={{
+                backgroundColor: "#E65100",
+                color: "#fff",
+                fontWeight: 500,
+              }}
+            />
+          </Box>
+        )}
       </Container>
 
       {/* Produtos */}
       <Container maxWidth="lg" sx={{ mb: 6 }}>
-        <Typography
-          variant="h5"
-          sx={{ fontWeight: 700, mb: 3, color: "#1A1A1A" }}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
         >
-          {searchTerm
-            ? `Resultados para "${searchTerm}"`
-            : "Novidades"}
-        </Typography>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 700, color: "#1A1A1A" }}
+          >
+            {searchTerm
+              ? `Resultados para "${searchTerm}"`
+              : categoriaAtiva
+              ? "Produtos"
+              : "Novidades"}
+          </Typography>
+          {!categoriaAtiva && !searchTerm && (
+            <Typography variant="body2" sx={{ color: "#999" }}>
+              {produtos.length} produto(s)
+            </Typography>
+          )}
+        </Box>
 
         {filteredProdutos.length === 0 ? (
           <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
             <Typography variant="h6">
               Nenhum produto encontrado
             </Typography>
-            <Typography variant="body2">
-              Tente buscar por outro termo
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Tente buscar por outro termo ou limpe os filtros
             </Typography>
+            {categoriaAtiva && (
+              <Chip
+                label="Limpar filtros"
+                onClick={() => setCategoriaAtiva(null)}
+                sx={{ cursor: "pointer" }}
+              />
+            )}
           </Box>
         ) : (
-          <Grid container spacing={3}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
             {filteredProdutos.map((produto) => (
-              <Grid key={produto.id} size={{ xs: 12, sm: 6, md: 4 }}>
+              <Box
+                key={produto.id}
+                sx={{
+                  flex: {
+                    xs: "1 1 100%",
+                    sm: "1 1 calc(50% - 12px)",
+                    md: "1 1 calc(33.33% - 16px)",
+                  },
+                }}
+              >
                 <ProductCard
                   produto={produto}
                   onAddToCart={addToCart}
                 />
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         )}
       </Container>
 
       <Footer />
 
-      {/* Carrinho drawer */}
       <CartDrawer
         open={cartOpen}
         onClose={() => setCartOpen(false)}
