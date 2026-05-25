@@ -113,7 +113,6 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               sx={{ mb: 2 }}
-              helperText="Use qualquer email + senha 123456 (modo teste)"
             />
 
             {error && (

@@ -1,0 +1,9 @@
+[
+  {
+    "nome": "Admin",
+    "email": "admin@carcrew.com.br",
+    "senha": "admin123",
+    "admin": true,
+    "criadoEm": "2026-05-25T00:00:00.000Z"
+  }
+]

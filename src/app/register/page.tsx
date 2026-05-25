@@ -38,11 +38,27 @@ export default function RegisterPage() {
       return;
     }
 
-    // Simula cadastro — em produção, salvaria no banco
-    setSuccess(true);
-    setTimeout(() => {
-      router.push("/login");
-    }, 2000);
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome: name, email, senha: password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Erro ao cadastrar");
+        return;
+      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    } catch {
+      setError("Erro de conexão ao servidor");
+    }
   };
 
   return (
