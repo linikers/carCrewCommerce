@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#1A1A1A"/>
+  <path d="M180 60 Q200 80 180 100 Q160 120 180 140 Q200 160 180 180 Q160 200 180 220 Q200 240 180 260" fill="none" stroke="#E65100" stroke-width="6" stroke-linecap="round"/>
+  <line x1="170" y1="60" x2="230" y2="60" stroke="#E65100" stroke-width="6"/>
+  <line x1="170" y1="260" x2="230" y2="260" stroke="#E65100" stroke-width="6"/>
+  <text x="200" y="270" text-anchor="middle" fill="#fff" font-size="14" font-family="sans-serif">Mola Helicoidal</text>
+</svg>

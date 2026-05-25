@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardMedia,
@@ -20,6 +21,7 @@ export default function ProductCard({
   produto,
   onAddToCart,
 }: ProductCardProps) {
+  const router = useRouter();
   const parcelas = produto.parcelamento || 12;
   const valorParcela = produto.preco / parcelas;
 
@@ -32,11 +34,13 @@ export default function ProductCard({
         flexDirection: "column",
         height: "100%",
         transition: "box-shadow 0.2s ease, transform 0.2s ease",
+        cursor: "pointer",
         "&:hover": {
           boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
           transform: "translateY(-2px)",
         },
       }}
+      onClick={() => router.push(`/produto/${produto.id}`)}
     >
       {/* Imagem */}
       <CardMedia
@@ -46,7 +50,8 @@ export default function ProductCard({
         alt={produto.nome}
         sx={{
           objectFit: "cover",
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#1A1A1A",
+          p: 2,
         }}
       />
 
@@ -56,6 +61,7 @@ export default function ProductCard({
           display: "flex",
           flexDirection: "column",
           p: 2,
+          pt: 1,
         }}
       >
         {/* Nome */}
@@ -115,43 +121,46 @@ export default function ProductCard({
           ou {parcelas}x de R$ {valorParcela.toFixed(2)} sem juros
         </Typography>
 
-        {/* Botões */}
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={() => onAddToCart(produto)}
-          sx={{
-            backgroundColor: "#E65100",
-            "&:hover": { backgroundColor: "#BF360C" },
-            textTransform: "none",
-            fontWeight: 600,
-            py: 1,
-            mb: 1,
-          }}
-        >
-          Adicionar ao Carrinho
-        </Button>
+        {/* Botões — parar propagação pra não navegar ao clicar */}
+        <Box onClick={(e) => e.stopPropagation()}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={() => onAddToCart(produto)}
+            sx={{
+              backgroundColor: "#E65100",
+              "&:hover": { backgroundColor: "#BF360C" },
+              textTransform: "none",
+              fontWeight: 600,
+              py: 1,
+              mb: 1,
+            }}
+          >
+            Adicionar ao Carrinho
+          </Button>
 
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<WhatsApp />}
-          href={`https://wa.me/5544991528386?text=Olá! Tenho interesse em: ${produto.nome}`}
-          target="_blank"
-          sx={{
-            borderColor: "#25D366",
-            color: "#25D366",
-            textTransform: "none",
-            fontSize: "0.8rem",
-            fontWeight: 500,
-            "&:hover": {
-              borderColor: "#1ebe5c",
-              backgroundColor: "rgba(37, 211, 102, 0.04)",
-            },
-          }}
-        >
-          Dúvidas? Fale no WhatsApp
-        </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<WhatsApp />}
+            href={`https://wa.me/5544991528386?text=Olá! Tenho interesse em: ${produto.nome}`}
+            target="_blank"
+            onClick={(e) => e.stopPropagation()}
+            sx={{
+              borderColor: "#25D366",
+              color: "#25D366",
+              textTransform: "none",
+              fontSize: "0.8rem",
+              fontWeight: 500,
+              "&:hover": {
+                borderColor: "#1ebe5c",
+                backgroundColor: "rgba(37, 211, 102, 0.04)",
+              },
+            }}
+          >
+            Dúvidas? Fale no WhatsApp
+          </Button>
+        </Box>
       </CardContent>
     </Card>
   );
