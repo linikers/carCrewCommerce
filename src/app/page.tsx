@@ -77,6 +77,8 @@ export default function Home() {
           setSearchTerm(term);
           setCategoriaAtiva(null);
         }}
+        activeCategory={categoriaAtiva}
+        onCategorySelect={(slug) => setCategoriaAtiva(slug as CategoriaSlug | null)}
       />
 
       {/* Banner carrossel dinâmico */}

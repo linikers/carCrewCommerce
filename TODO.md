@@ -1,16 +1,32 @@
 # CarCrew Commerce — Roadmap de Funcionalidades Futuras
 
-> Funcionalidades planejadas mas ainda não implementadas.
+> Última atualização: 25/05/2026
+
+---
+
+## ✅ Crítica de Design (Impeccable) — Achados
+
+### PR Fix #1 — Nav de categorias funcional
+**Problema:** Botões de categoria no header não filtram nem navegam (só decoração).
+- [ ] Fazer os botões de categoria no Header filtrar os produtos na home
+- [ ] Ou navegar para uma rota `/categoria/[slug]`
+- [ ] Destacar categoria ativa na nav
+
+### PR Fix #2 — Feedback ao adicionar ao carrinho
+**Problema:** Sem snackbar/toast quando clica "Adicionar ao Carrinho".
+- [ ] Adicionar Snackbar do MUI com confirmação
+- [ ] Mostrar nome do produto + link "Ver Carrinho"
+- [ ] Animação sutil no ícone do carrinho
+
+### PR Fix #3 — Busca por veículo / filtro avançado
+**Problema:** Busca só por nome, sem filtro de veículo ou código de peça.
+- [ ] Campo de busca por modelo de veículo
+- [ ] Filtro por aplicação (marca/modelo/ano)
+- [ ] Tags de compatibilidade nos produtos
 
 ---
 
 ## 🛠 Melhorias no Admin
-
-### Admin #2 — Dashboard Aprimorado
-- [ ] Stats com números reais (contar produtos do JSON, pedidos, etc.)
-- [ ] Gráficos de vendas do mês (chart.js ou recharts)
-- [ ] Nav lateral do admin ✅ (já feito neste PR)
-- [ ] Lista de pedidos recentes no dashboard
 
 ### Admin #5 — Pedidos
 - [ ] Página `/admin/pedidos` — listar pedidos com status
@@ -22,7 +38,7 @@
 
 ## 🌐 Mercado Livre
 
-### PR #7 — Integração Mercado Livre
+### PR — Integração Mercado Livre
 - [ ] OAuth callback `/api/ml/callback`
 - [ ] Sincronizar produtos do ML pro site
 - [ ] Webhooks de pedido do ML
@@ -33,28 +49,19 @@
 
 ## 🚀 Deploy
 
-### PR #8 — Deploy + Finalização
+### PR — Deploy + Finalização
 - [ ] Deploy na Vercel
 - [ ] Domínio próprio
 - [ ] SEO completo (sitemap.xml, meta tags, Open Graph)
 - [ ] PWA completo (service worker com Serwist)
-- [ ] Analytics (Google Analytics ou similar)
+- [ ] Analytics
 
 ---
 
-## ✨ Funcionalidades Extras
+## ✨ Extras
 
-### Checkout
 - [ ] Cálculo de frete por CEP (API dos Correios)
-- [ ] Upload de imagem nos produtos (admin)
-- [ ] Página de "Produto não encontrado" customizada
-
-### Geral
 - [ ] Páginas institucionais (Sobre, Política, Trocas)
-- [ ] Notificações push (PWA)
 - [ ] Modo escuro (dark mode)
 - [ ] Testes (Jest + Cypress/Playwright)
-
----
-
-> 🗓 Última atualização: 25/05/2026
+- [ ] Migrar JSON pra PostgreSQL (Vercel Postgres + Prisma)
