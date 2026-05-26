@@ -407,20 +407,26 @@ export default function Home() {
         onClear={clearCart}
       />
 
-      {/* Snackbar de feedback ao adicionar ao carrinho */}
+      {/* Snackbar de feedback */}
       <Snackbar
         open={snackOpen}
         autoHideDuration={2500}
         onClose={() => setSnackOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        slots={{ transition: Slide }}
       >
         <Alert
           severity="success"
           variant="filled"
           onClose={() => setSnackOpen(false)}
-          sx={{ backgroundColor: "#2e7d32", fontWeight: 500 }}
+          sx={{
+            backgroundColor: "#2e7d32",
+            fontWeight: 500,
+            fontSize: "0.9rem",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+          }}
         >
-          {snackProduto} adicionado ao carrinho!
+          ✓ {snackProduto} adicionado ao carrinho
         </Alert>
       </Snackbar>
     </Box>
