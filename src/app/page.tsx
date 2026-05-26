@@ -51,7 +51,6 @@ export default function Home() {
   const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(null);
 
   const { items, totalItens, addToCart, removeFromCart, clearCart } = useCart();
-
   // Dados dinâmicos da API
   const [produtos, setProdutos] = useState<ProdutoData[]>([]);
   const [categorias, setCategorias] = useState<CategoriaData[]>([]);
@@ -69,6 +68,16 @@ export default function Home() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  // Snackbar de feedback
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackProduto, setSnackProduto] = useState("");
+
+  const handleAddToCart = (produto: any) => {
+    addToCart(produto);
+    setSnackProduto(produto.nome);
+    setSnackOpen(true);
+  };
 
   // Banners
   const [banners, setBanners] = useState<any[]>([]);
