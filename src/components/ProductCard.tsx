@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { WhatsApp } from "@mui/icons-material";
 import { Produto } from "@/types";
+import { isCloudinaryUrl, thumbUrl, extractPublicId } from "@/lib/cloudinary";
 
 interface ProductCardProps {
   produto: Produto;
@@ -46,7 +47,11 @@ export default function ProductCard({
       <CardMedia
         component="img"
         height="200"
-        image={produto.imgUrl}
+        image={
+          isCloudinaryUrl(produto.imgUrl)
+            ? thumbUrl(extractPublicId(produto.imgUrl))
+            : produto.imgUrl
+        }
         alt={produto.nome}
         sx={{
           objectFit: "cover",

@@ -27,6 +27,7 @@ import { produtos } from "@/lib/produtos";
 import { categorias } from "@/lib/categorias";
 import { ItemCarrinho } from "@/types";
 import { useState } from "react";
+import { isCloudinaryUrl, detailUrl, extractPublicId } from "@/lib/cloudinary";
 
 export default function ProdutoDetalhe() {
   const params = useParams();
@@ -103,7 +104,11 @@ export default function ProdutoDetalhe() {
             >
               <Box
                 component="img"
-                src={produto.imgUrl}
+                src={
+                  isCloudinaryUrl(produto.imgUrl)
+                    ? detailUrl(extractPublicId(produto.imgUrl))
+                    : produto.imgUrl
+                }
                 alt={produto.nome}
                 sx={{
                   maxWidth: "100%",

@@ -21,6 +21,7 @@ import {
 import { ArrowBack, Save } from "@mui/icons-material";
 import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
+import CloudinaryUpload from "@/components/CloudinaryUpload";
 
 const categorias = [
   { value: "amortecedores", label: "Amortecedores" },
@@ -158,6 +159,17 @@ export default function EditarProduto() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="URL da Imagem" value={form.imgUrl}
                     onChange={(e) => setForm({ ...form, imgUrl: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <CloudinaryUpload
+                    onUpload={(url) => setForm({ ...form, imgUrl: url })}
+                    label="Upload via Cloudinary"
+                  />
+                  {form.imgUrl && form.imgUrl.includes("cloudinary") && (
+                    <Box sx={{ mt: 1 }}>
+                      <Box component="img" src={form.imgUrl} sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 2 }} />
+                    </Box>
+                  )}
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <FormControlLabel control={
