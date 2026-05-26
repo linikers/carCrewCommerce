@@ -8,6 +8,7 @@
     "category": "amortecedores",
     "parcelamento": 12,
     "estoque": 15,
+    "veiculos": ["Chevrolet Montana", "Chevrolet Vectra", "Chevrolet Astra"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -20,6 +21,7 @@
     "category": "ponta-de-eixo",
     "parcelamento": 12,
     "estoque": 8,
+    "veiculos": ["Chevrolet Montana", "Chevrolet Vectra", "Chevrolet Astra", "Peugeot 307", "Peugeot 308", "Peugeot 408"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -32,6 +34,7 @@
     "category": "calco-antirruido",
     "parcelamento": 6,
     "estoque": 50,
+    "veiculos": ["Universal"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -44,6 +47,7 @@
     "category": "bolsa-de-ar",
     "parcelamento": 12,
     "estoque": 10,
+    "veiculos": ["Universal"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -56,6 +60,7 @@
     "category": "acessorio-instalacao",
     "parcelamento": 12,
     "estoque": 5,
+    "veiculos": ["Universal"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -68,6 +73,7 @@
     "category": "mola-suspensao",
     "parcelamento": 10,
     "estoque": 20,
+    "veiculos": ["Chevrolet Montana"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -80,6 +86,7 @@
     "category": "amortecedores",
     "parcelamento": 10,
     "estoque": 12,
+    "veiculos": ["Universal"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -92,6 +99,7 @@
     "category": "calco-antirruido",
     "parcelamento": 6,
     "estoque": 30,
+    "veiculos": ["Chevrolet Montana", "Chevrolet Vectra"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   },
@@ -104,6 +112,7 @@
     "category": "bolsa-de-ar",
     "parcelamento": 6,
     "estoque": 25,
+    "veiculos": ["Universal"],
     "ativo": true,
     "criadoEm": "2026-05-25T00:00:00.000Z"
   }

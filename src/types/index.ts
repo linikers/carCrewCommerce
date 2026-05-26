@@ -7,7 +7,8 @@ export interface Produto {
   preco: number;
   imgUrl: string;
   category: CategoriaSlug;
-  parcelamento?: number; // máximo de parcelas
+  parcelamento?: number;
+  veiculos?: string[];
 }
 
 export type CategoriaSlug =
