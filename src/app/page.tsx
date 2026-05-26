@@ -9,6 +9,9 @@ import {
   CardContent,
   Chip,
   IconButton,
+  Snackbar,
+  Alert,
+  Slide,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -30,6 +33,16 @@ export default function Home() {
   );
 
   const { items, totalItens, addToCart, removeFromCart, clearCart } = useCart();
+
+  // Snackbar de feedback
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackProduto, setSnackProduto] = useState("");
+
+  const handleAddToCart = (produto: any) => {
+    addToCart(produto);
+    setSnackProduto(produto.nome);
+    setSnackOpen(true);
+  };
 
   // Banners
   const [banners, setBanners] = useState<any[]>([]);
@@ -346,7 +359,7 @@ export default function Home() {
                   },
                 }}
               >
-                <ProductCard produto={produto} onAddToCart={addToCart} />
+                <ProductCard produto={produto} onAddToCart={handleAddToCart} />
               </Box>
             ))}
           </Box>
@@ -355,12 +368,36 @@ export default function Home() {
 
       <Footer />
 
+      {/* Snackbar de feedback */}
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={2500}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        slots={{ transition: Slide }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          onClose={() => setSnackOpen(false)}
+          sx={{
+            backgroundColor: "#2e7d32",
+            fontWeight: 500,
+            fontSize: "0.9rem",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+          }}
+        >
+          ✓ {snackProduto} adicionado ao carrinho
+        </Alert>
+      </Snackbar>
+
+      {/* Carrinho drawer */}
       <CartDrawer
         open={cartOpen}
         onClose={() => setCartOpen(false)}
         items={items}
         total={items.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0)}
-        onAdd={(item) => addToCart(item.produto)}
+        onAdd={(item) => handleAddToCart(item.produto)}
         onRemove={removeFromCart}
         onClear={clearCart}
       />
