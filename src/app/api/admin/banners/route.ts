@@ -1,36 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { lerBanners, salvarBanners, proximoId, BannerData } from "@/lib/banners-admin";
 
+// GET /api/admin/banners — listar todos
 export async function GET() {
-  return NextResponse.json(lerBanners());
+  const banners = await lerBanners();
+  return NextResponse.json(banners);
 }
 
+// POST /api/admin/banners — criar novo
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { titulo, subtitulo, link, corFundo, corTexto, imgDesktop, imgMobile } = body;
+    const { titulo, subtitulo, imgDesktop, imgMobile, link, corFundo, corTexto, ativo, ordem } = body;
 
     if (!titulo) {
-      return NextResponse.json({ error: "Título é obrigatório" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Título é obrigatório" },
+        { status: 400 }
+      );
     }
 
-    const banners = lerBanners();
-    const nova: BannerData = {
-      id: proximoId(banners),
+    const id = await proximoId();
+    const novo: BannerData = {
+      id,
       titulo,
       subtitulo: subtitulo || "",
-      imgDesktop: imgDesktop || `/banners/banner-default-desktop.svg`,
-      imgMobile: imgMobile || `/banners/banner-default-mobile.svg`,
+      imgDesktop: imgDesktop || "",
+      imgMobile: imgMobile || "",
       link: link || "",
       corFundo: corFundo || "#1A1A1A",
       corTexto: corTexto || "#ffffff",
-      ativo: true,
-      ordem: banners.length + 1,
+      ativo: ativo !== undefined ? ativo : true,
+      ordem: ordem ?? 0,
     };
 
-    salvarBanners([...banners, nova]);
-    return NextResponse.json(nova, { status: 201 });
-  } catch {
+    await salvarBanners([novo]);
+
+    return NextResponse.json(novo, { status: 201 });
+  } catch (error) {
+    console.error("Erro ao criar banner:", error);
     return NextResponse.json({ error: "Erro ao criar banner" }, { status: 500 });
   }
 }

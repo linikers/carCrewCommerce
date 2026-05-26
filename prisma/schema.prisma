@@ -1,0 +1,135 @@
+// Prisma Schema — CarCrew Commerce
+// PostgreSQL via Vercel Postgres (Neon)
+// URL configurada em prisma.config.ts (não mais no schema)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// NextAuth v4 — PrismaAdapter models
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// CarCrew — Models de negócio
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  senha         String?
+  admin         Boolean   @default(false)
+  criadoEm      DateTime  @default(now()) @map("criado_em")
+
+  accounts Account[]
+  sessions Session[]
+  pedidos  Pedido[]
+
+  @@map("users")
+}
+
+model Categoria {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  nome      String
+  icone     String   @default("🔧")
+  descricao String?
+  ordem     Int      @default(0)
+  produtos  Produto[]
+
+  @@map("categorias")
+}
+
+model Produto {
+  id           Int       @id @default(autoincrement())
+  nome         String
+  descricao    String?
+  preco        Float
+  imgUrl       String?
+  categorySlug String    @map("category_slug")
+  parcelamento Int       @default(1)
+  estoque      Int       @default(0)
+  veiculos     String[]
+  ativo        Boolean   @default(true)
+  criadoEm     DateTime  @default(now()) @map("criado_em")
+
+  categoria Categoria @relation(fields: [categorySlug], references: [slug])
+
+  @@map("produtos")
+}
+
+model Banner {
+  id         Int      @id @default(autoincrement())
+  titulo     String
+  subtitulo  String?
+  imgDesktop String?
+  imgMobile  String?
+  link       String?
+  corFundo   String   @default("#1A1A1A") @map("cor_fundo")
+  corTexto   String   @default("#ffffff") @map("cor_texto")
+  ativo      Boolean  @default(true)
+  ordem      Int      @default(0)
+
+  @@map("banners")
+}
+
+model Pedido {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  items     Json
+  total     Float
+  status    String   @default("pendente")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("pedidos")
+}

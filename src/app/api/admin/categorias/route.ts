@@ -1,37 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import { lerCategorias, salvarCategorias, proximoId, CategoriaData } from "@/lib/categorias-admin";
 
+// GET /api/admin/categorias — listar todas
 export async function GET() {
-  return NextResponse.json(lerCategorias());
+  const categorias = await lerCategorias();
+  return NextResponse.json(categorias);
 }
 
+// POST /api/admin/categorias — criar nova
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { slug, nome, icone, descricao } = body;
+    const { slug, nome, icone, descricao, ordem } = body;
 
     if (!slug || !nome) {
-      return NextResponse.json({ error: "Slug e nome são obrigatórios" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Slug e nome são obrigatórios" },
+        { status: 400 }
+      );
     }
 
-    const categorias = lerCategorias();
-
-    if (categorias.find((c) => c.slug === slug)) {
-      return NextResponse.json({ error: "Slug já existe" }, { status: 409 });
-    }
-
+    const id = await proximoId();
     const nova: CategoriaData = {
-      id: proximoId(categorias),
+      id,
       slug,
       nome,
-      icone: icone || "📦",
+      icone: icone || "🔧",
       descricao: descricao || "",
-      ordem: categorias.length + 1,
+      ordem: ordem ?? 0,
     };
 
-    salvarCategorias([...categorias, nova]);
+    await salvarCategorias([nova]);
+
     return NextResponse.json(nova, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error("Erro ao criar categoria:", error);
     return NextResponse.json({ error: "Erro ao criar categoria" }, { status: 500 });
   }
 }

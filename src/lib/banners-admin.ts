@@ -1,5 +1,6 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import path from "path";
+// Admin CRUD — Banners via Prisma
+
+import prisma from "@/lib/prisma";
 
 export interface BannerData {
   id: number;
@@ -14,22 +15,60 @@ export interface BannerData {
   ordem: number;
 }
 
-const DATA_PATH = path.join(process.cwd(), "src/data/banners.json");
+export async function lerBanners(): Promise<BannerData[]> {
+  const banners = await prisma.banner.findMany({
+    orderBy: { ordem: "asc" },
+  });
 
-export function lerBanners(): BannerData[] {
-  try {
-    if (!existsSync(DATA_PATH)) return [];
-    return JSON.parse(readFileSync(DATA_PATH, "utf-8"));
-  } catch {
-    return [];
+  return banners.map((b) => ({
+    id: b.id,
+    titulo: b.titulo,
+    subtitulo: b.subtitulo || "",
+    imgDesktop: b.imgDesktop || "",
+    imgMobile: b.imgMobile || "",
+    link: b.link || "",
+    corFundo: b.corFundo || "#1A1A1A",
+    corTexto: b.corTexto || "#ffffff",
+    ativo: b.ativo,
+    ordem: b.ordem,
+  }));
+}
+
+export async function salvarBanners(banners: BannerData[]) {
+  for (const b of banners) {
+    await prisma.banner.upsert({
+      where: { id: b.id },
+      update: {
+        titulo: b.titulo,
+        subtitulo: b.subtitulo || null,
+        imgDesktop: b.imgDesktop || null,
+        imgMobile: b.imgMobile || null,
+        link: b.link || null,
+        corFundo: b.corFundo || "#1A1A1A",
+        corTexto: b.corTexto || "#ffffff",
+        ativo: b.ativo,
+        ordem: b.ordem,
+      },
+      create: {
+        id: b.id,
+        titulo: b.titulo,
+        subtitulo: b.subtitulo || null,
+        imgDesktop: b.imgDesktop || null,
+        imgMobile: b.imgMobile || null,
+        link: b.link || null,
+        corFundo: b.corFundo || "#1A1A1A",
+        corTexto: b.corTexto || "#ffffff",
+        ativo: b.ativo,
+        ordem: b.ordem,
+      },
+    });
   }
 }
 
-export function salvarBanners(banners: BannerData[]) {
-  writeFileSync(DATA_PATH, JSON.stringify(banners, null, 2));
-}
-
-export function proximoId(banners: BannerData[]): number {
-  if (banners.length === 0) return 1;
-  return Math.max(...banners.map((b) => b.id)) + 1;
+export async function proximoId(): Promise<number> {
+  const ultimo = await prisma.banner.findFirst({
+    orderBy: { id: "desc" },
+    select: { id: true },
+  });
+  return (ultimo?.id || 0) + 1;
 }
