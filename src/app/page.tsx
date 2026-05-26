@@ -14,6 +14,10 @@ import {
   Slide,
   useMediaQuery,
   useTheme,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import Header from "@/components/Header";
@@ -67,14 +71,23 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [banners.length, bannerIndex]);
 
-  // Filtro por busca + categoria
+  // Filtro por veículo
+  const [veiculoSelecionado, setVeiculoSelecionado] = useState("");
+
+  // Lista única de veículos
+  const todosVeiculos = [...new Set(produtos.flatMap((p) => p.veiculos || []))].sort();
+
+  // Filtro por busca + categoria + veículo
   const filteredProdutos = produtos.filter((p) => {
     const matchSearch =
       !searchTerm ||
       p.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.descricao.toLowerCase().includes(searchTerm.toLowerCase());
     const matchCategoria = !categoriaAtiva || p.category === categoriaAtiva;
-    return matchSearch && matchCategoria;
+    const matchVeiculo =
+      !veiculoSelecionado ||
+      (p.veiculos && p.veiculos.includes(veiculoSelecionado));
+    return matchSearch && matchCategoria && matchVeiculo;
   });
 
   const toggleCategoria = (slug: CategoriaSlug) => {
@@ -230,6 +243,30 @@ export default function Home() {
           </Box>
         </Container>
       </Box>
+
+      {/* Filtro por veículo */}
+      <Container maxWidth="lg" sx={{ mt: 3, mb: 1 }}>
+        <FormControl size="small" sx={{ minWidth: 280 }}>
+          <InputLabel>Filtrar por veículo</InputLabel>
+          <Select
+            value={veiculoSelecionado}
+            label="Filtrar por veículo"
+            onChange={(e) => { setVeiculoSelecionado(e.target.value); setCategoriaAtiva(null); }}
+          >
+            <MenuItem value="">Todos os veículos</MenuItem>
+            {todosVeiculos.map((v) => (
+              <MenuItem key={v} value={v}>{v}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {veiculoSelecionado && (
+          <Chip
+            label={veiculoSelecionado}
+            onDelete={() => setVeiculoSelecionado("")}
+            sx={{ ml: 1, backgroundColor: "#E65100", color: "#fff" }}
+          />
+        )}
+      </Container>
 
       {/* Categorias */}
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>

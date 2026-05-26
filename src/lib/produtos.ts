@@ -10,6 +10,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/amortecedor1.svg",
     category: "amortecedores",
     parcelamento: 12,
+    veiculos: ["Chevrolet Montana", "Chevrolet Vectra", "Chevrolet Astra"],
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/ponta-eixo1.svg",
     category: "ponta-de-eixo",
     parcelamento: 12,
+    veiculos: ["Chevrolet Montana", "Chevrolet Vectra", "Chevrolet Astra", "Peugeot 307", "Peugeot 308", "Peugeot 408"],
   },
   {
     id: 3,
@@ -30,6 +32,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/calco1.svg",
     category: "calco-antirruido",
     parcelamento: 6,
+    veiculos: ["Universal"],
   },
   {
     id: 4,
@@ -40,6 +43,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/bolsa-ar1.svg",
     category: "bolsa-de-ar",
     parcelamento: 12,
+    veiculos: ["Universal"],
   },
   {
     id: 5,
@@ -50,6 +54,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/kit-instalacao1.svg",
     category: "acessorio-instalacao",
     parcelamento: 12,
+    veiculos: ["Universal"],
   },
   {
     id: 6,
@@ -60,6 +65,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/mola1.svg",
     category: "mola-suspensao",
     parcelamento: 10,
+    veiculos: ["Chevrolet Montana"],
   },
   {
     id: 7,
@@ -70,6 +76,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/amortecedor1.svg",
     category: "amortecedores",
     parcelamento: 10,
+    veiculos: ["Universal"],
   },
   {
     id: 8,
@@ -80,6 +87,7 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/calco1.svg",
     category: "calco-antirruido",
     parcelamento: 6,
+    veiculos: ["Chevrolet Montana", "Chevrolet Vectra"],
   },
   {
     id: 9,
@@ -90,5 +98,6 @@ export const produtos: Produto[] = [
     imgUrl: "/produtos/bolsa-ar1.svg",
     category: "bolsa-de-ar",
     parcelamento: 6,
+    veiculos: ["Universal"],
   },
 ];
