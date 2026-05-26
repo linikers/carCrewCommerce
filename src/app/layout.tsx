@@ -54,6 +54,11 @@ export default function RootLayout({
             <CartProvider>{children}</CartProvider>
           </MuiProvider>
         </AuthProvider>
+        {/* Cloudinary Upload Widget */}
+        <script
+          src="https://upload-widget.cloudinary.com/global/all.js"
+          async
+        />
       </body>
     </html>
   );
