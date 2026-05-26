@@ -39,12 +39,16 @@ interface HeaderProps {
   cartItemCount?: number;
   onCartOpen?: () => void;
   onSearch?: (term: string) => void;
+  activeCategory?: string | null;
+  onCategorySelect?: (slug: string | null) => void;
 }
 
 export default function Header({
   cartItemCount = 0,
   onCartOpen,
   onSearch,
+  activeCategory,
+  onCategorySelect,
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
@@ -186,13 +190,16 @@ export default function Header({
               {categorias.map((cat) => (
                 <Button
                   key={cat.slug}
+                  onClick={() => onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug)}
                   sx={{
-                    color: "#ffffff",
+                    color: activeCategory === cat.slug ? "#E65100" : "#ffffff",
                     textTransform: "none",
                     fontSize: "0.85rem",
                     px: 1.5,
                     py: 1,
                     borderRadius: 0,
+                    fontWeight: activeCategory === cat.slug ? 600 : 400,
+                    borderBottom: activeCategory === cat.slug ? "2px solid #E65100" : "2px solid transparent",
                     "&:hover": {
                       backgroundColor: "rgba(255,255,255,0.1)",
                     },
@@ -275,8 +282,15 @@ export default function Header({
             <Collapse in={categoriesOpen}>
               <List disablePadding>
                 {categorias.map((cat) => (
-                  <ListItemButton key={cat.slug} sx={{ pl: 4 }}>
-                    <ListItemText primary={cat.nome} />
+                  <ListItemButton
+                    key={cat.slug}
+                    sx={{ pl: 4 }}
+                    onClick={() => { onCategorySelect?.(cat.slug); setMobileMenuOpen(false); }}
+                  >
+                    <ListItemText
+                      primary={cat.nome}
+                      sx={{ color: activeCategory === cat.slug ? "#E65100" : "inherit" }}
+                    />
                   </ListItemButton>
                 ))}
               </List>

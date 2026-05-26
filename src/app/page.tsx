@@ -79,6 +79,16 @@ export default function Home() {
     setSnackOpen(true);
   };
 
+  // Snackbar de feedback
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackProduto, setSnackProduto] = useState("");
+
+  const handleAddToCart = (produto: any) => {
+    addToCart(produto);
+    setSnackProduto(produto.nome);
+    setSnackOpen(true);
+  };
+
   // Banners
   const [banners, setBanners] = useState<any[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
@@ -131,6 +141,8 @@ export default function Home() {
           setSearchTerm(term);
           setCategoriaAtiva(null);
         }}
+        activeCategory={categoriaAtiva}
+        onCategorySelect={(slug) => setCategoriaAtiva(slug as CategoriaSlug | null)}
       />
 
       {/* Banner carrossel dinâmico */}
@@ -365,6 +377,34 @@ export default function Home() {
                 <Typography variant="body2" sx={{ mb: 2 }}>
                   Acesse o painel admin para cadastrar seus produtos
                 </Typography>
+        {filteredProdutos.length === 0 ? (
+          <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
+            <Typography variant="h6">Nenhum produto encontrado</Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Tente buscar por outro termo ou limpe os filtros
+            </Typography>
+            {categoriaAtiva && (
+              <Chip
+                label="Limpar filtros"
+                onClick={() => setCategoriaAtiva(null)}
+                sx={{ cursor: "pointer" }}
+              />
+            )}
+          </Box>
+        ) : (
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+            {filteredProdutos.map((produto) => (
+              <Box
+                key={produto.id}
+                sx={{
+                  flex: {
+                    xs: "1 1 100%",
+                    sm: "1 1 calc(50% - 12px)",
+                    md: "1 1 calc(33.33% - 16px)",
+                  },
+                }}
+              >
+                <ProductCard produto={produto} onAddToCart={handleAddToCart} />
               </Box>
             ) : filteredProdutos.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
@@ -397,12 +437,37 @@ export default function Home() {
       )}
 
       <Footer />
+
+      {/* Snackbar de feedback */}
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={2500}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        slots={{ transition: Slide }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          onClose={() => setSnackOpen(false)}
+          sx={{
+            backgroundColor: "#2e7d32",
+            fontWeight: 500,
+            fontSize: "0.9rem",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+          }}
+        >
+          ✓ {snackProduto} adicionado ao carrinho
+        </Alert>
+      </Snackbar>
+
+      {/* Carrinho drawer */}
       <CartDrawer
         open={cartOpen}
         onClose={() => setCartOpen(false)}
         items={items}
         total={items.reduce((sum, item) => sum + item.produto.preco * item.quantidade, 0)}
-        onAdd={(item) => addToCart(item.produto)}
+        onAdd={(item) => handleAddToCart(item.produto)}
         onRemove={removeFromCart}
         onClear={clearCart}
       />
