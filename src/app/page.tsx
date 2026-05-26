@@ -387,7 +387,7 @@ export default function Home() {
                     key={produto.id}
                     sx={{ flex: { xs: "1 1 100%", sm: "1 1 calc(50% - 12px)", md: "1 1 calc(33.33% - 16px)" } }}
                   >
-                    <ProductCard produto={produto as any} onAddToCart={addToCart} />
+                    <ProductCard produto={produto as any} onAddToCart={handleAddToCart} />
                   </Box>
                 ))}
               </Box>
@@ -406,6 +406,23 @@ export default function Home() {
         onRemove={removeFromCart}
         onClear={clearCart}
       />
+
+      {/* Snackbar de feedback ao adicionar ao carrinho */}
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={2500}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          onClose={() => setSnackOpen(false)}
+          sx={{ backgroundColor: "#2e7d32", fontWeight: 500 }}
+        >
+          {snackProduto} adicionado ao carrinho!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
