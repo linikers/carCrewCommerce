@@ -79,16 +79,6 @@ export default function Home() {
     setSnackOpen(true);
   };
 
-  // Snackbar de feedback
-  const [snackOpen, setSnackOpen] = useState(false);
-  const [snackProduto, setSnackProduto] = useState("");
-
-  const handleAddToCart = (produto: any) => {
-    addToCart(produto);
-    setSnackProduto(produto.nome);
-    setSnackOpen(true);
-  };
-
   // Banners
   const [banners, setBanners] = useState<any[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
@@ -377,34 +367,6 @@ export default function Home() {
                 <Typography variant="body2" sx={{ mb: 2 }}>
                   Acesse o painel admin para cadastrar seus produtos
                 </Typography>
-        {filteredProdutos.length === 0 ? (
-          <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
-            <Typography variant="h6">Nenhum produto encontrado</Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Tente buscar por outro termo ou limpe os filtros
-            </Typography>
-            {categoriaAtiva && (
-              <Chip
-                label="Limpar filtros"
-                onClick={() => setCategoriaAtiva(null)}
-                sx={{ cursor: "pointer" }}
-              />
-            )}
-          </Box>
-        ) : (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-            {filteredProdutos.map((produto) => (
-              <Box
-                key={produto.id}
-                sx={{
-                  flex: {
-                    xs: "1 1 100%",
-                    sm: "1 1 calc(50% - 12px)",
-                    md: "1 1 calc(33.33% - 16px)",
-                  },
-                }}
-              >
-                <ProductCard produto={produto} onAddToCart={handleAddToCart} />
               </Box>
             ) : filteredProdutos.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
@@ -425,7 +387,13 @@ export default function Home() {
                 {filteredProdutos.map((produto) => (
                   <Box
                     key={produto.id}
-                    sx={{ flex: { xs: "1 1 100%", sm: "1 1 calc(50% - 12px)", md: "1 1 calc(33.33% - 16px)" } }}
+                    sx={{
+                      flex: {
+                        xs: "1 1 100%",
+                        sm: "1 1 calc(50% - 12px)",
+                        md: "1 1 calc(33.33% - 16px)",
+                      },
+                    }}
                   >
                     <ProductCard produto={produto as any} onAddToCart={handleAddToCart} />
                   </Box>
