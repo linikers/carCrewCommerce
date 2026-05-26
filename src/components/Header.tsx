@@ -32,8 +32,8 @@ import {
   ExpandLess,
   ExpandMore,
 } from "@mui/icons-material";
-import { useState } from "react";
-import { categorias } from "@/lib/categorias";
+import { useState, useEffect } from "react";
+import { CategoriaSlug, Categoria } from "@/types";
 
 interface HeaderProps {
   cartItemCount?: number;
@@ -48,7 +48,15 @@ export default function Header({
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/categorias")
+      .then((r) => r.json())
+      .then(setCategorias)
+      .catch(() => {});
+  }, []);
 
   return (
     <>

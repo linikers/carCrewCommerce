@@ -12,6 +12,7 @@ import {
   Breadcrumbs,
   Link as MuiLink,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import {
   WhatsApp,
@@ -23,27 +24,81 @@ import {
 } from "@mui/icons-material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { produtos } from "@/lib/produtos";
-import { categorias } from "@/lib/categorias";
 import { ItemCarrinho } from "@/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { isCloudinaryUrl, detailUrl, extractPublicId } from "@/lib/cloudinary";
+
+interface ProdutoDetalheData {
+  id: number;
+  nome: string;
+  descricao: string;
+  preco: number;
+  imgUrl: string;
+  category: string;
+  parcelamento: number;
+  veiculos?: string[];
+}
+
+interface CategoriaData {
+  slug: string;
+  nome: string;
+  icone: string;
+}
 
 export default function ProdutoDetalhe() {
   const params = useParams();
   const router = useRouter();
   const id = Number(params.id);
-  const produto = produtos.find((p) => p.id === id);
 
+  const [produto, setProduto] = useState<ProdutoDetalheData | null>(null);
+  const [categorias, setCategorias] = useState<CategoriaData[]>([]);
+  const [produtos, setProdutos] = useState<ProdutoDetalheData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [naoEncontrado, setNaoEncontrado] = useState(false);
   const [quantidade, setQuantidade] = useState(1);
 
-  if (!produto) {
+  useEffect(() => {
+    Promise.all([
+      fetch(`/api/produtos?id=${id}`).then((r) => r.json()),
+      fetch("/api/categorias").then((r) => r.json()),
+      fetch("/api/produtos").then((r) => r.json()),
+    ])
+      .then(([prodData, catData, allProds]) => {
+        if (Array.isArray(prodData) && prodData.length > 0) {
+          setProduto(prodData[0]);
+        } else {
+          setNaoEncontrado(true);
+        }
+        setCategorias(catData);
+        setProdutos(allProds);
+      })
+      .catch(() => setNaoEncontrado(true))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <Header />
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1 }}>
+          <CircularProgress sx={{ color: "#E65100" }} />
+        </Box>
+        <Footer />
+      </Box>
+    );
+  }
+
+  if (naoEncontrado || !produto) {
     notFound();
   }
 
   const categoria = categorias.find((c) => c.slug === produto.category);
   const parcelas = produto.parcelamento || 12;
   const valorParcela = produto.preco / parcelas;
+
+  const relacionados = produtos.filter(
+    (p) => p.category === produto.category && p.id !== produto.id
+  ).slice(0, 3);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -121,7 +176,6 @@ export default function ProdutoDetalhe() {
 
           {/* Info */}
           <Grid size={{ xs: 12, md: 6 }}>
-            {/* Categoria tag */}
             {categoria && (
               <Chip
                 label={categoria.nome}
@@ -146,7 +200,6 @@ export default function ProdutoDetalhe() {
 
             <Divider sx={{ mb: 3 }} />
 
-            {/* Preço */}
             <Typography
               variant="h3"
               sx={{
@@ -183,32 +236,16 @@ export default function ProdutoDetalhe() {
               >
                 <Button
                   onClick={() => setQuantidade(Math.max(1, quantidade - 1))}
-                  sx={{
-                    minWidth: 40,
-                    height: 40,
-                    color: "#666",
-                    fontSize: "1.2rem",
-                  }}
+                  sx={{ minWidth: 40, height: 40, color: "#666", fontSize: "1.2rem" }}
                 >
                   −
                 </Button>
-                <Typography
-                  sx={{
-                    minWidth: 40,
-                    textAlign: "center",
-                    fontWeight: 600,
-                  }}
-                >
+                <Typography sx={{ minWidth: 40, textAlign: "center", fontWeight: 600 }}>
                   {quantidade}
                 </Typography>
                 <Button
                   onClick={() => setQuantidade(quantidade + 1)}
-                  sx={{
-                    minWidth: 40,
-                    height: 40,
-                    color: "#666",
-                    fontSize: "1.2rem",
-                  }}
+                  sx={{ minWidth: 40, height: 40, color: "#666", fontSize: "1.2rem" }}
                 >
                   +
                 </Button>
@@ -256,7 +293,6 @@ export default function ProdutoDetalhe() {
               Dúvidas? Fale no WhatsApp
             </Button>
 
-            {/* Info adicional */}
             <Box
               sx={{
                 mt: 4,
@@ -288,21 +324,17 @@ export default function ProdutoDetalhe() {
         </Grid>
 
         {/* Produtos relacionados */}
-        {produtos.filter((p) => p.category === produto.category && p.id !== produto.id)
-          .length > 0 && (
+        {relacionados.length > 0 && (
           <>
             <Typography variant="h5" sx={{ fontWeight: 700, mt: 6, mb: 3, color: "#1A1A1A" }}>
               Produtos Relacionados
             </Typography>
             <Grid container spacing={3}>
-              {produtos
-                .filter((p) => p.category === produto.category && p.id !== produto.id)
-                .slice(0, 3)
-                .map((rel) => (
-                  <Grid key={rel.id} size={{ xs: 12, sm: 6, md: 4 }}>
-                    <ProductCardInline produto={rel} />
-                  </Grid>
-                ))}
+              {relacionados.map((rel) => (
+                <Grid key={rel.id} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <ProductCardInline produto={rel} />
+                </Grid>
+              ))}
             </Grid>
           </>
         )}
@@ -313,8 +345,7 @@ export default function ProdutoDetalhe() {
   );
 }
 
-// Mini card para relacionados (evita import do ProductCard que tem estado de carrinho)
-function ProductCardInline({ produto }: { produto: (typeof produtos)[0] }) {
+function ProductCardInline({ produto }: { produto: ProdutoDetalheData }) {
   const router = useRouter();
   return (
     <Paper
