@@ -131,16 +131,15 @@ export default function NovoProduto() {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth label="URL da Imagem" value={form.imgUrl}
-                    onChange={(e) => setForm({ ...form, imgUrl: e.target.value })} />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid size={{ xs: 12 }}>
+                  <Typography variant="caption" sx={{ color: "#666", mb: 1, display: "block" }}>
+                    Imagem do Produto
+                  </Typography>
                   <CloudinaryUpload
                     onUpload={(url) => setForm({ ...form, imgUrl: url })}
-                    label="Upload via Cloudinary"
+                    label="Upload Imagem"
                   />
-                  {form.imgUrl && form.imgUrl.includes("cloudinary") && (
+                  {form.imgUrl && (
                     <Box sx={{ mt: 1 }}>
                       <Box component="img" src={form.imgUrl} sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 2 }} />
                     </Box>
