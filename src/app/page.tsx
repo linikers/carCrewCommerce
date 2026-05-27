@@ -18,25 +18,56 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  CircularProgress,
 } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import ProductCard from "@/components/ProductCard";
-import { produtos } from "@/lib/produtos";
-import { categorias } from "@/lib/categorias";
 import { useCart } from "@/lib/CartContext";
 import { CategoriaSlug } from "@/types";
+
+interface ProdutoData {
+  id: number;
+  nome: string;
+  descricao: string;
+  preco: number;
+  imgUrl: string;
+  category: string;
+  parcelamento: number;
+  veiculos?: string[];
+}
+
+interface CategoriaData {
+  slug: string;
+  nome: string;
+  icone: string;
+}
 
 export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(
-    null
-  );
+  const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(null);
 
   const { items, totalItens, addToCart, removeFromCart, clearCart } = useCart();
+  // Dados dinâmicos da API
+  const [produtos, setProdutos] = useState<ProdutoData[]>([]);
+  const [categorias, setCategorias] = useState<CategoriaData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/produtos").then((r) => r.json()),
+      fetch("/api/categorias").then((r) => r.json()),
+    ])
+      .then(([prods, cats]) => {
+        setProdutos(prods);
+        setCategorias(cats);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   // Snackbar de feedback
   const [snackOpen, setSnackOpen] = useState(false);
@@ -64,7 +95,6 @@ export default function Home() {
   const bannerAnterior = () => setBannerIndex((i) => (i === 0 ? banners.length - 1 : i - 1));
   const bannerProximo = () => setBannerIndex((i) => (i === banners.length - 1 ? 0 : i + 1));
 
-  // Auto-play
   useEffect(() => {
     if (banners.length <= 1) return;
     const timer = setInterval(() => bannerProximo(), 5000);
@@ -73,8 +103,6 @@ export default function Home() {
 
   // Filtro por veículo
   const [veiculoSelecionado, setVeiculoSelecionado] = useState("");
-
-  // Lista única de veículos
   const todosVeiculos = [...new Set(produtos.flatMap((p) => p.veiculos || []))].sort();
 
   // Filtro por busca + categoria + veículo
@@ -121,7 +149,6 @@ export default function Home() {
             transition: "background-color 0.5s ease",
           }}
         >
-          {/* Imagem de fundo */}
           <Box
             component="img"
             src={isMobile ? banners[bannerIndex]?.imgMobile : banners[bannerIndex]?.imgDesktop}
@@ -134,8 +161,6 @@ export default function Home() {
               inset: 0,
             }}
           />
-
-          {/* Setas */}
           {banners.length > 1 && (
             <>
               <IconButton
@@ -170,8 +195,6 @@ export default function Home() {
               </IconButton>
             </>
           )}
-
-          {/* Indicadores */}
           {banners.length > 1 && (
             <Box
               sx={{
@@ -209,14 +232,7 @@ export default function Home() {
       {/* Info strip */}
       <Box sx={{ backgroundColor: "#f5f5f5", py: 3 }}>
         <Container maxWidth="lg">
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: 2,
-            }}
-          >
+          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2 }}>
             {[
               { titulo: "Descontos", desc: "Aproveite nossas melhores ofertas" },
               { titulo: "Pague com Cartão", desc: "em até 12x sem juros" },
@@ -224,15 +240,9 @@ export default function Home() {
             ].map((item) => (
               <Box
                 key={item.titulo}
-                sx={{
-                  textAlign: "center",
-                  flex: { xs: "1 1 100%", sm: "1 1 30%" },
-                }}
+                sx={{ textAlign: "center", flex: { xs: "1 1 100%", sm: "1 1 30%" } }}
               >
-                <Typography
-                  variant="subtitle1"
-                  sx={{ fontWeight: 600, color: "#E65100" }}
-                >
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: "#E65100" }}>
                   {item.titulo}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#666" }}>
@@ -244,166 +254,155 @@ export default function Home() {
         </Container>
       </Box>
 
-      {/* Filtro por veículo */}
-      <Container maxWidth="lg" sx={{ mt: 3, mb: 1 }}>
-        <FormControl size="small" sx={{ minWidth: 280 }}>
-          <InputLabel>Filtrar por veículo</InputLabel>
-          <Select
-            value={veiculoSelecionado}
-            label="Filtrar por veículo"
-            onChange={(e) => { setVeiculoSelecionado(e.target.value); setCategoriaAtiva(null); }}
-          >
-            <MenuItem value="">Todos os veículos</MenuItem>
-            {todosVeiculos.map((v) => (
-              <MenuItem key={v} value={v}>{v}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        {veiculoSelecionado && (
-          <Chip
-            label={veiculoSelecionado}
-            onDelete={() => setVeiculoSelecionado("")}
-            sx={{ ml: 1, backgroundColor: "#E65100", color: "#fff" }}
-          />
-        )}
-      </Container>
-
-      {/* Categorias */}
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Typography
-          variant="h5"
-          sx={{ fontWeight: 700, mb: 3, color: "#1A1A1A" }}
-        >
-          Categorias
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-          {categorias.map((cat) => {
-            const isActive = categoriaAtiva === cat.slug;
-            return (
-              <Box
-                key={cat.slug}
-                sx={{
-                  flex: {
-                    xs: "1 1 calc(50% - 8px)",
-                    sm: "1 1 calc(25% - 8px)",
-                    md: "1 1 calc(16.66% - 10px)",
-                  },
-                }}
-              >
-                <Card
-                  onClick={() => toggleCategoria(cat.slug)}
-                  sx={{
-                    textAlign: "center",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    border: isActive
-                      ? "2px solid #E65100"
-                      : "2px solid transparent",
-                    backgroundColor: isActive ? "#fff5f0" : "#fff",
-                    "&:hover": {
-                      borderColor: "#E65100",
-                      boxShadow: "0 4px 12px rgba(230,81,0,0.15)",
-                    },
-                  }}
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+          <CircularProgress sx={{ color: "#E65100" }} />
+        </Box>
+      ) : (
+        <>
+          {/* Filtro por veículo */}
+          {todosVeiculos.length > 0 && (
+            <Container maxWidth="lg" sx={{ mt: 3, mb: 1 }}>
+              <FormControl size="small" sx={{ minWidth: 280 }}>
+                <InputLabel>Filtrar por veículo</InputLabel>
+                <Select
+                  value={veiculoSelecionado}
+                  label="Filtrar por veículo"
+                  onChange={(e) => { setVeiculoSelecionado(e.target.value); setCategoriaAtiva(null); }}
                 >
-                  <CardContent sx={{ py: 2 }}>
-                    <Typography variant="h4" sx={{ mb: 1 }}>
-                      {cat.icone}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontWeight: isActive ? 700 : 500,
-                        fontSize: "0.8rem",
-                        color: isActive ? "#E65100" : "#1A1A1A",
-                      }}
-                    >
-                      {cat.nome}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
-            );
-          })}
-        </Box>
-
-        {categoriaAtiva && (
-          <Box sx={{ mt: 2 }}>
-            <Chip
-              label={`${
-                categorias.find((c) => c.slug === categoriaAtiva)?.nome
-              } — ${filteredProdutos.length} produto(s)`}
-              onDelete={() => setCategoriaAtiva(null)}
-              sx={{
-                backgroundColor: "#E65100",
-                color: "#fff",
-                fontWeight: 500,
-              }}
-            />
-          </Box>
-        )}
-      </Container>
-
-      {/* Produtos */}
-      <Container maxWidth="lg" sx={{ mb: 6 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{ fontWeight: 700, color: "#1A1A1A" }}
-          >
-            {searchTerm
-              ? `Resultados para "${searchTerm}"`
-              : categoriaAtiva
-              ? "Produtos"
-              : "Novidades"}
-          </Typography>
-          {!categoriaAtiva && !searchTerm && (
-            <Typography variant="body2" sx={{ color: "#999" }}>
-              {produtos.length} produto(s)
-            </Typography>
+                  <MenuItem value="">Todos os veículos</MenuItem>
+                  {todosVeiculos.map((v) => (
+                    <MenuItem key={v} value={v}>{v}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {veiculoSelecionado && (
+                <Chip
+                  label={veiculoSelecionado}
+                  onDelete={() => setVeiculoSelecionado("")}
+                  sx={{ ml: 1, backgroundColor: "#E65100", color: "#fff" }}
+                />
+              )}
+            </Container>
           )}
-        </Box>
 
-        {filteredProdutos.length === 0 ? (
-          <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
-            <Typography variant="h6">Nenhum produto encontrado</Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Tente buscar por outro termo ou limpe os filtros
-            </Typography>
-            {categoriaAtiva && (
-              <Chip
-                label="Limpar filtros"
-                onClick={() => setCategoriaAtiva(null)}
-                sx={{ cursor: "pointer" }}
-              />
-            )}
-          </Box>
-        ) : (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-            {filteredProdutos.map((produto) => (
-              <Box
-                key={produto.id}
-                sx={{
-                  flex: {
-                    xs: "1 1 100%",
-                    sm: "1 1 calc(50% - 12px)",
-                    md: "1 1 calc(33.33% - 16px)",
-                  },
-                }}
-              >
-                <ProductCard produto={produto} onAddToCart={handleAddToCart} />
+          {/* Categorias */}
+          {categorias.length > 0 && (
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: "#1A1A1A" }}>
+                Categorias
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                {categorias.map((cat) => {
+                  const isActive = categoriaAtiva === cat.slug;
+                  return (
+                    <Box
+                      key={cat.slug}
+                      sx={{ flex: { xs: "1 1 calc(50% - 8px)", sm: "1 1 calc(25% - 8px)", md: "1 1 calc(16.66% - 10px)" } }}
+                    >
+                      <Card
+                        onClick={() => toggleCategoria(cat.slug as CategoriaSlug)}
+                        sx={{
+                          textAlign: "center",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                          border: isActive ? "2px solid #E65100" : "2px solid transparent",
+                          backgroundColor: isActive ? "#fff5f0" : "#fff",
+                          "&:hover": {
+                            borderColor: "#E65100",
+                            boxShadow: "0 4px 12px rgba(230,81,0,0.15)",
+                          },
+                        }}
+                      >
+                        <CardContent sx={{ py: 2 }}>
+                          <Typography variant="h4" sx={{ mb: 1 }}>{cat.icone}</Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontWeight: isActive ? 700 : 500,
+                              fontSize: "0.8rem",
+                              color: isActive ? "#E65100" : "#1A1A1A",
+                            }}
+                          >
+                            {cat.nome}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Box>
+                  );
+                })}
               </Box>
-            ))}
-          </Box>
-        )}
-      </Container>
+              {categoriaAtiva && (
+                <Box sx={{ mt: 2 }}>
+                  <Chip
+                    label={`${categorias.find((c) => c.slug === categoriaAtiva)?.nome} — ${filteredProdutos.length} produto(s)`}
+                    onDelete={() => setCategoriaAtiva(null)}
+                    sx={{ backgroundColor: "#E65100", color: "#fff", fontWeight: 500 }}
+                  />
+                </Box>
+              )}
+            </Container>
+          )}
+
+          {/* Produtos */}
+          <Container maxWidth="lg" sx={{ mb: 6 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
+                {searchTerm
+                  ? `Resultados para "${searchTerm}"`
+                  : categoriaAtiva
+                  ? "Produtos"
+                  : "Novidades"}
+              </Typography>
+              {!categoriaAtiva && !searchTerm && produtos.length > 0 && (
+                <Typography variant="body2" sx={{ color: "#999" }}>
+                  {produtos.length} produto(s)
+                </Typography>
+              )}
+            </Box>
+
+            {produtos.length === 0 ? (
+              <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
+                <Typography variant="h6">Nenhum produto cadastrado</Typography>
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  Acesse o painel admin para cadastrar seus produtos
+                </Typography>
+              </Box>
+            ) : filteredProdutos.length === 0 ? (
+              <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
+                <Typography variant="h6">Nenhum produto encontrado</Typography>
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  Tente buscar por outro termo ou limpe os filtros
+                </Typography>
+                {categoriaAtiva && (
+                  <Chip
+                    label="Limpar filtros"
+                    onClick={() => setCategoriaAtiva(null)}
+                    sx={{ cursor: "pointer" }}
+                  />
+                )}
+              </Box>
+            ) : (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+                {filteredProdutos.map((produto) => (
+                  <Box
+                    key={produto.id}
+                    sx={{
+                      flex: {
+                        xs: "1 1 100%",
+                        sm: "1 1 calc(50% - 12px)",
+                        md: "1 1 calc(33.33% - 16px)",
+                      },
+                    }}
+                  >
+                    <ProductCard produto={produto as any} onAddToCart={handleAddToCart} />
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Container>
+        </>
+      )}
 
       <Footer />
 
@@ -440,6 +439,29 @@ export default function Home() {
         onRemove={removeFromCart}
         onClear={clearCart}
       />
+
+      {/* Snackbar de feedback */}
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={2500}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        slots={{ transition: Slide }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          onClose={() => setSnackOpen(false)}
+          sx={{
+            backgroundColor: "#2e7d32",
+            fontWeight: 500,
+            fontSize: "0.9rem",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+          }}
+        >
+          ✓ {snackProduto} adicionado ao carrinho
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

@@ -1,5 +1,6 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import path from "path";
+// Admin CRUD — Categorias via Prisma
+
+import prisma from "@/lib/prisma";
 
 export interface CategoriaData {
   id: number;
@@ -10,22 +11,46 @@ export interface CategoriaData {
   ordem: number;
 }
 
-const DATA_PATH = path.join(process.cwd(), "src/data/categorias.json");
+export async function lerCategorias(): Promise<CategoriaData[]> {
+  const categorias = await prisma.categoria.findMany({
+    orderBy: { ordem: "asc" },
+  });
 
-export function lerCategorias(): CategoriaData[] {
-  try {
-    if (!existsSync(DATA_PATH)) return [];
-    return JSON.parse(readFileSync(DATA_PATH, "utf-8"));
-  } catch {
-    return [];
+  return categorias.map((c) => ({
+    id: c.id,
+    slug: c.slug,
+    nome: c.nome,
+    icone: c.icone || "🔧",
+    descricao: c.descricao || "",
+    ordem: c.ordem,
+  }));
+}
+
+export async function salvarCategorias(categorias: CategoriaData[]) {
+  for (const c of categorias) {
+    await prisma.categoria.upsert({
+      where: { slug: c.slug },
+      update: {
+        nome: c.nome,
+        icone: c.icone || "🔧",
+        descricao: c.descricao || "",
+        ordem: c.ordem,
+      },
+      create: {
+        slug: c.slug,
+        nome: c.nome,
+        icone: c.icone || "🔧",
+        descricao: c.descricao || "",
+        ordem: c.ordem,
+      },
+    });
   }
 }
 
-export function salvarCategorias(categorias: CategoriaData[]) {
-  writeFileSync(DATA_PATH, JSON.stringify(categorias, null, 2));
-}
-
-export function proximoId(categorias: CategoriaData[]): number {
-  if (categorias.length === 0) return 1;
-  return Math.max(...categorias.map((c) => c.id)) + 1;
+export async function proximoId(): Promise<number> {
+  const ultimo = await prisma.categoria.findFirst({
+    orderBy: { id: "desc" },
+    select: { id: true },
+  });
+  return (ultimo?.id || 0) + 1;
 }

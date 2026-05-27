@@ -1,5 +1,7 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import path from "path";
+// Admin CRUD — Produtos via Prisma
+// Antigo: JSON file read/write
+
+import prisma from "@/lib/prisma";
 
 export interface ProdutoData {
   id: number;
@@ -14,22 +16,61 @@ export interface ProdutoData {
   criadoEm: string;
 }
 
-const DATA_PATH = path.join(process.cwd(), "src/data/produtos.json");
+export async function lerProdutos(): Promise<ProdutoData[]> {
+  const produtos = await prisma.produto.findMany({
+    orderBy: { criadoEm: "desc" },
+    include: { categoria: true },
+  });
 
-export function lerProdutos(): ProdutoData[] {
-  try {
-    if (!existsSync(DATA_PATH)) return [];
-    return JSON.parse(readFileSync(DATA_PATH, "utf-8"));
-  } catch {
-    return [];
+  return produtos.map((p) => ({
+    id: p.id,
+    nome: p.nome,
+    descricao: p.descricao || "",
+    preco: p.preco,
+    imgUrl: p.imgUrl || "/produtos/placeholder.svg",
+    category: p.categorySlug,
+    parcelamento: p.parcelamento,
+    estoque: p.estoque,
+    ativo: p.ativo,
+    criadoEm: p.criadoEm.toISOString(),
+  }));
+}
+
+export async function salvarProdutos(produtos: ProdutoData[]) {
+  // Upsert em lote — cria ou atualiza cada produto
+  for (const p of produtos) {
+    await prisma.produto.upsert({
+      where: { id: p.id },
+      update: {
+        nome: p.nome,
+        descricao: p.descricao || null,
+        preco: p.preco,
+        imgUrl: p.imgUrl || null,
+        categorySlug: p.category,
+        parcelamento: p.parcelamento,
+        estoque: p.estoque,
+        ativo: p.ativo,
+      },
+      create: {
+        id: p.id,
+        nome: p.nome,
+        descricao: p.descricao || null,
+        preco: p.preco,
+        imgUrl: p.imgUrl || null,
+        categorySlug: p.category,
+        parcelamento: p.parcelamento,
+        estoque: p.estoque,
+        ativo: p.ativo,
+        veiculos: [],
+      },
+    });
   }
 }
 
-export function salvarProdutos(produtos: ProdutoData[]) {
-  writeFileSync(DATA_PATH, JSON.stringify(produtos, null, 2));
-}
-
-export function proximoId(produtos: ProdutoData[]): number {
-  if (produtos.length === 0) return 1;
-  return Math.max(...produtos.map((p) => p.id)) + 1;
+export async function proximoId(): Promise<number> {
+  const ultimo = await prisma.produto.findFirst({
+    orderBy: { id: "desc" },
+    select: { id: true },
+  });
+  return (ultimo?.id || 0) + 1;
 }

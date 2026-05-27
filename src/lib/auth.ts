@@ -1,29 +1,11 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { readFileSync, existsSync } from "fs";
-import path from "path";
-
-const DATA_PATH = path.join(process.cwd(), "src/data/usuarios.json");
-
-interface Usuario {
-  nome: string;
-  email: string;
-  senha: string;
-  admin: boolean;
-  criadoEm: string;
-}
-
-function lerUsuarios(): Usuario[] {
-  try {
-    if (!existsSync(DATA_PATH)) return [];
-    return JSON.parse(readFileSync(DATA_PATH, "utf-8"));
-  } catch {
-    return [];
-  }
-}
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -38,16 +20,14 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const usuarios = lerUsuarios();
-        const usuario = usuarios.find(
-          (u) =>
-            u.email === credentials.email && u.senha === credentials.password
-        );
+        const usuario = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-        if (usuario) {
+        if (usuario && usuario.senha === credentials.password) {
           return {
-            id: usuario.email,
-            name: usuario.nome,
+            id: usuario.id,
+            name: usuario.name,
             email: usuario.email,
             admin: usuario.admin,
           };

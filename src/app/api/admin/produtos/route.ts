@@ -3,7 +3,7 @@ import { lerProdutos, salvarProdutos, proximoId, ProdutoData } from "@/lib/produ
 
 // GET /api/admin/produtos — listar todos
 export async function GET() {
-  const produtos = lerProdutos();
+  const produtos = await lerProdutos();
   return NextResponse.json(produtos);
 }
 
@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const produtos = lerProdutos();
+    const id = await proximoId();
     const novoProduto: ProdutoData = {
-      id: proximoId(produtos),
+      id,
       nome,
       descricao: descricao || "",
       preco: Number(preco),
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       criadoEm: new Date().toISOString(),
     };
 
-    salvarProdutos([...produtos, novoProduto]);
+    await salvarProdutos([novoProduto]);
 
     return NextResponse.json(novoProduto, { status: 201 });
   } catch (error) {
