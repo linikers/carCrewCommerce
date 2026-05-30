@@ -4,7 +4,7 @@
     "nome": "Compressor HKI 444C Premium Cromado 200 PSI 12V",
     "descricao": "Compressor de ar 444C Premium para suspensão a ar. 200 PSI de pressão máxima, 12V. Acabamento cromado de alto padrão. Liga e desliga automático, silencioso e durável. Ideal para sistemas de suspensão pneumática.",
     "preco": 0,
-    "imgUrl": "/produtos/compressors/444-cromado.webp",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149003/carcrew/produtos/compressors/444-cromado.webp",
     "category": "compressores",
     "parcelamento": 12,
     "veiculos": [
@@ -17,7 +17,7 @@
     "nome": "Compressor HKI 444C Premium Preto 200 PSI 12V",
     "descricao": "Compressor de ar 444C Premium para suspensão a ar. 200 PSI de pressão máxima, 12V. Acabamento preto fosco de alto padrão. Liga e desliga automático, silencioso e durável.",
     "preco": 0,
-    "imgUrl": "/produtos/compressors/444-preto.webp",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149004/carcrew/produtos/compressors/444-preto.webp",
     "category": "compressores",
     "parcelamento": 12,
     "veiculos": [
@@ -30,7 +30,7 @@
     "nome": "Compressor HKI EVO 595 — Pré-lançamento 2026",
     "descricao": "Compressor HKI EVO 595, o enchimento mais rápido da categoria. Tecnologia de ponta linha 2026 com eficiência térmica imbatível. Enchimento de cilindro em tempo recorde, garantindo que seu carro suba mais rápido que nunca.",
     "preco": 0,
-    "imgUrl": "/produtos/compressors/444-cromado.webp",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149005/carcrew/produtos/compressors/evo-595.webp",
     "category": "compressores",
     "parcelamento": 12,
     "veiculos": [
@@ -43,7 +43,7 @@
     "nome": "Par Amortecedores Dianteiros +5cm Gol/Voyage/Saveiro G5-G7",
     "descricao": "Par de amortecedores dianteiros com altura elevada em +5cm. Ideal para Gol, Voyage e Saveiro G5 a G7. Proporciona maior curso e conforto em veículos com suspensão modificada.",
     "preco": 0,
-    "imgUrl": "/produtos/shocks/amortecedor-mais5.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149005/carcrew/produtos/shocks/amortecedor-mais5.jpg",
     "category": "amortecedores",
     "parcelamento": 12,
     "veiculos": [
@@ -58,7 +58,7 @@
     "nome": "Par Amortecedor Invertido p/ Suspensão a Ar Gol G1-G5",
     "descricao": "Par de amortecedores invertidos desenvolvido para veículos com suspensão a ar. Compatível com Gol G1 a G5. Proporciona melhor absorção e conforto, ideal para projetos de suspensão pneumática.",
     "preco": 0,
-    "imgUrl": "/produtos/shocks/amortecedor-invertido.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149006/carcrew/produtos/shocks/amortecedor-invertido.jpg",
     "category": "amortecedores",
     "parcelamento": 12,
     "veiculos": [
@@ -73,7 +73,7 @@
     "nome": "Bandeja Slim Reforçada Corsa/Celta/Prisma — Par",
     "descricao": "Bandeja Slim Reforçada para suspensão rebaixada. Design slim evita que a bandeja original raspe no chão, permitindo rebaixamento máximo sem comprometer a estrutura. Fabricada com materiais de alta resistência para durabilidade e segurança. Compatível com Corsa, Celta e Prisma.",
     "preco": 0,
-    "imgUrl": "/produtos/bandejas/bandeja-gm.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149007/carcrew/produtos/bandejas/bandeja-gm.jpg",
     "category": "bandejas",
     "parcelamento": 12,
     "veiculos": [
@@ -88,7 +88,7 @@
     "nome": "Bolsa de Ar Cônica Haste 12,5mm — Suspensão Pneumática",
     "descricao": "Bolsa base cônica haste 12,5mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. Mais de 10 anos de experiência em fabricação de bolsas de ar. Serve tanto para suspensão 8mm quanto 10mm.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-12.5.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149008/carcrew/produtos/bolsas/conica-12.5.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -101,7 +101,7 @@
     "nome": "Bolsa de Ar Cônica Haste 20mm — Suspensão Pneumática",
     "descricao": "Bolsa base cônica haste 20mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. Ideal para projetos que exigem haste mais robusta.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-20.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149009/carcrew/produtos/bolsas/conica-20.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -114,7 +114,7 @@
     "nome": "Bolsa de Ar Cônica Haste 22mm — Suspensão Pneumática",
     "descricao": "Bolsa base cônica haste 22mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. Haste mais grossa para aplicações pesadas.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-22.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149009/carcrew/produtos/bolsas/conica-22.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -127,7 +127,7 @@
     "nome": "Bolsa de Ar Cônica Fechada — Eixo Traseiro",
     "descricao": "Bolsa base cônica fechada para suspensão a ar. Compatível com veículos que usam bolsas fechadas no eixo traseiro. Base usinada em CNC, banho de Zinco, conexão universal rosca 1/8. Prensagem hidráulica, base de alumínio.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-fechada.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149010/carcrew/produtos/bolsas/conica-fechada.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -140,7 +140,7 @@
     "nome": "Bolsa de Ar Reta Haste 12,5mm — Suspensão Pneumática",
     "descricao": "Bolsa base reta haste 12,5mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. 10+ anos de experiência em fabricação.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/reta-12.5.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149010/carcrew/produtos/bolsas/reta-12.5.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -153,7 +153,7 @@
     "nome": "Par Bolsas de Ar Reta Haste 20mm — Suspensão Pneumática",
     "descricao": "PAR de bolsas base reta haste 20mm para suspensão a ar. Valor referente ao par (2 unidades). Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal rosca 1/8.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/reta-20-par.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149011/carcrew/produtos/bolsas/reta-20-par.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -166,7 +166,7 @@
     "nome": "Bolsa de Ar Reta 20mm c/ Borracha 90mm Reforçada",
     "descricao": "Bolsa base reta haste 20mm com borracha 90mm MAIOR e MAIS REFORÇADA. Ideal para quem precisa de maior capacidade e durabilidade. Base usinada em CNC, banho de Zinco. Conexão universal rosca 1/8.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-20.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149012/carcrew/produtos/bolsas/reta-20-90mm.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -179,7 +179,7 @@
     "nome": "Bolsa Deslocada Haste 20mm — Projetos Super Baixos",
     "descricao": "Bolsa deslocada haste 20mm base reta para projetos específicos e muito baixos. Centro deslocado permite que o amortecedor fique mais baixo, ideal para carros 0,0 e projetos especiais. Base usinada em CNC, alumínio, mangote reforçado.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-20.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149012/carcrew/produtos/bolsas/reta-20-deslocada.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -192,7 +192,7 @@
     "nome": "Par Bolsas de Ar Reta Haste 22mm — Suspensão Pneumática",
     "descricao": "PAR de bolsas base reta haste 22mm para suspensão a ar. Haste mais robusta para aplicações pesadas. Base usinada em CNC, banho de Zinco, conexão universal rosca 1/8.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-20.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149013/carcrew/produtos/bolsas/reta-22.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -205,7 +205,7 @@
     "nome": "Bolsa de Ar Reta Fechada — Eixo Traseiro",
     "descricao": "Bolsa base reta fechada para suspensão a ar. Compatível com veículos que usam bolsas fechadas no eixo traseiro. Base usinada em CNC, banho de Zinco. Conexão universal rosca 1/8, mangote reforçado.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-fechada.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149013/carcrew/produtos/bolsas/reta-fechada.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -218,7 +218,7 @@
     "nome": "Bolsa de Ar Reta Fechada 90mm Reforçada — Eixo Traseiro",
     "descricao": "Bolsa base reta fechada 90mm REFORÇADA para suspensão a ar. Modelo 90mm maior e mais reforçado para maior capacidade. Base usinada em CNC, banho de Zinco, conexão universal rosca 1/8.",
     "preco": 0,
-    "imgUrl": "/produtos/bolsas/conica-fechada.jpg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149014/carcrew/produtos/bolsas/reta-fechada-90mm.jpg",
     "category": "bolsas-de-ar",
     "parcelamento": 12,
     "veiculos": [
@@ -491,7 +491,7 @@
     "nome": "Bloco Airlux — Válvula de Suspensão a Ar",
     "descricao": "Bloco Airlux para sistema de suspensão a ar. Válvula de alta qualidade para controle preciso do fluxo de ar. Compatível com sistemas pneumáticos automotivos.",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149014/carcrew/produtos/componentes/bloco-airlux.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
