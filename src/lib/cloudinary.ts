@@ -41,12 +41,11 @@ export function isCloudinaryUrl(url: string): boolean {
   return url.includes("cloudinary.com");
 }
 
-// Gera URL de thumbnail (card do produto) — mostra produto inteiro sem cortar
+// Gera URL de thumbnail (card do produto) — sem zoom, mantém proporção original
 export function thumbUrl(publicId: string): string {
   return cloudinaryUrl(publicId, {
     width: 300,
-    height: 300,
-    crop: "pad",
+    crop: "fit",
     format: "auto",
   });
 }

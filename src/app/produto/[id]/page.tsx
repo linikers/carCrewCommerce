@@ -150,12 +150,13 @@ export default function ProdutoDetalhe() {
             <Paper
               sx={{
                 p: { xs: 2, md: 4 },
-                backgroundColor: "#1A1A1A",
+                backgroundColor: "#ffffff",
                 borderRadius: 4,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 minHeight: 350,
+                border: "1px solid #eee",
               }}
             >
               <Box
@@ -369,9 +370,10 @@ function ProductCardInline({ produto }: { produto: ProdutoDetalheData }) {
           width: "100%",
           height: 150,
           objectFit: "contain",
-          backgroundColor: "#1A1A1A",
+          backgroundColor: "#ffffff",
           borderRadius: 2,
           mb: 1,
+          border: "1px solid #eee",
         }}
       />
       <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
