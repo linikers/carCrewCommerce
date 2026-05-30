@@ -12,12 +12,16 @@ export interface Produto {
 }
 
 export type CategoriaSlug =
+  | "compressores"
   | "amortecedores"
-  | "calco-antirruido"
-  | "ponta-de-eixo"
-  | "bolsa-de-ar"
-  | "acessorio-instalacao"
-  | "mola-suspensao";
+  | "bandejas"
+  | "bolsas-de-ar"
+  | "pontas-de-eixo"
+  | "calcos-antirruido"
+  | "kits"
+  | "componentes"
+  | "terminais"
+  | "controles";
 
 export interface Categoria {
   slug: CategoriaSlug;

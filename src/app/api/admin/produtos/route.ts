@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       descricao: descricao || "",
       preco: Number(preco),
       imgUrl: imgUrl || "/produtos/placeholder.svg",
-      category: category || "acessorio-instalacao",
+      category: category || "amortecedores",
       parcelamento: Number(parcelamento) || 12,
       estoque: Number(estoque) || 0,
       ativo: true,

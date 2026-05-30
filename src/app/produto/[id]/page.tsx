@@ -95,6 +95,7 @@ export default function ProdutoDetalhe() {
   const categoria = categorias.find((c) => c.slug === produto.category);
   const parcelas = produto.parcelamento || 12;
   const valorParcela = produto.preco / parcelas;
+  const sobConsulta = produto.preco <= 0;
 
   const relacionados = produtos.filter(
     (p) => p.category === produto.category && p.id !== produto.id
@@ -209,9 +210,10 @@ export default function ProdutoDetalhe() {
                 mb: 1,
               }}
             >
-              R$ {produto.preco.toFixed(2)}
+              {sobConsulta ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
             </Typography>
 
+            {!sobConsulta && (
             <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
               ou{" "}
               <Box component="span" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
@@ -219,6 +221,7 @@ export default function ProdutoDetalhe() {
               </Box>{" "}
               sem juros
             </Typography>
+            )}
 
             {/* Quantidade */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
@@ -276,7 +279,7 @@ export default function ProdutoDetalhe() {
               variant="outlined"
               size="large"
               startIcon={<WhatsApp />}
-              href={`https://wa.me/5544991528386?text=Olá! Tenho interesse em: ${produto.nome} (R$ ${produto.preco.toFixed(2)})`}
+              href={`https://wa.me/5544991528386?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
               target="_blank"
               sx={{
                 borderColor: "#25D366",
@@ -375,7 +378,7 @@ function ProductCardInline({ produto }: { produto: ProdutoDetalheData }) {
         {produto.nome.substring(0, 50)}...
       </Typography>
       <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>
-        R$ {produto.preco.toFixed(2)}
+        {produto.preco <= 0 ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
       </Typography>
     </Paper>
   );

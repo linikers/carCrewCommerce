@@ -1,10 +1,14 @@
 import { Categoria } from "@/types";
 
 export const categorias: Categoria[] = [
+  { slug: "compressores", nome: "Compressores", icone: "🔄" },
   { slug: "amortecedores", nome: "Amortecedores", icone: "🔧" },
-  { slug: "calco-antirruido", nome: "Calço Antirruído", icone: "🔇" },
-  { slug: "ponta-de-eixo", nome: "Ponta de Eixo", icone: "⚙️" },
-  { slug: "bolsa-de-ar", nome: "Bolsa de Ar", icone: "💨" },
-  { slug: "acessorio-instalacao", nome: "Acessórios", icone: "🔩" },
-  { slug: "mola-suspensao", nome: "Molas", icone: "🔄" },
+  { slug: "bandejas", nome: "Bandejas", icone: "🛞" },
+  { slug: "bolsas-de-ar", nome: "Bolsas de Ar", icone: "🎈" },
+  { slug: "pontas-de-eixo", nome: "Pontas de Eixo", icone: "⚙️" },
+  { slug: "calcos-antirruido", nome: "Calços Antirruído", icone: "🔇" },
+  { slug: "kits", nome: "Kits", icone: "📦" },
+  { slug: "componentes", nome: "Componentes", icone: "🔩" },
+  { slug: "terminais", nome: "Terminais de Direção", icone: "🔄" },
+  { slug: "controles", nome: "Controles Bluetooth", icone: "📡" },
 ];
