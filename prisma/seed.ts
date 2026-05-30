@@ -1,19 +1,20 @@
 // Seed script — migra dados dos JSONs pro PostgreSQL
 // Uso: npx prisma db seed
-// ou: node prisma/seed.js
+import { PrismaClient } from "../src/generated/prisma/client.js";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
+import { readFileSync, existsSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
-const { PrismaClient } = require("@prisma/client");
-const { PrismaPg } = require("@prisma/adapter-pg");
-const { Pool } = require("pg");
-const fs = require("fs");
-const path = require("path");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const DATA_PATH = join(__dirname, "..", "src", "data");
 
-const DATA_PATH = path.join(__dirname, "..", "src", "data");
-
-function readJSON(filename) {
-  const filePath = path.join(DATA_PATH, filename);
-  if (!fs.existsSync(filePath)) return [];
-  return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+function readJSON(filename: string) {
+  const filePath = join(DATA_PATH, filename);
+  if (!existsSync(filePath)) return [];
+  return JSON.parse(readFileSync(filePath, "utf-8"));
 }
 
 async function main() {
