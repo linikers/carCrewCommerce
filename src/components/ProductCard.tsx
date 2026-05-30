@@ -55,9 +55,10 @@ export default function ProductCard({
         }
         alt={produto.nome}
         sx={{
-          objectFit: "cover",
-          backgroundColor: "#1A1A1A",
-          p: 2,
+          objectFit: "contain",
+          backgroundColor: "#ffffff",
+          p: 1.5,
+          borderRadius: 2,
         }}
       />
 
