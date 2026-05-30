@@ -46,3 +46,15 @@ public/workbox-*.js
 public/worker-*.js
 
 /src/generated/prisma
+
+# Product images - stored on Cloudinary
+public/produtos/compressors/
+public/produtos/shocks/
+public/produtos/bandejas/
+public/produtos/bolsas/
+public/produtos/componentes/
+public/produtos/controles/
+public/produtos/kits/
+public/produtos/pontas/
+public/produtos/calcos/
+public/produtos/terminais/
