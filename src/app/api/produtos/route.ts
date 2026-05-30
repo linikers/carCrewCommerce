@@ -1,6 +1,6 @@
 // API pública — Produtos
 // Retorna dados do JSON + dados do banco (Prisma)
-// Enquanto o banco estiver vazio, usa os produtos reais do JSON
+// Só mostra produtos com ativo=true (não publicados ficam ocultos)
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
@@ -16,15 +16,18 @@ interface ProdutoJson {
   category: string;
   parcelamento: number;
   veiculos?: string[];
+  ativo?: boolean;
 }
 
-// Carrega produtos do JSON como fallback principal
+// Carrega produtos PUBLICÁVEIS do JSON (ativo != false)
 function carregarProdutosJson(): ProdutoJson[] {
   try {
     const filePath = path.join(process.cwd(), "src/data/produtos.json");
     if (!existsSync(filePath)) return [];
     const raw = readFileSync(filePath, "utf-8");
-    return JSON.parse(raw);
+    const todos: ProdutoJson[] = JSON.parse(raw);
+    // Filtra só os publicados (ativo não é false)
+    return todos.filter((p) => p.ativo !== false);
   } catch {
     return [];
   }
@@ -66,7 +69,7 @@ export async function GET(req: Request) {
       veiculos: p.veiculos,
     }));
 
-    // Carrega fallback do JSON
+    // Carrega fallback do JSON (já filtrado por ativo)
     const jsonProdutos = carregarProdutosJson();
 
     // Filtra JSON pelos mesmos critérios
@@ -105,7 +108,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(combined);
   } catch {
-    // Sem banco — retorna só do JSON com filtros
+    // Sem banco — retorna só do JSON já filtrado por ativo
     const jsonProdutos = carregarProdutosJson();
 
     try {
@@ -133,7 +136,6 @@ export async function GET(req: Request) {
 
       return NextResponse.json(filtered);
     } catch {
-      // Fallback extremo: retorna tudo
       return NextResponse.json(jsonProdutos);
     }
   }
