@@ -229,7 +229,7 @@ export default function Header({
 
               <Button
                 startIcon={<WhatsApp />}
-                href="https://wa.me/5544991528386"
+                href="https://wa.me/5544998133182"
                 target="_blank"
                 sx={{
                   color: "#25D366",
@@ -306,7 +306,7 @@ export default function Header({
             </ListItemButton>
 
             <ListItemButton
-              onClick={() => router.push("https://wa.me/5544991528386")}
+              onClick={() => router.push("https://wa.me/5544998133182")}
             >
               <ListItemIcon>
                 <WhatsApp />
