@@ -152,7 +152,7 @@ export default function ProductCard({
             fullWidth
             variant="outlined"
             startIcon={<WhatsApp />}
-            href={`https://wa.me/5544991528386?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
+            href={`https://wa.me/5544998133182?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
             target="_blank"
             onClick={(e) => e.stopPropagation()}
             sx={{

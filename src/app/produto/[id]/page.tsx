@@ -280,7 +280,7 @@ export default function ProdutoDetalhe() {
               variant="outlined"
               size="large"
               startIcon={<WhatsApp />}
-              href={`https://wa.me/5544991528386?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
+              href={`https://wa.me/5544998133182?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
               target="_blank"
               sx={{
                 borderColor: "#25D366",

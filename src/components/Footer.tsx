@@ -50,7 +50,7 @@ export default function Footer() {
             </Typography>
             <Box sx={{ display: "flex", gap: 0.5 }}>
               <IconButton
-                href="https://wa.me/5544991528386"
+                href="https://wa.me/5544998133182"
                 target="_blank"
                 sx={{ color: "#25D366" }}
               >
@@ -137,7 +137,7 @@ export default function Footer() {
               Atendimento
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              📞 (44) 99152-8386
+              📞 (44) 99813-3182
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
               ✉️ contato@carcrew.com.br
