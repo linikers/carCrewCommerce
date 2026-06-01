@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     "ponta de eixo",
     "bolsa de ar",
     "car crew suspensões",
-    "peças suspensão sc",
+    "peças suspensão maringá",
   ],
   authors: [{ name: "CarCrew Suspensões" }],
   manifest: "/manifest.json",
@@ -72,9 +72,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
   },
   category: "vehicles",
 };
@@ -113,13 +110,13 @@ export default function RootLayout({
               image: `${siteUrl}/og-image.jpg`,
               "@id": siteUrl,
               url: siteUrl,
-              telephone: "(47) 99999-9999",
+              telephone: "(44) 99813-3182",
               address: {
                 "@type": "PostalAddress",
-                streetAddress: "Endereço da loja",
-                addressLocality: "Rio Negrinho",
-                addressRegion: "SC",
-                postalCode: "89295-000",
+                streetAddress: "Av. Dona Sophia Rasgulaeff, 2825 - Jardim Novo Oasis",
+                addressLocality: "Maringá",
+                addressRegion: "PR",
+                postalCode: "87047-300",
                 addressCountry: "BR",
               },
               openingHoursSpecification: [
@@ -137,25 +134,19 @@ export default function RootLayout({
           }}
         />
 
-        {/* Google Analytics */}
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-                  page_path: window.location.pathname,
-                });
-              `}
-            </Script>
-          </>
-        )}
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-6YMBYX21SF"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6YMBYX21SF');
+          `}
+        </Script>
 
         {/* Cloudinary Upload Widget */}
         <script
