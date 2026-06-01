@@ -10,7 +10,6 @@ import {
 import {
   WhatsApp,
   Instagram,
-  YouTube,
   Facebook,
 } from "@mui/icons-material";
 
@@ -50,20 +49,25 @@ export default function Footer() {
             </Typography>
             <Box sx={{ display: "flex", gap: 0.5 }}>
               <IconButton
-                href="https://wa.me/5544991528386"
+                href="https://wa.me/5544998133182"
                 target="_blank"
                 sx={{ color: "#25D366" }}
               >
                 <WhatsApp />
               </IconButton>
-              <IconButton href="#" target="_blank" sx={{ color: "#ffffff" }}>
+              <IconButton
+                href="https://www.instagram.com/carcrewgarage_/"
+                target="_blank"
+                sx={{ color: "#ffffff" }}
+              >
                 <Instagram />
               </IconButton>
-              <IconButton href="#" target="_blank" sx={{ color: "#ffffff" }}>
+              <IconButton
+                href="https://www.facebook.com/CarCrewG"
+                target="_blank"
+                sx={{ color: "#ffffff" }}
+              >
                 <Facebook />
-              </IconButton>
-              <IconButton href="#" target="_blank" sx={{ color: "#ffffff" }}>
-                <YouTube />
               </IconButton>
             </Box>
           </Box>
