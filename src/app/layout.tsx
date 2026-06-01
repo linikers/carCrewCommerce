@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrewcommerce.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 const storeName = "CarCrew Suspensões";
 const storeDescription =
   "Loja especializada em peças para suspensão automotiva. Amortecedores, molas, calços, ponta de eixo, bolsa de ar e muito mais. Entrega para todo Brasil.";

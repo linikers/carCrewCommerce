@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrewcommerce.vercel.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 
   // Rotas estáticas
   const staticRoutes = [
