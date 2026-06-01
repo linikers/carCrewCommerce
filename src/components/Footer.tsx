@@ -144,10 +144,10 @@ export default function Footer() {
               📞 (44) 99152-8386
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              ✉️ contato@carcrew.com.br
+              ✉️ carcrewgarage@gmail.com
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              🕐 Seg–Sex: 08h–18h | Sáb: 08h–12h
+              🕐 Seg–Sex: 08h–18h | Sáb: 09h–11h
             </Typography>
             <Box
               sx={{
