@@ -66,6 +66,7 @@ export default function ProdutoDetalhe() {
       .then(([prodData, catData, allProds]) => {
         if (Array.isArray(prodData) && prodData.length > 0) {
           setProduto(prodData[0]);
+          document.title = `${prodData[0].nome} | CarCrew Suspensões`;
         } else {
           setNaoEncontrado(true);
         }

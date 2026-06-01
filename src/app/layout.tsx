@@ -125,10 +125,11 @@ export default function RootLayout({
                 { "@type": "OpeningHoursSpecification", dayOfWeek: "Wednesday", opens: "08:00", closes: "18:00" },
                 { "@type": "OpeningHoursSpecification", dayOfWeek: "Thursday", opens: "08:00", closes: "18:00" },
                 { "@type": "OpeningHoursSpecification", dayOfWeek: "Friday", opens: "08:00", closes: "18:00" },
-                { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "08:00", closes: "12:00" },
+                { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "11:00" },
               ],
               sameAs: [
-                "https://www.instagram.com/carcrew.suspensoes",
+                "https://www.instagram.com/carcrewgarage_/",
+                "https://www.facebook.com/CarCrewG",
               ],
             }),
           }}
