@@ -25,6 +25,7 @@ export default function ProductCard({
   const router = useRouter();
   const parcelas = produto.parcelamento || 12;
   const valorParcela = produto.preco / parcelas;
+  const sobConsulta = produto.preco <= 0;
 
   return (
     <Card
@@ -54,9 +55,10 @@ export default function ProductCard({
         }
         alt={produto.nome}
         sx={{
-          objectFit: "cover",
-          backgroundColor: "#1A1A1A",
-          p: 2,
+          objectFit: "contain",
+          backgroundColor: "#ffffff",
+          p: 1.5,
+          borderRadius: 2,
         }}
       />
 
@@ -115,16 +117,18 @@ export default function ProductCard({
             mb: 0.5,
           }}
         >
-          R$ {produto.preco.toFixed(2)}
+          {sobConsulta ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
         </Typography>
 
         {/* Parcelamento */}
+        {!sobConsulta && (
         <Typography
           variant="caption"
           sx={{ color: "#666", mb: 2, fontSize: "0.8rem" }}
         >
           ou {parcelas}x de R$ {valorParcela.toFixed(2)} sem juros
         </Typography>
+        )}
 
         {/* Botões — parar propagação pra não navegar ao clicar */}
         <Box onClick={(e) => e.stopPropagation()}>
@@ -148,7 +152,7 @@ export default function ProductCard({
             fullWidth
             variant="outlined"
             startIcon={<WhatsApp />}
-            href={`https://wa.me/5544998133182?text=Olá! Tenho interesse em: ${produto.nome}`}
+            href={`https://wa.me/5544998133182?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
             target="_blank"
             onClick={(e) => e.stopPropagation()}
             sx={{

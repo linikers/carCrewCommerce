@@ -141,7 +141,7 @@ export default function Footer() {
               Atendimento
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              📞 (44) 99152-8386
+              📞 (44) 99813-3182
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
               ✉️ carcrewgarage@gmail.com

@@ -96,6 +96,7 @@ export default function ProdutoDetalhe() {
   const categoria = categorias.find((c) => c.slug === produto.category);
   const parcelas = produto.parcelamento || 12;
   const valorParcela = produto.preco / parcelas;
+  const sobConsulta = produto.preco <= 0;
 
   const relacionados = produtos.filter(
     (p) => p.category === produto.category && p.id !== produto.id
@@ -150,12 +151,13 @@ export default function ProdutoDetalhe() {
             <Paper
               sx={{
                 p: { xs: 2, md: 4 },
-                backgroundColor: "#1A1A1A",
+                backgroundColor: "#ffffff",
                 borderRadius: 4,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 minHeight: 350,
+                border: "1px solid #eee",
               }}
             >
               <Box
@@ -210,9 +212,10 @@ export default function ProdutoDetalhe() {
                 mb: 1,
               }}
             >
-              R$ {produto.preco.toFixed(2)}
+              {sobConsulta ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
             </Typography>
 
+            {!sobConsulta && (
             <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
               ou{" "}
               <Box component="span" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
@@ -220,6 +223,7 @@ export default function ProdutoDetalhe() {
               </Box>{" "}
               sem juros
             </Typography>
+            )}
 
             {/* Quantidade */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
@@ -277,7 +281,7 @@ export default function ProdutoDetalhe() {
               variant="outlined"
               size="large"
               startIcon={<WhatsApp />}
-              href={`https://wa.me/5544991528386?text=Olá! Tenho interesse em: ${produto.nome} (R$ ${produto.preco.toFixed(2)})`}
+              href={`https://wa.me/5544998133182?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
               target="_blank"
               sx={{
                 borderColor: "#25D366",
@@ -367,16 +371,17 @@ function ProductCardInline({ produto }: { produto: ProdutoDetalheData }) {
           width: "100%",
           height: 150,
           objectFit: "contain",
-          backgroundColor: "#1A1A1A",
+          backgroundColor: "#ffffff",
           borderRadius: 2,
           mb: 1,
+          border: "1px solid #eee",
         }}
       />
       <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
         {produto.nome.substring(0, 50)}...
       </Typography>
       <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>
-        R$ {produto.preco.toFixed(2)}
+        {produto.preco <= 0 ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
       </Typography>
     </Paper>
   );

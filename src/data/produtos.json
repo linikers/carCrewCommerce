@@ -1,119 +1,587 @@
 [
   {
     "id": 1,
-    "nome": "Amortecedor Dianteiro — Chevrolet Montana / Vectra / Astra",
-    "descricao": "Amortecedor dianteiro original ou similar de alta qualidade. Compatível com Chevrolet Montana, Vectra e Astra.",
-    "preco": 397.90,
-    "imgUrl": "/produtos/amortecedor1.svg",
-    "category": "amortecedores",
+    "nome": "Compressor HKI 444C Premium Cromado 200 PSI 12V",
+    "descricao": "Compressor de ar 444C Premium para suspensão a ar. 200 PSI de pressão máxima, 12V. Acabamento cromado de alto padrão. Liga e desliga automático, silencioso e durável. Ideal para sistemas de suspensão pneumática.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149003/carcrew/produtos/compressors/444-cromado.webp",
+    "category": "compressores",
     "parcelamento": 12,
-    "estoque": 15,
-    "veiculos": ["Chevrolet Montana", "Chevrolet Vectra", "Chevrolet Astra"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
   },
   {
     "id": 2,
-    "nome": "Suporte Ponta de Eixo Parafusada e Reforçada",
-    "descricao": "Suporte de ponta de eixo reforçado em aço de alta resistência. Compatível com Montana, Vectra, Astra, Peugeot 307/308/408.",
-    "preco": 997.90,
-    "imgUrl": "/produtos/ponta-eixo1.svg",
-    "category": "ponta-de-eixo",
+    "nome": "Compressor HKI 444C Premium Preto 200 PSI 12V",
+    "descricao": "Compressor de ar 444C Premium para suspensão a ar. 200 PSI de pressão máxima, 12V. Acabamento preto fosco de alto padrão. Liga e desliga automático, silencioso e durável.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149004/carcrew/produtos/compressors/444-preto.webp",
+    "category": "compressores",
     "parcelamento": 12,
-    "estoque": 8,
-    "veiculos": ["Chevrolet Montana", "Chevrolet Vectra", "Chevrolet Astra", "Peugeot 307", "Peugeot 308", "Peugeot 408"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
   },
   {
     "id": 3,
-    "nome": "Calço Antirruído Universal para Suspensão",
-    "descricao": "Calço de borracha de alta densidade para eliminar ruídos e vibrações na suspensão.",
-    "preco": 49.90,
-    "imgUrl": "/produtos/calco1.svg",
-    "category": "calco-antirruido",
-    "parcelamento": 6,
-    "estoque": 50,
-    "veiculos": ["Universal"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "nome": "Compressor HKI EVO 595 — Pré-lançamento 2026",
+    "descricao": "Compressor HKI EVO 595, o enchimento mais rápido da categoria. Tecnologia de ponta linha 2026 com eficiência térmica imbatível. Enchimento de cilindro em tempo recorde, garantindo que seu carro suba mais rápido que nunca.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149005/carcrew/produtos/compressors/evo-595.webp",
+    "category": "compressores",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
   },
   {
     "id": 4,
-    "nome": "Bolsa de Ar para Suspensão Pneumática — Reforçada",
-    "descricao": "Bolsa de ar reforçada em borracha com dupla camada de kevlar. Ideal para air lift.",
-    "preco": 667.00,
-    "imgUrl": "/produtos/bolsa-ar1.svg",
-    "category": "bolsa-de-ar",
+    "nome": "Par Amortecedores Dianteiros +5cm Gol/Voyage/Saveiro G5-G7",
+    "descricao": "Par de amortecedores dianteiros com altura elevada em +5cm. Ideal para Gol, Voyage e Saveiro G5 a G7. Proporciona maior curso e conforto em veículos com suspensão modificada.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149005/carcrew/produtos/shocks/amortecedor-mais5.jpg",
+    "category": "amortecedores",
     "parcelamento": 12,
-    "estoque": 10,
-    "veiculos": ["Universal"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "veiculos": [
+      "VW Gol G5-G7",
+      "VW Voyage G5-G7",
+      "VW Saveiro G5-G7"
+    ],
+    "ativo": true
   },
   {
     "id": 5,
-    "nome": "Kit Instalação Suspensão a Ar — Chicote + Central",
-    "descricao": "Kit completo para instalação de suspensão a ar. Inclui chicote elétrico e central de distribuição.",
-    "preco": 667.00,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
-    "category": "acessorio-instalacao",
+    "nome": "Par Amortecedor Invertido p/ Suspensão a Ar Gol G1-G5",
+    "descricao": "Par de amortecedores invertidos desenvolvido para veículos com suspensão a ar. Compatível com Gol G1 a G5. Proporciona melhor absorção e conforto, ideal para projetos de suspensão pneumática.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149006/carcrew/produtos/shocks/amortecedor-invertido.jpg",
+    "category": "amortecedores",
     "parcelamento": 12,
-    "estoque": 5,
-    "veiculos": ["Universal"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "veiculos": [
+      "VW Gol G1-G5",
+      "VW Voyage",
+      "VW Saveiro"
+    ],
+    "ativo": true
   },
   {
     "id": 6,
-    "nome": "Mola Helicoidal Dianteira — Original",
-    "descricao": "Mola helicoidal em aço silício-manganês com tratamento térmico.",
-    "preco": 297.50,
-    "imgUrl": "/produtos/mola1.svg",
-    "category": "mola-suspensao",
-    "parcelamento": 10,
-    "estoque": 20,
-    "veiculos": ["Chevrolet Montana"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "nome": "Bandeja Slim Reforçada Corsa/Celta/Prisma — Par",
+    "descricao": "Bandeja Slim Reforçada para suspensão rebaixada. Design slim evita que a bandeja original raspe no chão, permitindo rebaixamento máximo sem comprometer a estrutura. Fabricada com materiais de alta resistência para durabilidade e segurança. Compatível com Corsa, Celta e Prisma.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149007/carcrew/produtos/bandejas/bandeja-gm.jpg",
+    "category": "bandejas",
+    "parcelamento": 12,
+    "veiculos": [
+      "Chevrolet Corsa",
+      "Chevrolet Celta",
+      "Chevrolet Prisma"
+    ],
+    "ativo": true
   },
   {
     "id": 7,
-    "nome": "Amortecedor Traseiro — Aplicação Universal",
-    "descricao": "Amortecedor traseiro de alta performance, compatível com diversos veículos nacionais.",
-    "preco": 299.90,
-    "imgUrl": "/produtos/amortecedor1.svg",
-    "category": "amortecedores",
-    "parcelamento": 10,
-    "estoque": 12,
-    "veiculos": ["Universal"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "nome": "Bolsa de Ar Cônica Haste 12,5mm — Suspensão Pneumática",
+    "descricao": "Bolsa base cônica haste 12,5mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. Mais de 10 anos de experiência em fabricação de bolsas de ar. Serve tanto para suspensão 8mm quanto 10mm.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149008/carcrew/produtos/bolsas/conica-12.5.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
   },
   {
     "id": 8,
-    "nome": "Coxim do Amortecedor — Dianteiro",
-    "descricao": "Coxim em borracha vulcanizada. Absorve impactos e vibrações.",
-    "preco": 79.90,
-    "imgUrl": "/produtos/calco1.svg",
-    "category": "calco-antirruido",
-    "parcelamento": 6,
-    "estoque": 30,
-    "veiculos": ["Chevrolet Montana", "Chevrolet Vectra"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "nome": "Bolsa de Ar Cônica Haste 20mm — Suspensão Pneumática",
+    "descricao": "Bolsa base cônica haste 20mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. Ideal para projetos que exigem haste mais robusta.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149009/carcrew/produtos/bolsas/conica-20.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
   },
   {
     "id": 9,
-    "nome": "Mangueira para Suspensão a Ar — 10 metros",
-    "descricao": "Mangueira de nylon reforçado para suspensão a ar. Suporta até 200 PSI.",
-    "preco": 89.90,
-    "imgUrl": "/produtos/bolsa-ar1.svg",
-    "category": "bolsa-de-ar",
-    "parcelamento": 6,
-    "estoque": 25,
-    "veiculos": ["Universal"],
-    "ativo": true,
-    "criadoEm": "2026-05-25T00:00:00.000Z"
+    "nome": "Bolsa de Ar Cônica Haste 22mm — Suspensão Pneumática",
+    "descricao": "Bolsa base cônica haste 22mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. Haste mais grossa para aplicações pesadas.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149009/carcrew/produtos/bolsas/conica-22.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 10,
+    "nome": "Bolsa de Ar Cônica Fechada — Eixo Traseiro",
+    "descricao": "Bolsa base cônica fechada para suspensão a ar. Compatível com veículos que usam bolsas fechadas no eixo traseiro. Base usinada em CNC, banho de Zinco, conexão universal rosca 1/8. Prensagem hidráulica, base de alumínio.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149010/carcrew/produtos/bolsas/conica-fechada.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 11,
+    "nome": "Bolsa de Ar Reta Haste 12,5mm — Suspensão Pneumática",
+    "descricao": "Bolsa base reta haste 12,5mm para suspensão a ar. Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal com rosca 1/8 padrão. 10+ anos de experiência em fabricação.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149010/carcrew/produtos/bolsas/reta-12.5.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 12,
+    "nome": "Par Bolsas de Ar Reta Haste 20mm — Suspensão Pneumática",
+    "descricao": "PAR de bolsas base reta haste 20mm para suspensão a ar. Valor referente ao par (2 unidades). Base usinada em CNC, banho de Zinco, tinta especial. Conexão universal rosca 1/8.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149011/carcrew/produtos/bolsas/reta-20-par.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 13,
+    "nome": "Bolsa de Ar Reta 20mm c/ Borracha 90mm Reforçada",
+    "descricao": "Bolsa base reta haste 20mm com borracha 90mm MAIOR e MAIS REFORÇADA. Ideal para quem precisa de maior capacidade e durabilidade. Base usinada em CNC, banho de Zinco. Conexão universal rosca 1/8.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149012/carcrew/produtos/bolsas/reta-20-90mm.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 14,
+    "nome": "Bolsa Deslocada Haste 20mm — Projetos Super Baixos",
+    "descricao": "Bolsa deslocada haste 20mm base reta para projetos específicos e muito baixos. Centro deslocado permite que o amortecedor fique mais baixo, ideal para carros 0,0 e projetos especiais. Base usinada em CNC, alumínio, mangote reforçado.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149012/carcrew/produtos/bolsas/reta-20-deslocada.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 15,
+    "nome": "Par Bolsas de Ar Reta Haste 22mm — Suspensão Pneumática",
+    "descricao": "PAR de bolsas base reta haste 22mm para suspensão a ar. Haste mais robusta para aplicações pesadas. Base usinada em CNC, banho de Zinco, conexão universal rosca 1/8.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149013/carcrew/produtos/bolsas/reta-22.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 16,
+    "nome": "Bolsa de Ar Reta Fechada — Eixo Traseiro",
+    "descricao": "Bolsa base reta fechada para suspensão a ar. Compatível com veículos que usam bolsas fechadas no eixo traseiro. Base usinada em CNC, banho de Zinco. Conexão universal rosca 1/8, mangote reforçado.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149013/carcrew/produtos/bolsas/reta-fechada.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 17,
+    "nome": "Bolsa de Ar Reta Fechada 90mm Reforçada — Eixo Traseiro",
+    "descricao": "Bolsa base reta fechada 90mm REFORÇADA para suspensão a ar. Modelo 90mm maior e mais reforçado para maior capacidade. Base usinada em CNC, banho de Zinco, conexão universal rosca 1/8.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149014/carcrew/produtos/bolsas/reta-fechada-90mm.jpg",
+    "category": "bolsas-de-ar",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 18,
+    "nome": "Ponta de Eixo Corsa/Celta Deslocada 2 — 6 Furos",
+    "descricao": "Ponta de eixo Corsa/Celta Deslocada 2 com 6 furos. Chapa em aço carbono 1020 cortada à laser, espessura 10mm. Par de pontas de eixo. Pronta entrega. Recomendamos instalação por profissional.",
+    "preco": 0,
+    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "Chevrolet Corsa",
+      "Chevrolet Celta"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 19,
+    "nome": "Ponta de Eixo VW G1-G4 Soldar — Freio Tambor",
+    "descricao": "Ponta de eixo VW G1 G2 G3 G4 Santana Parati — necessário soldar. Chapa em aço carbono 1020 cortada à laser, espessura 10mm. Par de pontas. Somente para veículos com freio traseiro a tambor.",
+    "preco": 0,
+    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Gol G1-G4",
+      "VW Voyage",
+      "VW Santana",
+      "VW Parati"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 20,
+    "nome": "Ponta de Eixo G5/Golf Parafusar 12,5mm",
+    "descricao": "Suporte de ponta de eixo para parafusar. Exclusivo para parafusar, enviado com parafusos. Espessura 12,5mm, abaixa de 9 a 12cm. Compatível com aro 15\" a 18\". Não necessita reforço/mão francesa pela espessura da chapa.",
+    "preco": 0,
+    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Gol G5-G8",
+      "VW Saveiro G5-G8",
+      "VW Golf Mk4"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 21,
+    "nome": "Ponta de Eixo G5/Golf Soldar com Reforço",
+    "descricao": "Ponta de eixo Saveiro G5-G8, Golf Mk4 e Sportline, Audi A3, Bora. Necessário soldar. Chapa aço carbono 1020 cortada à laser, 10mm, com reforço. Serve freio tambor e freio a disco. Indicado para rodas 17 acima.",
+    "preco": 0,
+    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Saveiro G5-G8",
+      "VW Golf Mk4",
+      "Audi A3",
+      "VW Bora"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 22,
+    "nome": "Ponta de Eixo Polo/Fox Soldar",
+    "descricao": "Ponta de eixo Polo e Fox — necessário soldar. Chapa aço carbono 1020 cortada à laser, 10mm. Par de pontas 4 furos. Somente para freio traseiro a tambor. Pronta entrega.",
+    "preco": 0,
+    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Polo",
+      "VW Fox"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 23,
+    "nome": "Ponta de Eixo Saveiro G5-G8/Golf Soldar",
+    "descricao": "Ponta de Saveiro G5-G8, Golf Mk4 e Sportline, Audi A3, Bora. Necessário soldar. Chapa aço carbono 1020 cortada à laser, 10mm. Serve freio tambor e freio a disco. Par de pontas.",
+    "preco": 0,
+    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Saveiro G5-G8",
+      "VW Golf Mk4",
+      "Audi A3",
+      "VW Bora"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 24,
+    "nome": "Calço p/ Bolsa — New Civic (Coxim TR4/Corolla)",
+    "descricao": "Calço adaptador específico para New Civic e Civic G9 com suspensão a ar. Permite usar coxim de Pajero TR4 e Corolla, eliminando barulhos de rangidos. Fabricado em alumínio usinado, muito resistente.",
+    "preco": 0,
+    "imgUrl": "/produtos/calco1.svg",
+    "category": "calcos-antirruido",
+    "parcelamento": 12,
+    "veiculos": [
+      "Honda Civic G9",
+      "Honda New Civic"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 25,
+    "nome": "Calço Antirruído Gol/Saveiro/Voyage G1-G4",
+    "descricao": "Calço para bolsa suspensão a ar. Alumínio usinado. Cria distância entre bolsa e rolamento, evitando que a bolsa gire e corte mangueiras. Elimina barulhos de má adaptação. Compatível com Saveiro G1-G4, Gol G1-G4, Voyage G1, Santana.",
+    "preco": 0,
+    "imgUrl": "/produtos/calco1.svg",
+    "category": "calcos-antirruido",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Gol G1-G4",
+      "VW Saveiro G1-G4",
+      "VW Voyage G1",
+      "VW Santana"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 26,
+    "nome": "Calço Antirruído Gol/Saveiro/Voyage 2010+",
+    "descricao": "Calço para bolsa suspensão a ar fabricado em tecnil reforçado. Cria distância entre bolsa e rolamento, evitando que a bolsa gire e corte mangueiras. Elimina barulhos de rangidos. O par acompanha 2 calços.",
+    "preco": 0,
+    "imgUrl": "/produtos/calco1.svg",
+    "category": "calcos-antirruido",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Saveiro 2010+",
+      "VW Gol 2010+",
+      "VW Voyage 2010+"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 27,
+    "nome": "Calço Antirruído GM — Corsa/Celta/Onix/Montana/Astra",
+    "descricao": "Calço para bolsa suspensão a ar Car Crew Garage. Alumínio usinado muito resistente. Cria distância necessária entre bolsa e rolamento, evitando que a bolsa gire e corte mangueiras. Compatível com Montana, Astra, Vectra, Onix, Prisma, Corsa, Celta.",
+    "preco": 0,
+    "imgUrl": "/produtos/calco1.svg",
+    "category": "calcos-antirruido",
+    "parcelamento": 12,
+    "veiculos": [
+      "Chevrolet Montana",
+      "Chevrolet Astra",
+      "Chevrolet Vectra",
+      "Chevrolet Onix",
+      "Chevrolet Prisma",
+      "Chevrolet Corsa",
+      "Chevrolet Celta"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 28,
+    "nome": "Kit Anti-Ruído New Civic G9 — Bolsas + Calços + Coxins",
+    "descricao": "Kit dos sonhos para Civic com suspensão a ar! Resolve problemas crônicos de rangidos do coxim original quando instalado bolsa de ar. Itens: 2 bolsas de ar haste 20mm cônicas, 2 calços de bolsa usinados em alumínio, 2 coxins superiores anti-ruído. Plug and Play.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "kits",
+    "parcelamento": 12,
+    "veiculos": [
+      "Honda Civic G9",
+      "Honda New Civic"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 29,
+    "nome": "Kit Bolsa Flexível — Suspensão a Ar",
+    "descricao": "Kit bolsa flexível para suspensão a ar. Solução versátil para projetos que exigem bolsa flexível. Consulte para mais informações sobre compatibilidade.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "kits",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 30,
+    "nome": "Bucha Reduzida do Eixo Traseiro p/ Carro Rebaixado",
+    "descricao": "Bucha reduzida do eixo traseiro desenvolvida para veículos com suspensão rebaixada. Sob medida para não precisar cortar a estrutura do veículo. Redução da bucha permite mais curso e menos esforço, evitando danos e melhorando o comportamento do carro baixo.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 31,
+    "nome": "Central de Controle 4 Canais c/ Controle Remoto",
+    "descricao": "Central de controle 4 canais compatível com qualquer marca de bloco ou válvulas. Funciona em 12V e 24V. Acompanha controle remoto longa distância full com 8 botões e chicote para ligação. Alcance de até 50 metros.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 32,
+    "nome": "Pressostato Cebolinha Car Crew 120/160 PSI",
+    "descricao": "Pressostato Cebolinha Car Crew Original, responsável por controlar o acionamento do compressor no sistema de suspensão a ar. Garante que o compressor ligue e desligue automaticamente, evitando sobrecarga e aumentando a vida útil do sistema. 120/160 PSI.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 33,
+    "nome": "Cilindro Alumínio 11,6L Cromado p/ Suspensão a Ar",
+    "descricao": "Cilindro Premium em alumínio com suporte de fixação. Capacidade 11,6 litros, tampas billet usinadas, acabamento cromado. Comprimento 60cm, diâmetro 15,5cm, 4 saídas 1/4 NPT. Peso 3,5kg. Imagens reais do produto.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 34,
+    "nome": "Reservatório Slim — Suspensão a Ar",
+    "descricao": "Reservatório slim para suspensão a ar. Design compacto para instalação em espaços reduzidos. Ideal para projetos que exigem economia de espaço sem perder capacidade de armazenamento de ar.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 35,
+    "nome": "Reservatório TF Imports — Suspensão a Ar",
+    "descricao": "Reservatório TF Imports para suspensão a ar. Componente de qualidade para armazenamento de ar comprimido no sistema pneumático. Consulte para informações técnicas completas.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 36,
+    "nome": "Bloco Airlux — Válvula de Suspensão a Ar",
+    "descricao": "Bloco Airlux para sistema de suspensão a ar. Válvula de alta qualidade para controle preciso do fluxo de ar. Compatível com sistemas pneumáticos automotivos.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780149014/carcrew/produtos/componentes/bloco-airlux.jpg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 37,
+    "nome": "Conexões Flexíveis — Suspensão a Ar",
+    "descricao": "Conexões flexíveis para sistema de suspensão a ar. Mangueiras e conexões de alta qualidade para instalação segura e durável do sistema pneumático.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 38,
+    "nome": "Regulador Barra — Rosca Reguladora Direção",
+    "descricao": "Regulador de barra para direção. Rosca reguladora para ajuste fino da geometria da direção em veículos rebaixados. Componente essencial para alinhamento correto.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 39,
+    "nome": "Par Coxim Anti-Ruído c/ Flange Polo/Fox",
+    "descricao": "Par de coxim anti-ruído com flange para suspensão a ar. Linha Premium Car Crew Fab. Substitui o sistema original eliminando estalos e ruídos metálicos. Garante rodar macio, máxima estabilidade e acabamento profissional. Compatível com Polo e Fox.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Polo",
+      "VW Fox"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 40,
+    "nome": "Terminal Alongado Direção N — VW Carros Rebaixados",
+    "descricao": "Terminal alongado para direção linha VW. Produto novo, não recondicionado. Corrige geometria da direção em carros rebaixados, garantindo mais estabilidade, segurança e vida útil. Evita desgaste irregular dos pneus. Ideal para suspensão fixa, rosca e a ar.",
+    "preco": 0,
+    "imgUrl": "/produtos/calco1.svg",
+    "category": "terminais",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Gol",
+      "VW Saveiro",
+      "VW Voyage",
+      "VW Santana"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 41,
+    "nome": "Terminal Alongado Direção R — VW Carros Rebaixados",
+    "descricao": "Terminal alongado para direção linha VW modelo R. Produto novo, não recondicionado. Corrige ângulo da direção em carros rebaixados. Evita desgaste irregular dos pneus. Melhora dirigibilidade e estabilidade. Ideal para suspensão fixa, rosca e a ar.",
+    "preco": 0,
+    "imgUrl": "/produtos/calco1.svg",
+    "category": "terminais",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Gol",
+      "VW Saveiro",
+      "VW Voyage",
+      "VW Santana"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 42,
+    "nome": "Controle Bluetooth V2 + Central Car Crew — 3 Presets",
+    "descricao": "Controle Car Crew V2 com Bluetooth para precisão no acionamento da suspensão a ar. Acompanha central para integrar ao bloco. 3 presets de altura por temporização de pulso. Entrada para sensores de pressão. Mais comodidade e confiabilidade.",
+    "preco": 0,
+    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "category": "controles",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
   }
 ]

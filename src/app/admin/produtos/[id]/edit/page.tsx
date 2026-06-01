@@ -24,12 +24,16 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import CloudinaryUpload from "@/components/CloudinaryUpload";
 
 const categorias = [
+  { value: "compressores", label: "Compressores" },
   { value: "amortecedores", label: "Amortecedores" },
-  { value: "calco-antirruido", label: "Calço Antirruído" },
-  { value: "ponta-de-eixo", label: "Ponta de Eixo" },
-  { value: "bolsa-de-ar", label: "Bolsa de Ar" },
-  { value: "acessorio-instalacao", label: "Acessórios" },
-  { value: "mola-suspensao", label: "Molas" },
+  { value: "bandejas", label: "Bandejas" },
+  { value: "bolsas-de-ar", label: "Bolsas de Ar" },
+  { value: "pontas-de-eixo", label: "Pontas de Eixo" },
+  { value: "calcos-antirruido", label: "Calços Antirruído" },
+  { value: "kits", label: "Kits" },
+  { value: "componentes", label: "Componentes" },
+  { value: "terminais", label: "Terminais de Direção" },
+  { value: "controles", label: "Controles Bluetooth" },
 ];
 
 export default function EditarProduto() {
