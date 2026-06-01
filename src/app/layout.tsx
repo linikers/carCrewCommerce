@@ -131,7 +131,6 @@ export default function RootLayout({
                 "https://www.instagram.com/carcrewgarage_/",
                 "https://www.facebook.com/CarCrewG",
               ],
-              ],
             }),
           }}
         />
