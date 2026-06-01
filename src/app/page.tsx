@@ -5,8 +5,6 @@ import {
   Box,
   Container,
   Typography,
-  Card,
-  CardContent,
   Chip,
   IconButton,
   Snackbar,
@@ -282,64 +280,6 @@ export default function Home() {
                   onDelete={() => setVeiculoSelecionado("")}
                   sx={{ ml: 1, backgroundColor: "#E65100", color: "#fff" }}
                 />
-              )}
-            </Container>
-          )}
-
-          {/* Categorias */}
-          {categorias.length > 0 && (
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: "#1A1A1A" }}>
-                Categorias
-              </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-                {categorias.map((cat) => {
-                  const isActive = categoriaAtiva === cat.slug;
-                  return (
-                    <Box
-                      key={cat.slug}
-                      sx={{ flex: { xs: "1 1 calc(50% - 8px)", sm: "1 1 calc(25% - 8px)", md: "1 1 calc(16.66% - 10px)" } }}
-                    >
-                      <Card
-                        onClick={() => toggleCategoria(cat.slug as CategoriaSlug)}
-                        sx={{
-                          textAlign: "center",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease",
-                          border: isActive ? "2px solid #E65100" : "2px solid transparent",
-                          backgroundColor: isActive ? "#fff5f0" : "#fff",
-                          "&:hover": {
-                            borderColor: "#E65100",
-                            boxShadow: "0 4px 12px rgba(230,81,0,0.15)",
-                          },
-                        }}
-                      >
-                        <CardContent sx={{ py: 2 }}>
-                          <Typography variant="h4" sx={{ mb: 1 }}>{cat.icone}</Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: isActive ? 700 : 500,
-                              fontSize: "0.8rem",
-                              color: isActive ? "#E65100" : "#1A1A1A",
-                            }}
-                          >
-                            {cat.nome}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </Box>
-                  );
-                })}
-              </Box>
-              {categoriaAtiva && (
-                <Box sx={{ mt: 2 }}>
-                  <Chip
-                    label={`${categorias.find((c) => c.slug === categoriaAtiva)?.nome} — ${filteredProdutos.length} produto(s)`}
-                    onDelete={() => setCategoriaAtiva(null)}
-                    sx={{ backgroundColor: "#E65100", color: "#fff", fontWeight: 500 }}
-                  />
-                </Box>
               )}
             </Container>
           )}
