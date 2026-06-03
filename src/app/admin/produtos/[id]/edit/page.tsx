@@ -46,6 +46,7 @@ export default function EditarProduto() {
     descricao: "",
     preco: "",
     imgUrl: "",
+    galeria: "",
     category: "acessorio-instalacao",
     parcelamento: "12",
     estoque: "0",
@@ -67,6 +68,7 @@ export default function EditarProduto() {
           descricao: data.descricao,
           preco: String(data.preco),
           imgUrl: data.imgUrl,
+          galeria: data.galeria?.join(", ") || "",
           category: data.category,
           parcelamento: String(data.parcelamento),
           estoque: String(data.estoque),
@@ -90,6 +92,9 @@ export default function EditarProduto() {
           preco: parseFloat(form.preco),
           parcelamento: parseInt(form.parcelamento),
           estoque: parseInt(form.estoque),
+          galeria: form.galeria
+            ? form.galeria.split(",").map((u: string) => u.trim()).filter(Boolean)
+            : [],
         }),
       });
 
@@ -163,6 +168,12 @@ export default function EditarProduto() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="URL da Imagem" value={form.imgUrl}
                     onChange={(e) => setForm({ ...form, imgUrl: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <TextField fullWidth label="URLs extras (galeria)" value={form.galeria}
+                    onChange={(e) => setForm({ ...form, galeria: e.target.value })}
+                    multiline rows={2} placeholder="https://... , https://..." size="small"
+                    helperText="URLs separadas por vírgula" />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <CloudinaryUpload

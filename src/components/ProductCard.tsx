@@ -45,22 +45,43 @@ export default function ProductCard({
       onClick={() => router.push(`/produto/${produto.id}`)}
     >
       {/* Imagem */}
-      <CardMedia
-        component="img"
-        height="200"
-        image={
-          isCloudinaryUrl(produto.imgUrl)
-            ? thumbUrl(extractPublicId(produto.imgUrl))
-            : produto.imgUrl
-        }
-        alt={produto.nome}
-        sx={{
-          objectFit: "contain",
-          backgroundColor: "#ffffff",
-          p: 1.5,
-          borderRadius: 2,
-        }}
-      />
+      <Box sx={{ position: "relative" }}>
+        <CardMedia
+          component="img"
+          height="200"
+          image={
+            isCloudinaryUrl(produto.imgUrl)
+              ? thumbUrl(extractPublicId(produto.imgUrl))
+              : produto.imgUrl
+          }
+          alt={produto.nome}
+          sx={{
+            objectFit: "contain",
+            backgroundColor: "#ffffff",
+            p: 1.5,
+            borderRadius: 2,
+          }}
+        />
+        {produto.galeria && produto.galeria.length > 0 && (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 8,
+              right: 8,
+              backgroundColor: "rgba(0,0,0,0.65)",
+              color: "#fff",
+              fontSize: "0.7rem",
+              fontWeight: 600,
+              px: 1,
+              py: 0.3,
+              borderRadius: 1,
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            +{produto.galeria.length} fotos
+          </Box>
+        )}
+      </Box>
 
       <CardContent
         sx={{

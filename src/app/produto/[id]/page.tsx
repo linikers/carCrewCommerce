@@ -26,7 +26,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ItemCarrinho } from "@/types";
 import { useState, useEffect } from "react";
-import { isCloudinaryUrl, detailUrl, extractPublicId } from "@/lib/cloudinary";
+import { isCloudinaryUrl, detailUrl, thumbUrl, extractPublicId } from "@/lib/cloudinary";
 
 interface ProdutoDetalheData {
   id: number;
@@ -34,6 +34,7 @@ interface ProdutoDetalheData {
   descricao: string;
   preco: number;
   imgUrl: string;
+  galeria?: string[];
   category: string;
   parcelamento: number;
   veiculos?: string[];
@@ -56,6 +57,7 @@ export default function ProdutoDetalhe() {
   const [loading, setLoading] = useState(true);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
   const [quantidade, setQuantidade] = useState(1);
+  const [_selectedImg, setSelectedImg] = useState(0);
 
   useEffect(() => {
     Promise.all([
@@ -146,35 +148,103 @@ export default function ProdutoDetalhe() {
         </Button>
 
         <Grid container spacing={4}>
-          {/* Imagem */}
+          {/* Imagem & Galeria */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Paper
+            <Box
               sx={{
-                p: { xs: 2, md: 4 },
-                backgroundColor: "#ffffff",
-                borderRadius: 4,
                 display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: 350,
-                border: "1px solid #eee",
+                flexDirection: "column",
+                gap: 1.5,
               }}
             >
-              <Box
-                component="img"
-                src={
-                  isCloudinaryUrl(produto.imgUrl)
-                    ? detailUrl(extractPublicId(produto.imgUrl))
-                    : produto.imgUrl
-                }
-                alt={produto.nome}
+              {/* Imagem principal */}
+              <Paper
                 sx={{
-                  maxWidth: "100%",
-                  maxHeight: 400,
-                  objectFit: "contain",
+                  p: { xs: 2, md: 4 },
+                  backgroundColor: "#ffffff",
+                  borderRadius: 4,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: 350,
+                  border: "1px solid #eee",
+                  position: "relative",
                 }}
-              />
-            </Paper>
+              >
+                <Box
+                  component="img"
+                  src={
+                    (() => {
+                      const allImages = [produto.imgUrl, ...(produto.galeria || [])];
+                      const selected = allImages[_selectedImg] || produto.imgUrl;
+                      return isCloudinaryUrl(selected)
+                        ? detailUrl(extractPublicId(selected))
+                        : selected;
+                    })()
+                  }
+                  alt={produto.nome}
+                  sx={{
+                    maxWidth: "100%",
+                    maxHeight: 400,
+                    objectFit: "contain",
+                    transition: "opacity 0.2s ease",
+                  }}
+                />
+              </Paper>
+
+              {/* Miniaturas */}
+              {(() => {
+                const allImages = [produto.imgUrl, ...(produto.galeria || [])];
+                if (allImages.length <= 1) return null;
+                return (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {allImages.map((url, idx) => (
+                      <Paper
+                        key={idx}
+                        onClick={() => setSelectedImg(idx)}
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          cursor: "pointer",
+                          border: _selectedImg === idx ? "2px solid #E65100" : "2px solid transparent",
+                          opacity: _selectedImg === idx ? 1 : 0.6,
+                          transition: "all 0.2s ease",
+                          "&:hover": { opacity: 1 },
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <Box
+                          component="img"
+                          src={
+                            isCloudinaryUrl(url)
+                              ? thumbUrl(extractPublicId(url))
+                              : url
+                          }
+                          alt=""
+                          sx={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                            p: 0.5,
+                          }}
+                        />
+                      </Paper>
+                    ))}
+                  </Box>
+                );
+              })()}
+            </Box>
           </Grid>
 
           {/* Info */}
