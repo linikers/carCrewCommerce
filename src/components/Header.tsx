@@ -35,7 +35,7 @@ import {
 } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { Categoria } from "@/types";
-import CarCrewLogo from "@/components/CarCrewLogo";
+import CarCrewLogoText from "@/components/CarCrewLogoText";
 
 interface HeaderProps {
   cartItemCount?: number;
@@ -80,36 +80,45 @@ export default function Header({
             disableGutters
             sx={{
               minHeight: { xs: 56, md: 64 },
-              gap: 0,
+              position: "relative",
             }}
           >
             {/* Hamburger (mobile only) */}
             <IconButton
-              sx={{ display: { xs: "flex", md: "none" } }}
+              sx={{
+                display: { xs: "flex", md: "none" },
+                position: "absolute",
+                left: 0,
+                zIndex: 1,
+              }}
               onClick={() => setMobileMenuOpen(true)}
             >
               <MenuIcon />
             </IconButton>
 
-            {/* Spacer left — empurra logo pro centro */}
-            <Box sx={{ flex: 1, display: { xs: "none", md: "block" } }} />
-
-            {/* Hamburger spacer on mobile */}
-            <Box sx={{ flex: { xs: 1, md: 0 } }} />
-
-            {/* Logo */}
+            {/* Logo — perfeitamente centralizado */}
             <Link
               href="/"
-              style={{ textDecoration: "none", lineHeight: 0 }}
+              style={{
+                textDecoration: "none",
+                lineHeight: 0,
+                margin: "0 auto",
+              }}
             >
-              <CarCrewLogo />
+              <CarCrewLogoText />
             </Link>
 
-            {/* Spacer right */}
-            <Box sx={{ flex: 1 }} />
-
-            {/* Ícones */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0, sm: 0.5 } }}>
+            {/* Ícones — alinhados à direita */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: { xs: 0, sm: 0.5 },
+                position: "absolute",
+                right: 0,
+                zIndex: 1,
+              }}
+            >
               <UserMenu />
               <IconButton
                 onClick={onCartOpen}
@@ -292,7 +301,7 @@ export default function Header({
           {/* Logo no drawer */}
           <Box sx={{ px: 2, pb: 2 }}>
             <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-              <CarCrewLogo />
+              <CarCrewLogoText />
             </Link>
           </Box>
           <Divider />

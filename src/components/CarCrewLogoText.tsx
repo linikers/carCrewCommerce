@@ -24,7 +24,7 @@ export default function CarCrewLogoText() {
           `,
         }}
       >
-        Car
+        CAR
       </Typography>
       <Typography
         component="span"
@@ -40,7 +40,7 @@ export default function CarCrewLogoText() {
           `,
         }}
       >
-        Crew
+        CREW
       </Typography>
       <Typography
         component="span"
@@ -57,7 +57,7 @@ export default function CarCrewLogoText() {
           ml: { xs: 0.75, md: 1.25 },
         }}
       >
-        Garage
+        GARAGE
       </Typography>
     </Box>
   );
