@@ -2,6 +2,8 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import {
   AppBar,
   Box,
@@ -33,7 +35,7 @@ import {
   ExpandMore,
 } from "@mui/icons-material";
 import { useState, useEffect } from "react";
-import { CategoriaSlug, Categoria } from "@/types";
+import { Categoria } from "@/types";
 
 interface HeaderProps {
   cartItemCount?: number;
@@ -64,7 +66,6 @@ export default function Header({
 
   return (
     <>
-      {/* Barra superior */}
       <AppBar
         position="sticky"
         sx={{
@@ -73,9 +74,16 @@ export default function Header({
           boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
         }}
       >
+        {/* === Row 1: Logo central + ícones === */}
         <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ gap: 1 }}>
-            {/* Mobile menu toggle */}
+          <Toolbar
+            disableGutters
+            sx={{
+              minHeight: { xs: 56, md: 64 },
+              gap: 0,
+            }}
+          >
+            {/* Hamburger (mobile only) */}
             <IconButton
               sx={{ display: { xs: "flex", md: "none" } }}
               onClick={() => setMobileMenuOpen(true)}
@@ -83,75 +91,52 @@ export default function Header({
               <MenuIcon />
             </IconButton>
 
-            {/* Logo */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-                flexShrink: 0,
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  color: "#E65100",
-                  fontSize: { xs: "1rem", md: "1.25rem" },
-                  letterSpacing: "-0.5px",
-                }}
-              >
-                CarCrew
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: "#1A1A1A",
-                  fontWeight: 500,
-                  display: { xs: "none", sm: "block" },
-                }}
-              >
-                Suspensões
-              </Typography>
-            </Box>
+            {/* Spacer left — empurra logo pro centro */}
+            <Box sx={{ flex: 1, display: { xs: "none", md: "block" } }} />
 
-            {/* Busca */}
-            <Box
-              sx={{
-                flexGrow: 1,
-                display: "flex",
-                justifyContent: "center",
-                mx: { xs: 1, md: 3 },
-              }}
+            {/* Hamburger spacer on mobile */}
+            <Box sx={{ flex: { xs: 1, md: 0 } }} />
+
+            {/* Logo */}
+            <Link
+              href="/"
+              style={{ textDecoration: "none", lineHeight: 0 }}
             >
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: 2,
-                  px: 2,
-                  py: 0.5,
-                  width: "100%",
-                  maxWidth: 500,
+                  position: "relative",
+                  width: { xs: 120, sm: 140, md: 160 },
+                  height: { xs: 32, sm: 36, md: 40 },
+                  transition: "opacity 0.2s ease",
+                  "&:hover": { opacity: 0.85 },
+                  "&:active": { opacity: 0.7 },
                 }}
               >
-                <SearchIcon sx={{ color: "#999", mr: 1, fontSize: 20 }} />
-                <InputBase
-                  placeholder="O que deseja procurar?"
-                  onChange={(e) => onSearch?.(e.target.value)}
-                  sx={{ flex: 1, fontSize: { xs: "0.85rem", md: "0.95rem" } }}
-                  inputProps={{ "aria-label": "buscar" }}
+                <Image
+                  src="/logo.jpg"
+                  alt="CarCrew Suspensões"
+                  fill
+                  sizes="(max-width: 600px) 120px, (max-width: 900px) 140px, 160px"
+                  priority
+                  style={{ objectFit: "contain" }}
                 />
               </Box>
-            </Box>
+            </Link>
 
-            {/* Ícones direita */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              {/* User menu */}
+            {/* Spacer right */}
+            <Box sx={{ flex: 1 }} />
+
+            {/* Ícones */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0, sm: 0.5 } }}>
               <UserMenu />
-
-              <IconButton onClick={onCartOpen} sx={{ color: "#1A1A1A" }}>
+              <IconButton
+                onClick={onCartOpen}
+                sx={{
+                  color: "#1A1A1A",
+                  transition: "color 0.2s ease",
+                  "&:hover": { color: "#E65100" },
+                }}
+              >
                 <Badge
                   badgeContent={cartItemCount}
                   color="primary"
@@ -162,6 +147,7 @@ export default function Header({
                       fontSize: 10,
                       minWidth: 18,
                       height: 18,
+                      fontWeight: 600,
                     },
                   }}
                 >
@@ -172,7 +158,48 @@ export default function Header({
           </Toolbar>
         </Container>
 
-        {/* Nav de categorias (desktop) */}
+        {/* === Row 2: Busca === */}
+        <Box
+          sx={{
+            backgroundColor: "#fafafa",
+            borderTop: "1px solid #f0f0f0",
+            borderBottom: "1px solid #f0f0f0",
+            py: { xs: 1, md: 1.25 },
+          }}
+        >
+          <Container maxWidth="lg">
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                backgroundColor: "#ffffff",
+                borderRadius: 1.5,
+                border: "1px solid #e0e0e0",
+                px: 1.5,
+                py: 0.5,
+                maxWidth: 600,
+                mx: { xs: "auto" },
+                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                "&:focus-within": {
+                  borderColor: "#E65100",
+                  boxShadow: "0 0 0 3px rgba(230, 81, 0, 0.1)",
+                },
+              }}
+            >
+              <SearchIcon
+                sx={{ color: "#999", mr: 1, fontSize: 20, flexShrink: 0 }}
+              />
+              <InputBase
+                placeholder="O que deseja procurar?"
+                onChange={(e) => onSearch?.(e.target.value)}
+                sx={{ flex: 1, fontSize: { xs: "0.85rem", md: "0.925rem" } }}
+                inputProps={{ "aria-label": "buscar" }}
+              />
+            </Box>
+          </Container>
+        </Box>
+
+        {/* === Row 3: Nav de categorias (desktop) === */}
         <Box
           sx={{
             backgroundColor: "#1A1A1A",
@@ -190,18 +217,29 @@ export default function Header({
               {categorias.map((cat) => (
                 <Button
                   key={cat.slug}
-                  onClick={() => onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug)}
+                  onClick={() =>
+                    onCategorySelect?.(
+                      activeCategory === cat.slug ? null : cat.slug,
+                    )
+                  }
                   sx={{
-                    color: activeCategory === cat.slug ? "#E65100" : "#ffffff",
+                    color:
+                      activeCategory === cat.slug ? "#E65100" : "#ffffff",
                     textTransform: "none",
-                    fontSize: "0.85rem",
-                    px: 1.5,
-                    py: 1,
+                    fontSize: "0.825rem",
+                    px: 1.25,
+                    py: 0.75,
                     borderRadius: 0,
                     fontWeight: activeCategory === cat.slug ? 600 : 400,
-                    borderBottom: activeCategory === cat.slug ? "2px solid #E65100" : "2px solid transparent",
+                    borderBottom:
+                      activeCategory === cat.slug
+                        ? "2px solid #E65100"
+                        : "2px solid transparent",
+                    letterSpacing: "0.01em",
+                    transition: "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
                     "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.1)",
+                      backgroundColor: "rgba(255,255,255,0.08)",
+                      color: "#fff",
                     },
                   }}
                 >
@@ -212,13 +250,14 @@ export default function Header({
                 sx={{
                   color: "#E65100",
                   textTransform: "none",
-                  fontSize: "0.85rem",
-                  px: 1.5,
-                  py: 1,
+                  fontSize: "0.825rem",
+                  px: 1.25,
+                  py: 0.75,
                   borderRadius: 0,
                   fontWeight: 600,
+                  transition: "background-color 0.15s ease",
                   "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.1)",
+                    backgroundColor: "rgba(255,255,255,0.08)",
                   },
                 }}
               >
@@ -228,19 +267,24 @@ export default function Header({
               <Box sx={{ flex: 1 }} />
 
               <Button
-                startIcon={<WhatsApp />}
+                startIcon={
+                  <WhatsApp sx={{ fontSize: 16 }} />
+                }
                 href="https://wa.me/5544998133182"
                 target="_blank"
                 sx={{
                   color: "#25D366",
                   textTransform: "none",
-                  fontSize: "0.8rem",
+                  fontSize: "0.775rem",
                   fontWeight: 600,
-                  px: 1.5,
-                  py: 1,
+                  px: 1.25,
+                  py: 0.75,
                   borderRadius: 0,
+                  letterSpacing: "0.01em",
+                  transition: "background-color 0.15s ease, color 0.15s ease",
                   "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.1)",
+                    backgroundColor: "rgba(255,255,255,0.08)",
+                    color: "#2ee87a",
                   },
                 }}
               >
@@ -251,28 +295,45 @@ export default function Header({
         </Box>
       </AppBar>
 
-      {/* Mobile drawer */}
+      {/* Mobile Drawer */}
       <Drawer
         anchor="left"
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
+        slotProps={{
+          paper: {
+            sx: { width: 280 },
+          },
+        }}
       >
-        <Box sx={{ width: 280, pt: 2 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              px: 2,
-              pb: 2,
-              color: "#E65100",
-              fontWeight: 700,
-            }}
-          >
-            CarCrew Suspensões
-          </Typography>
+        <Box sx={{ pt: 2 }}>
+          {/* Logo no drawer */}
+          <Box sx={{ px: 2, pb: 2 }}>
+            <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+              <Box
+                sx={{
+                  position: "relative",
+                  width: 120,
+                  height: 32,
+                }}
+              >
+                <Image
+                  src="/logo.jpg"
+                  alt="CarCrew Suspensões"
+                  fill
+                  sizes="120px"
+                  priority
+                  style={{ objectFit: "contain" }}
+                />
+              </Box>
+            </Link>
+          </Box>
           <Divider />
 
           <List>
-            <ListItemButton onClick={() => setCategoriesOpen(!categoriesOpen)}>
+            <ListItemButton
+              onClick={() => setCategoriesOpen(!categoriesOpen)}
+            >
               <ListItemIcon>
                 <MenuIcon />
               </ListItemIcon>
@@ -285,11 +346,19 @@ export default function Header({
                   <ListItemButton
                     key={cat.slug}
                     sx={{ pl: 4 }}
-                    onClick={() => { onCategorySelect?.(cat.slug); setMobileMenuOpen(false); }}
+                    onClick={() => {
+                      onCategorySelect?.(cat.slug);
+                      setMobileMenuOpen(false);
+                    }}
                   >
                     <ListItemText
                       primary={cat.nome}
-                      sx={{ color: activeCategory === cat.slug ? "#E65100" : "inherit" }}
+                      sx={{
+                        color:
+                          activeCategory === cat.slug
+                            ? "#E65100"
+                            : "inherit",
+                      }}
                     />
                   </ListItemButton>
                 ))}
@@ -298,7 +367,12 @@ export default function Header({
 
             <Divider />
 
-            <ListItemButton onClick={() => router.push("/conta")}>
+            <ListItemButton
+              onClick={() => {
+                router.push("/conta");
+                setMobileMenuOpen(false);
+              }}
+            >
               <ListItemIcon>
                 <Person />
               </ListItemIcon>
@@ -306,7 +380,10 @@ export default function Header({
             </ListItemButton>
 
             <ListItemButton
-              onClick={() => router.push("https://wa.me/5544998133182")}
+              onClick={() => {
+                router.push("https://wa.me/5544998133182");
+                setMobileMenuOpen(false);
+              }}
             >
               <ListItemIcon>
                 <WhatsApp />
@@ -334,7 +411,11 @@ function UserMenu() {
       <>
         <IconButton
           onClick={(e) => setAnchorEl(e.currentTarget)}
-          sx={{ display: { xs: "none", sm: "inline-flex" } }}
+          sx={{
+            display: { xs: "none", sm: "inline-flex" },
+            transition: "opacity 0.2s ease",
+            "&:hover": { opacity: 0.8 },
+          }}
         >
           <Avatar
             src={session.user.image || undefined}
@@ -355,19 +436,48 @@ function UserMenu() {
           onClose={() => setAnchorEl(null)}
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          sx={{
+            "& .MuiPaper-root": {
+              borderRadius: 1.5,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+              mt: 0.5,
+            },
+          }}
         >
           {session?.user?.admin && (
             <MenuItem
-              onClick={() => { setAnchorEl(null); router.push("/admin"); }}
-              sx={{ color: "#E65100", fontWeight: 600, borderBottom: "1px solid", borderColor: "divider", mb: 0.5 }}
+              onClick={() => {
+                setAnchorEl(null);
+                router.push("/admin");
+              }}
+              sx={{
+                color: "#E65100",
+                fontWeight: 600,
+                borderBottom: "1px solid",
+                borderColor: "divider",
+                mb: 0.5,
+                fontSize: "0.9rem",
+              }}
             >
               Painel Admin
             </MenuItem>
           )}
-          <MenuItem onClick={() => { setAnchorEl(null); router.push("/conta"); }}>
+          <MenuItem
+            onClick={() => {
+              setAnchorEl(null);
+              router.push("/conta");
+            }}
+            sx={{ fontSize: "0.9rem" }}
+          >
             Minha Conta
           </MenuItem>
-          <MenuItem onClick={() => { setAnchorEl(null); signOut(); }}>
+          <MenuItem
+            onClick={() => {
+              setAnchorEl(null);
+              signOut();
+            }}
+            sx={{ fontSize: "0.9rem" }}
+          >
             Sair
           </MenuItem>
         </Menu>
@@ -381,6 +491,8 @@ function UserMenu() {
       sx={{
         color: "#1A1A1A",
         display: { xs: "none", sm: "inline-flex" },
+        transition: "color 0.2s ease",
+        "&:hover": { color: "#E65100" },
       }}
     >
       <Person />
