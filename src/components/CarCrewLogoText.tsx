@@ -14,7 +14,7 @@ export default function CarCrewLogoText() {
         component="span"
         sx={{
           fontFamily: "var(--font-orbitron), 'Orbitron', sans-serif",
-          fontSize: { xs: 20, md: 34 },
+          fontSize: { xs: 22, md: 36 },
           fontWeight: 900,
           lineHeight: 1,
           color: "#E65100",
@@ -30,7 +30,7 @@ export default function CarCrewLogoText() {
         component="span"
         sx={{
           fontFamily: "var(--font-orbitron), 'Orbitron', sans-serif",
-          fontSize: { xs: 20, md: 34 },
+          fontSize: { xs: 22, md: 36 },
           fontWeight: 900,
           lineHeight: 1,
           color: "#1A1A1A",
@@ -46,7 +46,7 @@ export default function CarCrewLogoText() {
         component="span"
         sx={{
           fontFamily: "var(--font-orbitron), 'Orbitron', sans-serif",
-          fontSize: { xs: 15, md: 26 },
+          fontSize: { xs: 14, md: 22 },
           fontWeight: 700,
           lineHeight: 1,
           color: "#E65100",
