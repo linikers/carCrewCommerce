@@ -1,0 +1,14 @@
+{
+  "originCep": "",
+  "clientId": "",
+  "clientSecret": "",
+  "accessToken": "",
+  "refreshToken": "",
+  "tokenExpiresAt": null,
+  "packageWeight": 0.5,
+  "packageHeight": 2,
+  "packageWidth": 16,
+  "packageLength": 18,
+  "markupPercent": 0,
+  "sandbox": true
+}
