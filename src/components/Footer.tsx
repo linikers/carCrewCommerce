@@ -10,7 +10,6 @@ import {
 import {
   WhatsApp,
   Instagram,
-  YouTube,
   Facebook,
 } from "@mui/icons-material";
 
@@ -56,14 +55,19 @@ export default function Footer() {
               >
                 <WhatsApp />
               </IconButton>
-              <IconButton href="#" target="_blank" sx={{ color: "#ffffff" }}>
+              <IconButton
+                href="https://www.instagram.com/carcrewgarage_/"
+                target="_blank"
+                sx={{ color: "#ffffff" }}
+              >
                 <Instagram />
               </IconButton>
-              <IconButton href="#" target="_blank" sx={{ color: "#ffffff" }}>
+              <IconButton
+                href="https://www.facebook.com/CarCrewG"
+                target="_blank"
+                sx={{ color: "#ffffff" }}
+              >
                 <Facebook />
-              </IconButton>
-              <IconButton href="#" target="_blank" sx={{ color: "#ffffff" }}>
-                <YouTube />
               </IconButton>
             </Box>
           </Box>
@@ -140,10 +144,10 @@ export default function Footer() {
               📞 (44) 99813-3182
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              ✉️ contato@carcrew.com.br
+              ✉️ carcrewgarage@gmail.com
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              🕐 Seg–Sex: 08h–18h | Sáb: 08h–12h
+              🕐 Seg–Sex: 08h–18h | Sáb: 09h–11h
             </Typography>
             <Box
               sx={{
