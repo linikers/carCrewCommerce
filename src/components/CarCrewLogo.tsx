@@ -5,9 +5,9 @@ export default function CarCrewLogo() {
     <Box
       sx={{
         width: "fit-content",
-        p: { xs: 2, md: 3.2 },
+        p: { xs: 1.2, md: 2 },
         bgcolor: "#000",
-        border: { xs: "4px solid #000", md: "6px solid #000" },
+        border: { xs: "2px solid #000", md: "4px solid #000" },
         clipPath:
           "polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)",
         position: "relative",
@@ -15,8 +15,8 @@ export default function CarCrewLogo() {
     >
       <Box
         sx={{
-          border: { xs: "3px solid white", md: "5px solid white" },
-          p: { xs: 2, md: 3.2 },
+          border: { xs: "2px solid white", md: "3px solid white" },
+          p: { xs: 1.2, md: 2 },
           clipPath:
             "polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)",
         }}
@@ -24,7 +24,7 @@ export default function CarCrewLogo() {
         <Typography
           sx={{
             fontFamily: "var(--font-orbitron), 'Orbitron', sans-serif",
-            fontSize: { xs: 22, md: 58 },
+            fontSize: { xs: 13, md: 35 },
             fontWeight: 900,
             lineHeight: 1,
             color: "#ff6a00",
@@ -41,7 +41,7 @@ export default function CarCrewLogo() {
         <Typography
           sx={{
             fontFamily: "var(--font-orbitron), 'Orbitron', sans-serif",
-            fontSize: { xs: 29, md: 72 },
+            fontSize: { xs: 17, md: 43 },
             fontWeight: 900,
             lineHeight: 0.9,
             color: "#fff",
@@ -58,7 +58,7 @@ export default function CarCrewLogo() {
         <Typography
           sx={{
             fontFamily: "var(--font-orbitron), 'Orbitron', sans-serif",
-            fontSize: { xs: 18, md: 42 },
+            fontSize: { xs: 11, md: 25 },
             fontWeight: 900,
             lineHeight: 1,
             color: "#ff6a00",
