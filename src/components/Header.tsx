@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import CarCrewLogo from "@/components/CarCrewLogo";
+import CarCrewLogoText from "@/components/CarCrewLogoText";
 import {
   AppBar,
   Box,
@@ -102,7 +102,7 @@ export default function Header({
               href="/"
               style={{ textDecoration: "none", lineHeight: 0 }}
             >
-              <CarCrewLogo />
+              <CarCrewLogoText />
             </Link>
 
             {/* Spacer right */}
@@ -292,7 +292,7 @@ export default function Header({
           {/* Logo no drawer */}
           <Box sx={{ px: 2, pb: 2 }}>
             <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-              <CarCrewLogo />
+              <CarCrewLogoText />
             </Link>
           </Box>
           <Divider />
