@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import CarCrewLogo from "@/components/CarCrewLogo";
 import {
   AppBar,
   Box,
@@ -102,25 +102,7 @@ export default function Header({
               href="/"
               style={{ textDecoration: "none", lineHeight: 0 }}
             >
-              <Box
-                sx={{
-                  position: "relative",
-                  width: { xs: 120, sm: 140, md: 160 },
-                  height: { xs: 32, sm: 36, md: 40 },
-                  transition: "opacity 0.2s ease",
-                  "&:hover": { opacity: 0.85 },
-                  "&:active": { opacity: 0.7 },
-                }}
-              >
-                <Image
-                  src="/logo.jpg"
-                  alt="CarCrew Suspensões"
-                  fill
-                  sizes="(max-width: 600px) 120px, (max-width: 900px) 140px, 160px"
-                  priority
-                  style={{ objectFit: "contain" }}
-                />
-              </Box>
+              <CarCrewLogo />
             </Link>
 
             {/* Spacer right */}
@@ -310,22 +292,7 @@ export default function Header({
           {/* Logo no drawer */}
           <Box sx={{ px: 2, pb: 2 }}>
             <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-              <Box
-                sx={{
-                  position: "relative",
-                  width: 120,
-                  height: 32,
-                }}
-              >
-                <Image
-                  src="/logo.jpg"
-                  alt="CarCrew Suspensões"
-                  fill
-                  sizes="120px"
-                  priority
-                  style={{ objectFit: "contain" }}
-                />
-              </Box>
+              <CarCrewLogo />
             </Link>
           </Box>
           <Divider />
