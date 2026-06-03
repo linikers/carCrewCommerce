@@ -32,7 +32,7 @@ const menuItems = [
   { label: "Produtos", icon: <Inventory2 />, path: "/admin/produtos" },
   { label: "Categorias", icon: <Category />, path: "/admin/categorias" },
   { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners" },
-  { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos", disabled: true, tag: "Em breve" },
+  { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
   { label: "Clientes", icon: <People />, path: "/admin/clientes", disabled: true, tag: "Em breve" },
 ];
 
