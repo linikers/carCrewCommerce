@@ -583,5 +583,77 @@
       "Universal"
     ],
     "ativo": false
+  },
+  {
+    "id": 43,
+    "nome": "Suporte Lixadeira",
+    "descricao": "",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518596/carcrew/produtos/txvny66wjofh0wwap68x.jpg",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518598/carcrew/produtos/l483msycuwnm6xs5gdnu.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518601/carcrew/produtos/bhkasyyuknm9zidtjtii.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518604/carcrew/produtos/bzhc2sddrs02vbxrdlul.jpg"
+    ],
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 44,
+    "nome": "Churrasqueira AD",
+    "descricao": "",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518607/carcrew/produtos/d6gvd5skg5mog9peygvx.jpg",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518609/carcrew/produtos/noysbsexepuhhskaedy2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518612/carcrew/produtos/lckkecviv7fnxarogrbh.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518615/carcrew/produtos/yec3lsuo9ngnptrxcwmt.jpg"
+    ],
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": false
+  },
+  {
+    "id": 45,
+    "nome": "Amortecedor Off Road",
+    "descricao": "Amortecedor Off Road para suspensão a ar",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518617/carcrew/produtos/mgja0gvqkodt9papmagd.jpg",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518620/carcrew/produtos/pavbzctbgixtcnjhihrr.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518622/carcrew/produtos/rzt4cmwexsaplsfe5agw.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518624/carcrew/produtos/lpjrlshdtnnatm2t7ola.jpg"
+    ],
+    "category": "amortecedores",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 46,
+    "nome": "Bocal Tanque — Mangueira e Conexões",
+    "descricao": "",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518626/carcrew/produtos/engebaciubwupaxwjrjy.webp",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518628/carcrew/produtos/ddkru3gczflrggtozaal.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518630/carcrew/produtos/pcv6zzdouwztnhhnngyo.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518633/carcrew/produtos/obdofj5bwmgc8kyszpai.webp"
+    ],
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
   }
 ]
