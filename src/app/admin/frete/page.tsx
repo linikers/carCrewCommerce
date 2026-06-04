@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -25,7 +25,7 @@ import {
 import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 
-export default function AdminFrete() {
+function AdminFreteContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -362,5 +362,13 @@ export default function AdminFrete() {
         </Container>
       </AdminLayout>
     </>
+  );
+}
+
+export default function AdminFrete() {
+  return (
+    <Suspense fallback={<CircularProgress />}>
+      <AdminFreteContent />
+    </Suspense>
   );
 }
