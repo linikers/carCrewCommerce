@@ -24,6 +24,7 @@ import {
   Logout,
   Close,
   Store,
+  LocalShipping,
   ViewCarousel,
 } from "@mui/icons-material";
 
@@ -32,7 +33,8 @@ const menuItems = [
   { label: "Produtos", icon: <Inventory2 />, path: "/admin/produtos" },
   { label: "Categorias", icon: <Category />, path: "/admin/categorias" },
   { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners" },
-  { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos", disabled: true, tag: "Em breve" },
+  { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
+  { label: "Frete", icon: <LocalShipping />, path: "/admin/frete" },
   { label: "Clientes", icon: <People />, path: "/admin/clientes", disabled: true, tag: "Em breve" },
 ];
 

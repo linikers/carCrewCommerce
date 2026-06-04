@@ -36,7 +36,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 4,
@@ -238,7 +238,7 @@
       "Chevrolet Corsa",
       "Chevrolet Celta"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 19,
@@ -254,7 +254,7 @@
       "VW Santana",
       "VW Parati"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 20,
@@ -269,7 +269,7 @@
       "VW Saveiro G5-G8",
       "VW Golf Mk4"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 21,
@@ -285,7 +285,7 @@
       "Audi A3",
       "VW Bora"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 22,
@@ -299,7 +299,7 @@
       "VW Polo",
       "VW Fox"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 23,
@@ -315,7 +315,7 @@
       "Audi A3",
       "VW Bora"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 24,
@@ -329,7 +329,7 @@
       "Honda Civic G9",
       "Honda New Civic"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 25,
@@ -345,7 +345,7 @@
       "VW Voyage G1",
       "VW Santana"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 26,
@@ -360,7 +360,7 @@
       "VW Gol 2010+",
       "VW Voyage 2010+"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 27,
@@ -379,7 +379,7 @@
       "Chevrolet Corsa",
       "Chevrolet Celta"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 28,
@@ -393,7 +393,7 @@
       "Honda Civic G9",
       "Honda New Civic"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 29,
@@ -406,7 +406,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 30,
@@ -419,7 +419,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 31,
@@ -432,7 +432,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 32,
@@ -445,7 +445,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 33,
@@ -458,7 +458,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 34,
@@ -471,7 +471,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 35,
@@ -484,7 +484,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 36,
@@ -497,7 +497,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 37,
@@ -510,7 +510,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 38,
@@ -523,7 +523,7 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 39,
@@ -537,7 +537,7 @@
       "VW Polo",
       "VW Fox"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 40,
@@ -553,7 +553,7 @@
       "VW Voyage",
       "VW Santana"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 41,
@@ -569,7 +569,7 @@
       "VW Voyage",
       "VW Santana"
     ],
-    "ativo": false
+    "ativo": true
   },
   {
     "id": 42,
@@ -582,6 +582,78 @@
     "veiculos": [
       "Universal"
     ],
-    "ativo": false
+    "ativo": true
+  },
+  {
+    "id": 43,
+    "nome": "Suporte Lixadeira",
+    "descricao": "Suporte de parede para lixadeira",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518596/carcrew/produtos/txvny66wjofh0wwap68x.jpg",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518598/carcrew/produtos/l483msycuwnm6xs5gdnu.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518601/carcrew/produtos/bhkasyyuknm9zidtjtii.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518604/carcrew/produtos/bzhc2sddrs02vbxrdlul.jpg"
+    ],
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 44,
+    "nome": "Churrasqueira AD",
+    "descricao": "Churrasqueira desmontável",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518607/carcrew/produtos/d6gvd5skg5mog9peygvx.jpg",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518609/carcrew/produtos/noysbsexepuhhskaedy2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518612/carcrew/produtos/lckkecviv7fnxarogrbh.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518615/carcrew/produtos/yec3lsuo9ngnptrxcwmt.jpg"
+    ],
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 45,
+    "nome": "Amortecedor Off Road",
+    "descricao": "Amortecedor Off Road para suspensão a ar",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518617/carcrew/produtos/mgja0gvqkodt9papmagd.jpg",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518620/carcrew/produtos/pavbzctbgixtcnjhihrr.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518622/carcrew/produtos/rzt4cmwexsaplsfe5agw.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518624/carcrew/produtos/lpjrlshdtnnatm2t7ola.jpg"
+    ],
+    "category": "amortecedores",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
+  },
+  {
+    "id": 46,
+    "nome": "Bocal Tanque — Mangueira e Conexões",
+    "descricao": "",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518626/carcrew/produtos/engebaciubwupaxwjrjy.webp",
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518628/carcrew/produtos/ddkru3gczflrggtozaal.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518630/carcrew/produtos/pcv6zzdouwztnhhnngyo.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1780518633/carcrew/produtos/obdofj5bwmgc8kyszpai.webp"
+    ],
+    "category": "componentes",
+    "parcelamento": 12,
+    "veiculos": [
+      "Universal"
+    ],
+    "ativo": true
   }
 ]

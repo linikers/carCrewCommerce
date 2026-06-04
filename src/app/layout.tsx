@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron } from "next/font/google";
 import MuiProvider from "@/lib/MuiProvider";
 import { CartProvider } from "@/lib/CartContext";
 import AuthProvider from "@/lib/AuthProvider";
@@ -14,6 +14,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
+  subsets: ["latin"],
+  weight: ["700", "800", "900"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
@@ -90,7 +96,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable}`}
     >
       <body>
         <AuthProvider>
