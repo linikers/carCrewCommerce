@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
     const payload = QrCodePix({
       version: "01",
       key: chavePix,
-      name: (nome || "CarCrew Suspensoes").substring(0, 25), // máx 25 caracteres
+      name: (nome || "Car Crew Garage").substring(0, 25), // máx 25 caracteres
       city: (cidade || "SaoPaulo").substring(0, 15), // máx 15 caracteres
       value: Number(amount),
-      message: "Pedido CarCrew",
+      message: "Pedido Car Crew Garage",
     });
 
     const pixPayload = payload.payload();

@@ -234,7 +234,7 @@ export default function Home() {
             {[
               { titulo: "Descontos", desc: "Aproveite nossas melhores ofertas" },
               { titulo: "Pague com Cartão", desc: "em até 12x sem juros" },
-              { titulo: "Segurança", desc: "Loja oficial CarCrew" },
+              { titulo: "Segurança", desc: "Loja oficial Car Crew Garage" },
             ].map((item) => (
               <Box
                 key={item.titulo}

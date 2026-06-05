@@ -36,7 +36,7 @@ export async function generateMetadata(props: {
   const title = produto.nome;
   const description = produto.descricao
     ? produto.descricao.substring(0, 160)
-    : "Peça para suspensão automotiva — CarCrew Suspensões";
+    : "Peça para suspensão automotiva — Car Crew Garage";
 
   return {
     title,
@@ -101,7 +101,7 @@ export default async function ProdutoPage(props: {
     sku: String(produto.id),
     brand: {
       "@type": "Brand",
-      name: "CarCrew",
+      name: "Car Crew Garage",
     },
     url: productUrl,
     offers: {
@@ -117,7 +117,7 @@ export default async function ProdutoPage(props: {
       ).toISOString().split("T")[0],
       seller: {
         "@type": "Organization",
-        name: "CarCrew Suspensões",
+        name: "Car Crew Garage",
       },
     },
   };

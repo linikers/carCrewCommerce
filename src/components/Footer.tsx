@@ -41,7 +41,7 @@ export default function Footer() {
                 mb: 1,
               }}
             >
-              CarCrew Suspensões
+              Car Crew Garage
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 2 }}>
               Especialistas em peças para suspensão automotiva.
@@ -181,7 +181,7 @@ export default function Footer() {
 
       <Box sx={{ py: 3, textAlign: "center" }}>
         <Typography variant="body2" sx={{ color: "#777777" }}>
-          © {new Date().getFullYear()} CarCrew Suspensões. Todos os direitos
+          © {new Date().getFullYear()} Car Crew Garage. Todos os direitos
           reservados.
         </Typography>
       </Box>

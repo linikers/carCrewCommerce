@@ -23,7 +23,7 @@ const orbitron = Orbitron({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
-const storeName = "CarCrew Suspensões";
+const storeName = "Car Crew Garage";
 const storeDescription =
   "Loja especializada em peças para suspensão automotiva. Amortecedores, molas, calços, ponta de eixo, bolsa de ar e muito mais. Entrega para todo Brasil.";
 
@@ -44,10 +44,11 @@ export const metadata: Metadata = {
     "calço antirruído",
     "ponta de eixo",
     "bolsa de ar",
-    "car crew suspensões",
+    "car crew garage",
+    "carcrew suspensões",
     "peças suspensão maringá",
   ],
-  authors: [{ name: "CarCrew Suspensões" }],
+  authors: [{ name: storeName }],
   manifest: "/manifest.json",
   openGraph: {
     type: "website",
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "CarCrew Suspensões",
+        alt: storeName,
       },
     ],
   },
@@ -115,7 +116,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Store",
-              name: "CarCrew Suspensões",
+              name: storeName,
               image: `${siteUrl}/og-image.jpg`,
               "@id": siteUrl,
               url: siteUrl,
