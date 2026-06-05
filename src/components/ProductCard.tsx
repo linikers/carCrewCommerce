@@ -45,10 +45,12 @@ export default function ProductCard({
       onClick={() => router.push(`/produto/${produto.id}`)}
     >
       {/* Imagem */}
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: "relative", aspectRatio: "1/1" }}>
         <CardMedia
           component="img"
           height="200"
+          width="200"
+          loading="lazy"
           image={
             isCloudinaryUrl(produto.imgUrl)
               ? thumbUrl(extractPublicId(produto.imgUrl))

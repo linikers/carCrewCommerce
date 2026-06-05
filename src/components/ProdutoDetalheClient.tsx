@@ -130,10 +130,12 @@ export default function ProdutoDetalheClient({
                   minHeight: 350,
                   border: "1px solid #eee",
                   position: "relative",
+                  aspectRatio: "1/1",
                 }}
               >
                 <Box
                   component="img"
+                  fetchPriority="high"
                   src={
                     isCloudinaryUrl(allImages[selectedImg])
                       ? detailUrl(extractPublicId(allImages[selectedImg]))
@@ -174,6 +176,7 @@ export default function ProdutoDetalheClient({
                     >
                       <Box
                         component="img"
+                        loading="lazy"
                         src={
                           isCloudinaryUrl(url)
                             ? thumbUrl(extractPublicId(url))
@@ -417,8 +420,15 @@ function ProductCardInline({ produto }: { produto: Produto }) {
     >
       <Box
         component="img"
-        src={produto.imgUrl}
+        src={
+          isCloudinaryUrl(produto.imgUrl)
+            ? thumbUrl(extractPublicId(produto.imgUrl))
+            : produto.imgUrl
+        }
         alt={produto.nome}
+        loading="lazy"
+        width="300"
+        height="150"
         sx={{
           width: "100%",
           height: 150,
@@ -427,6 +437,7 @@ function ProductCardInline({ produto }: { produto: Produto }) {
           borderRadius: 2,
           mb: 1,
           border: "1px solid #eee",
+          aspectRatio: "2/1",
         }}
       />
       <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>

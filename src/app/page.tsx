@@ -149,6 +149,7 @@ export default function Home() {
         >
           <Box
             component="img"
+            fetchPriority="high"
             src={isMobile ? banners[bannerIndex]?.imgMobile : banners[bannerIndex]?.imgDesktop}
             alt={banners[bannerIndex]?.titulo}
             sx={{
