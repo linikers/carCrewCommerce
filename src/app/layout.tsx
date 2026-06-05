@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     template: `%s | ${storeName}`,
   },
   description: storeDescription,
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "suspensão automotiva",
     "amortecedores",

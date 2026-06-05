@@ -22,6 +22,7 @@
     "@prisma/client": "^7.8.0",
     "@serwist/next": "^9.5.11",
     "@serwist/sw": "^9.5.11",
+    "cloudinary": "^2.10.0",
     "next": "16.2.6",
     "next-auth": "^4.24.14",
     "pg": "^8.21.0",
