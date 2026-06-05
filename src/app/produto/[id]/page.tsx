@@ -33,7 +33,7 @@ export async function generateMetadata(props: {
   if (!produto) return {};
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
-  const title = `${produto.nome} | CarCrew Suspensões`;
+  const title = produto.nome;
   const description = produto.descricao
     ? produto.descricao.substring(0, 160)
     : "Peça para suspensão automotiva — CarCrew Suspensões";
