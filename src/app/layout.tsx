@@ -138,6 +138,7 @@ export default function RootLayout({
                 { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "11:00" },
               ],
               sameAs: [
+                "https://share.google/iPKvtaL8rfQXonZW1",
                 "https://www.instagram.com/carcrewgarage_/",
                 "https://www.facebook.com/CarCrewG",
               ],
