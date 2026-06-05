@@ -51,7 +51,7 @@ export async function generateMetadata(props: {
       type: "website",
       images: [
         {
-          url: `${siteUrl}${produto.imgUrl?.startsWith("http") ? "" : ""}${produto.imgUrl || "/og-image.jpg"}`,
+          url: produto.imgUrl || `${siteUrl}/og-image.jpg`,
           width: 800,
           height: 800,
           alt: produto.nome,
