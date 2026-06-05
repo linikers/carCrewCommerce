@@ -104,8 +104,80 @@ export default function ProdutoDetalhe() {
     (p) => p.category === produto.category && p.id !== produto.id
   ).slice(0, 3);
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
+  const productUrl = `${siteUrl}/produto/${produto.id}`;
+  const productImage = produto.imgUrl || `${siteUrl}/og-image.jpg`;
+
+  // Product Structured Data
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: produto.nome,
+    description: produto.descricao,
+    image: productImage,
+    sku: String(produto.id),
+    brand: {
+      "@type": "Brand",
+      name: "CarCrew",
+    },
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: "BRL",
+      price: produto.preco > 0 ? produto.preco.toFixed(2) : "0",
+      availability: produto.preco > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/InStoreOnly",
+      seller: {
+        "@type": "Organization",
+        name: "CarCrew Suspensões",
+      },
+    },
+  };
+
+  // BreadcrumbList Structured Data
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: siteUrl,
+      },
+      ...(categoria
+        ? [
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: categoria.nome,
+            },
+          ]
+        : []),
+      {
+        "@type": "ListItem",
+        position: categoria ? 3 : 2,
+        name: produto.nome,
+      },
+    ],
+  };
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <>
+      {/* Product Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+
+      {/* BreadcrumbList Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
 
       <Container maxWidth="lg" sx={{ mt: 3, mb: 6, flex: 1 }}>
@@ -417,6 +489,7 @@ export default function ProdutoDetalhe() {
 
       <Footer />
     </Box>
+  </>
   );
 }
 
