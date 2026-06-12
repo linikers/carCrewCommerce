@@ -202,7 +202,7 @@ export default function Header({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: 0,
+                gap: { xs: 0.5, md: 1 },
               }}
             >
               {categorias.map((cat) => (
@@ -309,6 +309,7 @@ export default function Header({
           <List>
             <ListItemButton
               onClick={() => setCategoriesOpen(!categoriesOpen)}
+              sx={{ mb: 0.5 }}
             >
               <ListItemIcon>
                 <MenuIcon />
@@ -348,6 +349,7 @@ export default function Header({
                 router.push("/conta");
                 setMobileMenuOpen(false);
               }}
+              sx={{ mb: 0.5 }}
             >
               <ListItemIcon>
                 <Person />
@@ -360,6 +362,7 @@ export default function Header({
                 router.push("https://wa.me/5544998133182");
                 setMobileMenuOpen(false);
               }}
+              sx={{ mb: 0.5 }}
             >
               <ListItemIcon>
                 <WhatsApp />

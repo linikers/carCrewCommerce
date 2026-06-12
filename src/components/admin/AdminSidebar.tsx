@@ -107,7 +107,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             disabled={item.disabled}
             sx={{
               borderRadius: 2,
-              mb: 0.5,
+              mb: 1,
               color: "#ccc",
               "&.Mui-selected": {
                 backgroundColor: "rgba(230,81,0,0.15)",
