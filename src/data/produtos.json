@@ -231,14 +231,19 @@
     "nome": "Ponta de Eixo Corsa/Celta Deslocada 2 — 6 Furos",
     "descricao": "Ponta de eixo Corsa/Celta Deslocada 2 com 6 furos. Chapa em aço carbono 1020 cortada à laser, espessura 10mm. Par de pontas de eixo. Pronta entrega. Recomendamos instalação por profissional.",
     "preco": 0,
-    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288464/carcrew/produtos/ponta-eixo/ponta-eixo-celta-1.png",
     "category": "pontas-de-eixo",
     "parcelamento": 12,
     "veiculos": [
       "Chevrolet Corsa",
       "Chevrolet Celta"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288464/carcrew/produtos/ponta-eixo/ponta-eixo-celta-1.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288465/carcrew/produtos/ponta-eixo/ponta-eixo-celta-2.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288466/carcrew/produtos/ponta-eixo/ponta-eixo-celta-3.jpg"
+    ]
   },
   {
     "id": 19,
