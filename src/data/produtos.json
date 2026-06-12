@@ -695,5 +695,45 @@
       "Universal"
     ],
     "ativo": true
+  },
+  {
+    "id": 47,
+    "nome": "Ponta de Eixo Montana/Astra/Vectra Soldar",
+    "descricao": "Ponta de eixo Montana/Astra/Vectra. Chapa em aço carbono 1020 cortada à laser, espessura 10mm. Par de pontas de eixo. Pronta entrega. Recomendamos instalação por profissional.",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290825/carcrew/produtos/ponta-eixo/ponta-eixo-montana-1.jpg",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "Chevrolet Montana",
+      "Chevrolet Astra",
+      "Chevrolet Vectra"
+    ],
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290825/carcrew/produtos/ponta-eixo/ponta-eixo-montana-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290828/carcrew/produtos/ponta-eixo/ponta-eixo-montana-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290829/carcrew/produtos/ponta-eixo/ponta-eixo-montana-3.jpg"
+    ]
+  },
+  {
+    "id": 48,
+    "nome": "Ponta de Eixo Gol G1-G4 a10 com Reforço",
+    "descricao": "Ponta de Gol G1 G2 G3 G4 a10\n\nIndicado para Rodas 17 acima\nNECESSÁRIO SOLDAR\n\nChapa em aço carbono 1020 cortada à laser\nEspessura 10mm\n\nCom reforço\n\nConteúdo da embalagem:\n• 01 Par de Ponta de Eixo de soldar 4 furos\n• 01 Par de suportes para reforçar atrás da ponta\n• Serve para veiculos com freio traseiro a tambor e para freio a disco.\n\n*EM CASO DE DÚVIDAS, ANTES DA AQUISIÇÃO DO PRODUTO, FAVOR NOS CONSULTAR, PARA CONFIRMARMOS A COMPATIBILIDADE COM SEU VEÍCULO*\n\n*PRONTA ENTREGA*\n\n*A GARANTIA DAS PEÇAS NÃO COBRE POR DANOS OU PROBLEMAS RESULTANTES DE MÁ INSTALAÇÃO E/OU USO INDEVIDO*",
+    "preco": 0,
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290834/carcrew/produtos/ponta-eixo/ponta-eixo-gol-g1g4-reforco-2.webp",
+    "category": "pontas-de-eixo",
+    "parcelamento": 12,
+    "veiculos": [
+      "VW Gol G1-G4",
+      "VW Voyage G1-G4",
+      "VW Saveiro G1-G4"
+    ],
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290834/carcrew/produtos/ponta-eixo/ponta-eixo-gol-g1g4-reforco-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290835/carcrew/produtos/ponta-eixo/ponta-eixo-gol-g1g4-reforco-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781290836/carcrew/produtos/ponta-eixo/ponta-eixo-gol-g1g4-reforco-wa.jpg"
+    ]
   }
 ]
