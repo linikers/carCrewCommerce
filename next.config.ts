@@ -3,6 +3,9 @@ import withSerwistInit from "@serwist/next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
+  // Configuração vazia do Turbopack - necessária porque Serwist adiciona
+  // config webpack, e Next.js 16 exige config explícita do Turbopack
+  turbopack: {},
   // CORS headers for API routes (Mercado Livre integration)
   async headers() {
     return [
