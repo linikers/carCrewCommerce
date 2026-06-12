@@ -17,9 +17,9 @@ const nextConfig: NextConfig = {
           { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
         ],
       },
-      // Cache headers for static assets (1 year)
+      // Cache headers for favicon assets (1 year)
       {
-        source: "/icons/:path*",
+        source: "/favicon/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
