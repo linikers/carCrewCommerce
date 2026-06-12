@@ -360,23 +360,30 @@
   {
     "id": 24,
     "nome": "Calço p/ Bolsa — New Civic (Coxim TR4/Corolla)",
-    "descricao": "Calço adaptador específico para New Civic e Civic G9 com suspensão a ar. Permite usar coxim de Pajero TR4 e Corolla, eliminando barulhos de rangidos. Fabricado em alumínio usinado, muito resistente.",
+    "descricao": "Calço adaptador específico para New Civic e Civic G9 com suspensão a ar. Permite usar coxim de Pajero TR4 e Corolla, eliminando barulhos de rangidos. Fabricado em alumínio usinado, muito resistente. 01 Par de Calços para Bolsa de Suspensão (Lado Esquerdo e Direito). Produto com Nota Fiscal e Garantia.",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293059/carcrew/produtos/calcos/calco-civic-dl.webp",
     "category": "calcos-antirruido",
     "parcelamento": 12,
     "veiculos": [
       "Honda Civic G9",
       "Honda New Civic"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293059/carcrew/produtos/calcos/calco-civic-dl.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293060/carcrew/produtos/calcos/calco-civic-dl7.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293105/carcrew/produtos/calcos/calco-civic-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293105/carcrew/produtos/calcos/calco-civic-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293106/carcrew/produtos/calcos/calco-civic-3.jpg"
+    ]
   },
   {
     "id": 25,
     "nome": "Calço Antirruído Gol/Saveiro/Voyage G1-G4",
-    "descricao": "Calço para bolsa suspensão a ar. Alumínio usinado. Cria distância entre bolsa e rolamento, evitando que a bolsa gire e corte mangueiras. Elimina barulhos de má adaptação. Compatível com Saveiro G1-G4, Gol G1-G4, Voyage G1, Santana.",
+    "descricao": "Calço para bolsa suspensão a ar Car Crew Garage. Esse calço deixa a distância necessária entre a bolsa de ar e rolamento (batente superior), assim evitando que a bolsa gire e corte a mangueiras. Produto fabricado em alumínio usinado. Muito resistente.\n\nConteúdo da embalagem:\n• 02 calços antirruído\n\nAplicável:\n• Saveiro G1 a G4\n• Gol G1 a G4\n• Voyage G1\n• Santana",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293107/carcrew/produtos/calcos/calco-g1g4-dl1.webp",
     "category": "calcos-antirruido",
     "parcelamento": 12,
     "veiculos": [
@@ -385,14 +392,21 @@
       "VW Voyage G1",
       "VW Santana"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293107/carcrew/produtos/calcos/calco-g1g4-dl1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293107/carcrew/produtos/calcos/calco-g1g4-dl2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293108/carcrew/produtos/calcos/calco-g1g4-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293108/carcrew/produtos/calcos/calco-g1g4-b93.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293109/carcrew/produtos/calcos/calco-g1g4-dfbd.jpg"
+    ]
   },
   {
     "id": 26,
     "nome": "Calço Antirruído Gol/Saveiro/Voyage 2010+",
-    "descricao": "Calço para bolsa suspensão a ar fabricado em tecnil reforçado. Cria distância entre bolsa e rolamento, evitando que a bolsa gire e corte mangueiras. Elimina barulhos de rangidos. O par acompanha 2 calços.",
+    "descricao": "Calço para bolsa suspensão a ar Car Crew Garage. Esse calço deixa a distância necessária entre a bolsa de ar e rolamento (batente superior), assim evitando que a bolsa gire e corte a mangueiras. Produto fabricado em tecnil reforçado.\n\nConteúdo da embalagem:\n• 02 calços antirruído\n\nAplicável:\n• Saveiro 2010 a 2025\n• Gol 2010 a 2023\n• Voyage 2010 a 2023\n• Nivus 2020 a 2025\n• T-Cross 2019 a 2025\n• Virtus 2018 a 2025\n• Polo 2017 a 2025\n• VW UP todos",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293110/carcrew/produtos/calcos/calco-g5g8-1.jpg",
     "category": "calcos-antirruido",
     "parcelamento": 12,
     "veiculos": [
@@ -400,14 +414,19 @@
       "VW Gol 2010+",
       "VW Voyage 2010+"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293110/carcrew/produtos/calcos/calco-g5g8-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293110/carcrew/produtos/calcos/calco-g5g8-89f4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293111/carcrew/produtos/calcos/calco-g5g8-8d1f.jpg"
+    ]
   },
   {
     "id": 27,
     "nome": "Calço Antirruído GM — Corsa/Celta/Onix/Montana/Astra",
-    "descricao": "Calço para bolsa suspensão a ar Car Crew Garage. Alumínio usinado muito resistente. Cria distância necessária entre bolsa e rolamento, evitando que a bolsa gire e corte mangueiras. Compatível com Montana, Astra, Vectra, Onix, Prisma, Corsa, Celta.",
+    "descricao": "Calço para bolsa suspensão a Ar Car Crew Garage. Esse calço deixa a distância necessária entre a bolsa de ar e rolamento (batente superior), assim evitando que a bolsa gire e corte a mangueiras. Fabricado em alumínio usinado, muito resistente.\n\nItens inclusos:\n• 02 Calços usinados em alumínio\n\nAplicável:\n• Montana (antiga e nova)\n• Astra\n• Vectra\n• Vectra GTX\n• Onix\n• Prisma\n• Celta\n• Corsa",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293112/carcrew/produtos/calcos/calco-gm-4a74.png",
     "category": "calcos-antirruido",
     "parcelamento": 12,
     "veiculos": [
@@ -419,112 +438,172 @@
       "Chevrolet Corsa",
       "Chevrolet Celta"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293112/carcrew/produtos/calcos/calco-gm-4a74.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293115/carcrew/produtos/calcos/calco-gm-4b3c.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293116/carcrew/produtos/calcos/calco-gm-556e.png"
+    ]
   },
   {
     "id": 28,
     "nome": "Kit Anti-Ruído New Civic G9 — Bolsas + Calços + Coxins",
-    "descricao": "Kit dos sonhos para Civic com suspensão a ar! Resolve problemas crônicos de rangidos do coxim original quando instalado bolsa de ar. Itens: 2 bolsas de ar haste 20mm cônicas, 2 calços de bolsa usinados em alumínio, 2 coxins superiores anti-ruído. Plug and Play.",
+    "descricao": "Kit anti ruído para New Civic e Civic G9. Projetado especificamente para resolver os problemas crônicos dos rangidos e barulho do coxim original quando instalado bolsa de ar. Peças Plug and Play.\n\nITENS INCLUSOS:\n• 02 Bolsas de ar Haste 20mm Cônica\n• 02 Calços de bolsa usinado em alumínio\n• 02 Coxims superiores anti ruído\n\nINFORMAÇÕES TÉCNICAS:\n• Base usinada em CNC\n• Banho de Zinco\n• Tinta especial\n• Sob medida\n• Prensagem Hidráulica\n• Base de Alumínio\n• Mangote reforçado\n• Mais Conforto\n• Altíssima qualidade\n\n* Garantia de 3 meses\n* Recomendamos instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293117/carcrew/produtos/calcos/calco-kit-1.webp",
     "category": "kits",
     "parcelamento": 12,
     "veiculos": [
       "Honda Civic G9",
       "Honda New Civic"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293117/carcrew/produtos/calcos/calco-kit-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293118/carcrew/produtos/calcos/calco-kit-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293119/carcrew/produtos/calcos/calco-kit-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293119/carcrew/produtos/calcos/calco-kit-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293120/carcrew/produtos/calcos/calco-kit-5.webp"
+    ]
   },
   {
     "id": 29,
     "nome": "Kit Bolsa Flexível — Suspensão a Ar",
-    "descricao": "Kit bolsa flexível para suspensão a ar. Solução versátil para projetos que exigem bolsa flexível. Consulte para mais informações sobre compatibilidade.",
+    "descricao": "Kit Bolsa Flexível para Suspensão a Ar. Bolsa base cônica de alta qualidade, ideal para projetos de suspensão pneumática.\n\nProduto novo de extrema qualidade. Experiência de mais de 10 anos de fabricação de bolsas de ar.\n\nITENS INCLUSOS:\n• 01 bolsa flexível\n\nINFORMAÇÕES TÉCNICAS:\n• Conexão UNIVERSAL com rosca 1/8 padrão\n• Base usinada em CNC\n• Banho de Zinco\n• Tinta especial\n• Sob medida\n• Prensagem Hidráulica\n• Base de Alumínio\n• Mangote reforçado\n• Mais Conforto\n• Altíssima qualidade\n\n* Garantia de 3 meses\n* Imagens reais do produto\n* Recomendamos instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293383/carcrew/produtos/kits/kit-bolsa-flexivel-1.jpg",
     "category": "kits",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293383/carcrew/produtos/kits/kit-bolsa-flexivel-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293383/carcrew/produtos/kits/kit-bolsa-flexivel-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293384/carcrew/produtos/kits/kit-bolsa-flexivel-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293385/carcrew/produtos/kits/kit-bolsa-flexivel-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293385/carcrew/produtos/kits/kit-bolsa-flexivel-5.jpg"
+    ]
   },
   {
     "id": 30,
     "nome": "Bucha Reduzida do Eixo Traseiro p/ Carro Rebaixado",
-    "descricao": "Bucha reduzida do eixo traseiro desenvolvida para veículos com suspensão rebaixada. Sob medida para não precisar cortar a estrutura do veículo. Redução da bucha permite mais curso e menos esforço, evitando danos e melhorando o comportamento do carro baixo.",
+    "descricao": "BUCHA REDUZIDA DO EIXO TRASEIRO – IDEAL PARA CARRO REBAIXADO\n\nA bucha reduzida do eixo traseiro foi desenvolvida para veículos com suspensão rebaixada, feito sob medida para não precisar cortar a estrutura do veículo e zerar o carro nas laterais do filete.\n\nCom a redução da bucha, o eixo trabalha com mais curso e menos esforço, evitando danos e melhorando o comportamento do carro baixo.\n\nBENEFÍCIOS:\n• Ideal para carros rebaixados\n• Melhora o curso da suspensão traseira\n• Evita travamento do eixo\n• Mais conforto e estabilidade\n• Produto reforçado e durável\n\nAPLICAÇÃO:\n• Gol G5, G6, G7, G8\n• Saveiro G5, G6, G7, G8\n• Voyage G5, G6, G7, G8\n• Fox, Golf, Polo, Spacefox\n\nCONTEÚDO DO KIT:\n• 1 Kit com par de buchas de suspensão de alto desempenho em poliuretano com alojamento e tubo central\n\n* Necessário soldagem no eixo traseiro\n* Instalação por profissional especializado\n* Pronta entrega!",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293566/carcrew/produtos/componentes/bucha-eixo-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293566/carcrew/produtos/componentes/bucha-eixo-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293567/carcrew/produtos/componentes/bucha-eixo-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293568/carcrew/produtos/componentes/bucha-eixo-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293569/carcrew/produtos/componentes/bucha-eixo-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293570/carcrew/produtos/componentes/bucha-eixo-5.jpg"
+    ]
   },
   {
     "id": 31,
     "nome": "Central de Controle 4 Canais c/ Controle Remoto",
-    "descricao": "Central de controle 4 canais compatível com qualquer marca de bloco ou válvulas. Funciona em 12V e 24V. Acompanha controle remoto longa distância full com 8 botões e chicote para ligação. Alcance de até 50 metros.",
+    "descricao": "Central de Controle 4 Canais compatível com qualquer marca de bloco ou válvulas. Ideal para projetos personalizados de suspensão a ar.\n\nCARACTERÍSTICAS:\n• Funciona em 12V e 24V\n• Compatível com qualquer veículo\n• Compatível com qualquer marca de válvula ou bloco\n• Alcance do controle: até 50 metros\n• Controle remoto com 8 botões longa distância\n• Sistema de codificação: Code Learning\n• Memória não volátil (não perde configuração ao desligar)\n• Corrente máxima por canal: 2A\n• Bateria do controle: A23\n\nACOMPANHA:\n• 1 Central de controle\n• 1 Controle remoto longa distância\n• 1 Chicote para ligação\n\n* Garantia de 3 meses\n* Instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293570/carcrew/produtos/componentes/central-4-canais-1.webp",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293570/carcrew/produtos/componentes/central-4-canais-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293571/carcrew/produtos/componentes/central-4-canais-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293572/carcrew/produtos/componentes/central-4-canais-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293572/carcrew/produtos/componentes/central-4-canais-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293573/carcrew/produtos/componentes/central-4-canais-5.webp"
+    ]
   },
   {
     "id": 32,
     "nome": "Pressostato Cebolinha Car Crew 120/160 PSI",
-    "descricao": "Pressostato Cebolinha Car Crew Original, responsável por controlar o acionamento do compressor no sistema de suspensão a ar. Garante que o compressor ligue e desligue automaticamente, evitando sobrecarga e aumentando a vida útil do sistema. 120/160 PSI.",
+    "descricao": "Pressostato Cebolinha Car Crew Original 120/160 PSI – Suspensão a Ar\n\nO Pressostato Cebolinha Car Crew Original é a peça responsável por controlar o acionamento do compressor no sistema de suspensão a ar. Ele garante que o compressor ligue e desligue automaticamente, evitando sobrecarga e aumentando a vida útil do equipamento.\n\nESPECIFICAÇÕES TÉCNICAS:\n• Marca: Car Crew – Original\n• Pressão de acionamento: Liga em 120 PSI / Desliga em 160 PSI\n• Rosca: 1/4 NPT\n• Compatível com compressores de 12V e 24V\n\nCONTEÚDO DA EMBALAGEM:\n• 1 Pressostato Cebolinha Car Crew 120/160 PSI\n\n* Produto original com nota fiscal\n* Garantia de 30 dias\n* Recomendamos instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293983/carcrew/produtos/componentes/pressostato-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293983/carcrew/produtos/componentes/pressostato-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293984/carcrew/produtos/componentes/pressostato-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293984/carcrew/produtos/componentes/pressostato-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293985/carcrew/produtos/componentes/pressostato-4.jpg"
+    ]
   },
   {
     "id": 33,
     "nome": "Cilindro Alumínio 11,6L Cromado p/ Suspensão a Ar",
-    "descricao": "Cilindro Premium em alumínio com suporte de fixação. Capacidade 11,6 litros, tampas billet usinadas, acabamento cromado. Comprimento 60cm, diâmetro 15,5cm, 4 saídas 1/4 NPT. Peso 3,5kg. Imagens reais do produto.",
+    "descricao": "CILINDRO DE ALUMÍNIO COM SUPORTE DE FIXAÇÃO 11,6L\n\nCilindro Premium ideal para projetos de alto padrão. Solda e acabamento de alto nível!\n\nESPECIFICAÇÃO TÉCNICA:\n• Capacidade 11,6 litros\n• Tampas Billit Usinadas\n• Acabamento com solda\n• Comprimento 60cm\n• Diâmetro 15,5cm\n• 4 Saídas de 1/4 NPT\n• Peso: 3,5kg\n• Cor Cromado\n• Cilindro em Alumínio com suporte de fixação\n\n* Garantia de 90 dias\n* Valor Unitário\n* Imagens reais do produto",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293986/carcrew/produtos/componentes/cilindro-11l-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293986/carcrew/produtos/componentes/cilindro-11l-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293986/carcrew/produtos/componentes/cilindro-11l-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293987/carcrew/produtos/componentes/cilindro-11l-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293987/carcrew/produtos/componentes/cilindro-11l-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293988/carcrew/produtos/componentes/cilindro-11l-5.jpg"
+    ]
   },
   {
     "id": 34,
     "nome": "Reservatório Slim — Suspensão a Ar",
-    "descricao": "Reservatório slim para suspensão a ar. Design compacto para instalação em espaços reduzidos. Ideal para projetos que exigem economia de espaço sem perder capacidade de armazenamento de ar.",
+    "descricao": "Reservatório Slim para Suspensão a Ar. Design compacto e elegante, ideal para projetos que exigem economia de espaço sem abrir mão da capacidade de armazenamento de ar. Produto de alta qualidade com acabamento premium.",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293989/carcrew/produtos/componentes/res-slim-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293989/carcrew/produtos/componentes/res-slim-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293990/carcrew/produtos/componentes/res-slim-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293990/carcrew/produtos/componentes/res-slim-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293991/carcrew/produtos/componentes/res-slim-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293992/carcrew/produtos/componentes/res-slim-5.jpg"
+    ]
   },
   {
     "id": 35,
     "nome": "Reservatório TF Imports — Suspensão a Ar",
-    "descricao": "Reservatório TF Imports para suspensão a ar. Componente de qualidade para armazenamento de ar comprimido no sistema pneumático. Consulte para informações técnicas completas.",
+    "descricao": "Reservatório TF Imports para Suspensão a Ar. Reservatório de alta qualidade, ideal para sistemas de suspensão pneumática. Resistente e durável, com acabamento premium. Perfeito para projetos personalizados.",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293992/carcrew/produtos/componentes/res-tf-1.webp",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293992/carcrew/produtos/componentes/res-tf-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293993/carcrew/produtos/componentes/res-tf-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293994/carcrew/produtos/componentes/res-tf-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293995/carcrew/produtos/componentes/res-tf-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293996/carcrew/produtos/componentes/res-tf-5.png"
+    ]
   },
   {
     "id": 36,
@@ -542,49 +621,72 @@
   {
     "id": 37,
     "nome": "Conexões Flexíveis — Suspensão a Ar",
-    "descricao": "Conexões flexíveis para sistema de suspensão a ar. Mangueiras e conexões de alta qualidade para instalação segura e durável do sistema pneumático.",
+    "descricao": "Flexível para bolsa de suspensão a ar. O uso do flexível na instalação da bolsa de ar é uma garantia de segurança, pois ele é muito mais reforçado que uma mangueira comum. Possui 2 camadas de borracha resistente entrelaçada com uma trama de linho garantindo resistência a pancadas, cortes, temperatura e etc.\n\nITENS INCLUSOS:\n• 01 Flexível com conexão 1/8 para bolsa de ar\n• 01 Conexão 1/8 para mangueira 08mm\n\nINFORMAÇÕES TÉCNICAS:\n• Comprimento 380mm\n• Altíssima qualidade\n• Já vai colado e pronto pra instalação\n\n* Garantia de 3 meses\n* Recomendamos instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293997/carcrew/produtos/componentes/conexoes-flexiveis-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293997/carcrew/produtos/componentes/conexoes-flexiveis-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293998/carcrew/produtos/componentes/conexoes-flexiveis-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293999/carcrew/produtos/componentes/conexoes-flexiveis-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293999/carcrew/produtos/componentes/conexoes-flexiveis-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294000/carcrew/produtos/componentes/conexoes-flexiveis-5.jpg"
+    ]
   },
   {
     "id": 38,
     "nome": "Regulador Barra — Rosca Reguladora Direção",
-    "descricao": "Regulador de barra para direção. Rosca reguladora para ajuste fino da geometria da direção em veículos rebaixados. Componente essencial para alinhamento correto.",
+    "descricao": "Regulador de barra para direção. Rosca reguladora para ajuste fino da geometria da suspensão. Fabricado em material de alta resistência. Ideal para projetos de suspensão a ar, rosca ou fixa. Acompanha porcas e arruelas.",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294420/carcrew/produtos/componentes/regulador-barra-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294420/carcrew/produtos/componentes/regulador-barra-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294421/carcrew/produtos/componentes/regulador-barra-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294421/carcrew/produtos/componentes/regulador-barra-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294422/carcrew/produtos/componentes/regulador-barra-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294423/carcrew/produtos/componentes/regulador-barra-5.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294423/carcrew/produtos/componentes/regulador-barra-6.png"
+    ]
   },
   {
     "id": 39,
     "nome": "Par Coxim Anti-Ruído c/ Flange Polo/Fox",
-    "descricao": "Par de coxim anti-ruído com flange para suspensão a ar. Linha Premium Car Crew Fab. Substitui o sistema original eliminando estalos e ruídos metálicos. Garante rodar macio, máxima estabilidade e acabamento profissional. Compatível com Polo e Fox.",
+    "descricao": "Par de Coxim Anti-Ruído com Flange para Suspensão a Ar - Polo / Fox. Linha Premium Car Crew Fab. Desenvolvido para substituir o sistema original de fábrica, eliminando estalos e ruídos metálicos.\n\nCOMPATIBILIDADE:\n• Volkswagen Polo (2002 a 2017)\n• Volkswagen Fox (Todos)\n\nCONTEÚDO:\n• 02 Coxins de Alta Performance\n• 02 Flanges Exclusivas de Encaixe Perfeito\n\nDIFERENCIAIS:\n• Zero Barulho\n• Plug and Play\n• Estrutura Reforçada\n• Acabamento Premium\n\n* Garantia de 3 meses\n* Instalação por profissional qualificado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294424/carcrew/produtos/componentes/flange-coxim-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "VW Polo",
       "VW Fox"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294424/carcrew/produtos/componentes/flange-coxim-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294425/carcrew/produtos/componentes/flange-coxim-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294425/carcrew/produtos/componentes/flange-coxim-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294426/carcrew/produtos/componentes/flange-coxim-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294426/carcrew/produtos/componentes/flange-coxim-5.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294427/carcrew/produtos/componentes/flange-coxim-6.jpg"
+    ]
   },
   {
     "id": 40,
     "nome": "Terminal Alongado Direção N — VW Carros Rebaixados",
-    "descricao": "Terminal alongado para direção linha VW. Produto novo, não recondicionado. Corrige geometria da direção em carros rebaixados, garantindo mais estabilidade, segurança e vida útil. Evita desgaste irregular dos pneus. Ideal para suspensão fixa, rosca e a ar.",
+    "descricao": "Terminal Alongado para Direção – Linha VW (Carros Rebaixados) Modelo N. Produto NOVO, não recondicionado. Corrige a geometria da direção em carros rebaixados, garantindo mais estabilidade e segurança.\n\nBENEFÍCIOS:\n• Corrige ângulo da direção em carros rebaixados\n• Evita desgaste irregular dos pneus\n• Melhora dirigibilidade e estabilidade\n• Ideal para suspensão fixa, rosca e a ar\n\nCOMPATIBILIDADE:\n• Fox, Polo 2003-2014, Gol G5/G6/G7/G8, Golf, Saveiro, Bora, Fusca Novo, New Beetle\n\n* Produto reforçado para uso severo\n* Instalação por profissional recomendada",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294428/carcrew/produtos/componentes/terminal-n-1.webp",
     "category": "terminais",
     "parcelamento": 12,
     "veiculos": [
@@ -593,14 +695,22 @@
       "VW Voyage",
       "VW Santana"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294428/carcrew/produtos/componentes/terminal-n-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294428/carcrew/produtos/componentes/terminal-n-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294429/carcrew/produtos/componentes/terminal-n-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294430/carcrew/produtos/componentes/terminal-n-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294431/carcrew/produtos/componentes/terminal-n-5.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294432/carcrew/produtos/componentes/terminal-n-6.png"
+    ]
   },
   {
     "id": 41,
     "nome": "Terminal Alongado Direção R — VW Carros Rebaixados",
-    "descricao": "Terminal alongado para direção linha VW modelo R. Produto novo, não recondicionado. Corrige ângulo da direção em carros rebaixados. Evita desgaste irregular dos pneus. Melhora dirigibilidade e estabilidade. Ideal para suspensão fixa, rosca e a ar.",
+    "descricao": "Terminal Alongado para Direção – Linha VW (Carros Rebaixados) Modelo R. Corrige a geometria da direção em carros rebaixados, garantindo mais estabilidade, segurança e vida útil dos componentes.\n\nBENEFÍCIOS:\n• Corrige ângulo da direção em carros rebaixados\n• Evita desgaste irregular dos pneus\n• Melhora dirigibilidade e estabilidade\n• Ideal para suspensão fixa, rosca e a ar\n\nCOMPATIBILIDADE:\n• Fox, Polo 2003-2014, Gol G5/G6/G7/G8, Golf, Saveiro, Bora, Fusca Novo, New Beetle\n\n* Produto reforçado para uso severo\n* Envio rápido para todo o Brasil",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294433/carcrew/produtos/componentes/terminal-r-1.webp",
     "category": "terminais",
     "parcelamento": 12,
     "veiculos": [
@@ -609,20 +719,36 @@
       "VW Voyage",
       "VW Santana"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294433/carcrew/produtos/componentes/terminal-r-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294434/carcrew/produtos/componentes/terminal-r-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294434/carcrew/produtos/componentes/terminal-r-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294435/carcrew/produtos/componentes/terminal-r-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294435/carcrew/produtos/componentes/terminal-r-5.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294436/carcrew/produtos/componentes/terminal-r-6.png"
+    ]
   },
   {
     "id": 42,
     "nome": "Controle Bluetooth V2 + Central Car Crew — 3 Presets",
-    "descricao": "Controle Car Crew V2 com Bluetooth para precisão no acionamento da suspensão a ar. Acompanha central para integrar ao bloco. 3 presets de altura por temporização de pulso. Entrada para sensores de pressão. Mais comodidade e confiabilidade.",
+    "descricao": "Controle Car Crew V2 com Bluetooth para precisão no acionamento da suspensão a ar. Acompanha Central e chicote de alimentação. Integra ao seu bloco e sistema.\n\nFUNCIONALIDADES:\n• 3 Presets de altura por temporização de pulso\n• Entrada para sensores de posição (upgrade)\n• Permite integrar ao seu kit existente\n\nCONTEÚDO DA EMBALAGEM:\n• 1 Controle Bluetooth\n• 1 Central\n• 1 Chicote de alimentação\n\n* Valor Unitário\n* Garantia de 3 meses\n* Instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294437/carcrew/produtos/componentes/controle-bt-1.jpg",
     "category": "controles",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294437/carcrew/produtos/componentes/controle-bt-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294437/carcrew/produtos/componentes/controle-bt-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294438/carcrew/produtos/componentes/controle-bt-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294439/carcrew/produtos/componentes/controle-bt-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294439/carcrew/produtos/componentes/controle-bt-5.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294440/carcrew/produtos/componentes/controle-bt-6.png"
+    ]
   },
   {
     "id": 43,
