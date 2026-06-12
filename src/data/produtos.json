@@ -641,36 +641,52 @@
   {
     "id": 38,
     "nome": "Regulador Barra — Rosca Reguladora Direção",
-    "descricao": "Regulador de barra para direção. Rosca reguladora para ajuste fino da geometria da direção em veículos rebaixados. Componente essencial para alinhamento correto.",
+    "descricao": "Regulador de barra para direção. Rosca reguladora para ajuste fino da geometria da suspensão. Fabricado em material de alta resistência. Ideal para projetos de suspensão a ar, rosca ou fixa. Acompanha porcas e arruelas.",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294420/carcrew/produtos/componentes/regulador-barra-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294420/carcrew/produtos/componentes/regulador-barra-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294421/carcrew/produtos/componentes/regulador-barra-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294421/carcrew/produtos/componentes/regulador-barra-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294422/carcrew/produtos/componentes/regulador-barra-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294423/carcrew/produtos/componentes/regulador-barra-5.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294423/carcrew/produtos/componentes/regulador-barra-6.png"
+    ]
   },
   {
     "id": 39,
     "nome": "Par Coxim Anti-Ruído c/ Flange Polo/Fox",
-    "descricao": "Par de coxim anti-ruído com flange para suspensão a ar. Linha Premium Car Crew Fab. Substitui o sistema original eliminando estalos e ruídos metálicos. Garante rodar macio, máxima estabilidade e acabamento profissional. Compatível com Polo e Fox.",
+    "descricao": "Par de Coxim Anti-Ruído com Flange para Suspensão a Ar - Polo / Fox. Linha Premium Car Crew Fab. Desenvolvido para substituir o sistema original de fábrica, eliminando estalos e ruídos metálicos.\n\nCOMPATIBILIDADE:\n• Volkswagen Polo (2002 a 2017)\n• Volkswagen Fox (Todos)\n\nCONTEÚDO:\n• 02 Coxins de Alta Performance\n• 02 Flanges Exclusivas de Encaixe Perfeito\n\nDIFERENCIAIS:\n• Zero Barulho\n• Plug and Play\n• Estrutura Reforçada\n• Acabamento Premium\n\n* Garantia de 3 meses\n* Instalação por profissional qualificado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294424/carcrew/produtos/componentes/flange-coxim-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "VW Polo",
       "VW Fox"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294424/carcrew/produtos/componentes/flange-coxim-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294425/carcrew/produtos/componentes/flange-coxim-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294425/carcrew/produtos/componentes/flange-coxim-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294426/carcrew/produtos/componentes/flange-coxim-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294426/carcrew/produtos/componentes/flange-coxim-5.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294427/carcrew/produtos/componentes/flange-coxim-6.jpg"
+    ]
   },
   {
     "id": 40,
     "nome": "Terminal Alongado Direção N — VW Carros Rebaixados",
-    "descricao": "Terminal alongado para direção linha VW. Produto novo, não recondicionado. Corrige geometria da direção em carros rebaixados, garantindo mais estabilidade, segurança e vida útil. Evita desgaste irregular dos pneus. Ideal para suspensão fixa, rosca e a ar.",
+    "descricao": "Terminal Alongado para Direção – Linha VW (Carros Rebaixados) Modelo N. Produto NOVO, não recondicionado. Corrige a geometria da direção em carros rebaixados, garantindo mais estabilidade e segurança.\n\nBENEFÍCIOS:\n• Corrige ângulo da direção em carros rebaixados\n• Evita desgaste irregular dos pneus\n• Melhora dirigibilidade e estabilidade\n• Ideal para suspensão fixa, rosca e a ar\n\nCOMPATIBILIDADE:\n• Fox, Polo 2003-2014, Gol G5/G6/G7/G8, Golf, Saveiro, Bora, Fusca Novo, New Beetle\n\n* Produto reforçado para uso severo\n* Instalação por profissional recomendada",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294428/carcrew/produtos/componentes/terminal-n-1.webp",
     "category": "terminais",
     "parcelamento": 12,
     "veiculos": [
@@ -679,14 +695,22 @@
       "VW Voyage",
       "VW Santana"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294428/carcrew/produtos/componentes/terminal-n-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294428/carcrew/produtos/componentes/terminal-n-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294429/carcrew/produtos/componentes/terminal-n-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294430/carcrew/produtos/componentes/terminal-n-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294431/carcrew/produtos/componentes/terminal-n-5.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294432/carcrew/produtos/componentes/terminal-n-6.png"
+    ]
   },
   {
     "id": 41,
     "nome": "Terminal Alongado Direção R — VW Carros Rebaixados",
-    "descricao": "Terminal alongado para direção linha VW modelo R. Produto novo, não recondicionado. Corrige ângulo da direção em carros rebaixados. Evita desgaste irregular dos pneus. Melhora dirigibilidade e estabilidade. Ideal para suspensão fixa, rosca e a ar.",
+    "descricao": "Terminal Alongado para Direção – Linha VW (Carros Rebaixados) Modelo R. Corrige a geometria da direção em carros rebaixados, garantindo mais estabilidade, segurança e vida útil dos componentes.\n\nBENEFÍCIOS:\n• Corrige ângulo da direção em carros rebaixados\n• Evita desgaste irregular dos pneus\n• Melhora dirigibilidade e estabilidade\n• Ideal para suspensão fixa, rosca e a ar\n\nCOMPATIBILIDADE:\n• Fox, Polo 2003-2014, Gol G5/G6/G7/G8, Golf, Saveiro, Bora, Fusca Novo, New Beetle\n\n* Produto reforçado para uso severo\n* Envio rápido para todo o Brasil",
     "preco": 0,
-    "imgUrl": "/produtos/calco1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294433/carcrew/produtos/componentes/terminal-r-1.webp",
     "category": "terminais",
     "parcelamento": 12,
     "veiculos": [
@@ -695,20 +719,36 @@
       "VW Voyage",
       "VW Santana"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294433/carcrew/produtos/componentes/terminal-r-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294434/carcrew/produtos/componentes/terminal-r-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294434/carcrew/produtos/componentes/terminal-r-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294435/carcrew/produtos/componentes/terminal-r-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294435/carcrew/produtos/componentes/terminal-r-5.png",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294436/carcrew/produtos/componentes/terminal-r-6.png"
+    ]
   },
   {
     "id": 42,
     "nome": "Controle Bluetooth V2 + Central Car Crew — 3 Presets",
-    "descricao": "Controle Car Crew V2 com Bluetooth para precisão no acionamento da suspensão a ar. Acompanha central para integrar ao bloco. 3 presets de altura por temporização de pulso. Entrada para sensores de pressão. Mais comodidade e confiabilidade.",
+    "descricao": "Controle Car Crew V2 com Bluetooth para precisão no acionamento da suspensão a ar. Acompanha Central e chicote de alimentação. Integra ao seu bloco e sistema.\n\nFUNCIONALIDADES:\n• 3 Presets de altura por temporização de pulso\n• Entrada para sensores de posição (upgrade)\n• Permite integrar ao seu kit existente\n\nCONTEÚDO DA EMBALAGEM:\n• 1 Controle Bluetooth\n• 1 Central\n• 1 Chicote de alimentação\n\n* Valor Unitário\n* Garantia de 3 meses\n* Instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294437/carcrew/produtos/componentes/controle-bt-1.jpg",
     "category": "controles",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294437/carcrew/produtos/componentes/controle-bt-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294437/carcrew/produtos/componentes/controle-bt-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294438/carcrew/produtos/componentes/controle-bt-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294439/carcrew/produtos/componentes/controle-bt-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294439/carcrew/produtos/componentes/controle-bt-5.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294440/carcrew/produtos/componentes/controle-bt-6.png"
+    ]
   },
   {
     "id": 43,
