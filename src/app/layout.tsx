@@ -25,12 +25,12 @@ const orbitron = Orbitron({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 const storeName = "Car Crew Garage";
 const storeDescription =
-  "Loja especializada em peças para suspensão automotiva. Amortecedores, molas, calços, ponta de eixo, bolsa de ar e muito mais. Entrega para todo Brasil.";
+  "Loja especializada em suspensão automotiva custom e peças. Amortecedores, molas, calços, ponta de eixo, bolsa de ar, nivelamento e muito mais. Entrega para todo Brasil. Car Crew Garage — sua oficina de confiança em Maringá.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${storeName} — Peças para Suspensão Automotiva`,
+    default: `${storeName} - Custom - Suspensões - Peças Automotivas`,
     template: `%s | ${storeName}`,
   },
   description: storeDescription,
@@ -38,15 +38,21 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   keywords: [
-    "suspensão automotiva",
+    "car crew garage",
+    "carcrew suspensões",
+    "suspensão automotiva custom",
     "amortecedores",
     "peças de suspensão",
     "calço antirruído",
     "ponta de eixo",
     "bolsa de ar",
-    "car crew garage",
-    "carcrew suspensões",
+    "suspensão a ar",
+    "nivelamento veicular",
     "peças suspensão maringá",
+    "oficina suspensão maringá",
+    "molas automotivas",
+    "peças suspensão atacado",
+    "car crew garage maringá",
   ],
   authors: [{ name: storeName }],
   manifest: "/manifest.json",
@@ -54,7 +60,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     siteName: storeName,
-    title: `${storeName} — Peças para Suspensão Automotiva`,
+    title: `${storeName} - Custom - Suspensões - Peças Automotivas`,
     description: storeDescription,
     url: siteUrl,
     images: [
@@ -62,13 +68,13 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: storeName,
+        alt: "Car Crew Garage - Suspensão Automotiva Custom em Maringá",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${storeName} — Peças para Suspensão Automotiva`,
+    title: `${storeName} - Custom - Suspensões - Peças Automotivas`,
     description: storeDescription,
     images: ["/og-image.jpg"],
   },
