@@ -489,28 +489,42 @@
   {
     "id": 30,
     "nome": "Bucha Reduzida do Eixo Traseiro p/ Carro Rebaixado",
-    "descricao": "Bucha reduzida do eixo traseiro desenvolvida para veículos com suspensão rebaixada. Sob medida para não precisar cortar a estrutura do veículo. Redução da bucha permite mais curso e menos esforço, evitando danos e melhorando o comportamento do carro baixo.",
+    "descricao": "BUCHA REDUZIDA DO EIXO TRASEIRO – IDEAL PARA CARRO REBAIXADO\n\nA bucha reduzida do eixo traseiro foi desenvolvida para veículos com suspensão rebaixada, feito sob medida para não precisar cortar a estrutura do veículo e zerar o carro nas laterais do filete.\n\nCom a redução da bucha, o eixo trabalha com mais curso e menos esforço, evitando danos e melhorando o comportamento do carro baixo.\n\nBENEFÍCIOS:\n• Ideal para carros rebaixados\n• Melhora o curso da suspensão traseira\n• Evita travamento do eixo\n• Mais conforto e estabilidade\n• Produto reforçado e durável\n\nAPLICAÇÃO:\n• Gol G5, G6, G7, G8\n• Saveiro G5, G6, G7, G8\n• Voyage G5, G6, G7, G8\n• Fox, Golf, Polo, Spacefox\n\nCONTEÚDO DO KIT:\n• 1 Kit com par de buchas de suspensão de alto desempenho em poliuretano com alojamento e tubo central\n\n* Necessário soldagem no eixo traseiro\n* Instalação por profissional especializado\n* Pronta entrega!",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293566/carcrew/produtos/componentes/bucha-eixo-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293566/carcrew/produtos/componentes/bucha-eixo-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293567/carcrew/produtos/componentes/bucha-eixo-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293568/carcrew/produtos/componentes/bucha-eixo-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293569/carcrew/produtos/componentes/bucha-eixo-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293570/carcrew/produtos/componentes/bucha-eixo-5.jpg"
+    ]
   },
   {
     "id": 31,
     "nome": "Central de Controle 4 Canais c/ Controle Remoto",
-    "descricao": "Central de controle 4 canais compatível com qualquer marca de bloco ou válvulas. Funciona em 12V e 24V. Acompanha controle remoto longa distância full com 8 botões e chicote para ligação. Alcance de até 50 metros.",
+    "descricao": "Central de Controle 4 Canais compatível com qualquer marca de bloco ou válvulas. Ideal para projetos personalizados de suspensão a ar.\n\nCARACTERÍSTICAS:\n• Funciona em 12V e 24V\n• Compatível com qualquer veículo\n• Compatível com qualquer marca de válvula ou bloco\n• Alcance do controle: até 50 metros\n• Controle remoto com 8 botões longa distância\n• Sistema de codificação: Code Learning\n• Memória não volátil (não perde configuração ao desligar)\n• Corrente máxima por canal: 2A\n• Bateria do controle: A23\n\nACOMPANHA:\n• 1 Central de controle\n• 1 Controle remoto longa distância\n• 1 Chicote para ligação\n\n* Garantia de 3 meses\n* Instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293570/carcrew/produtos/componentes/central-4-canais-1.webp",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293570/carcrew/produtos/componentes/central-4-canais-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293571/carcrew/produtos/componentes/central-4-canais-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293572/carcrew/produtos/componentes/central-4-canais-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293572/carcrew/produtos/componentes/central-4-canais-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293573/carcrew/produtos/componentes/central-4-canais-5.webp"
+    ]
   },
   {
     "id": 32,
