@@ -469,15 +469,22 @@
   {
     "id": 29,
     "nome": "Kit Bolsa Flexível — Suspensão a Ar",
-    "descricao": "Kit bolsa flexível para suspensão a ar. Solução versátil para projetos que exigem bolsa flexível. Consulte para mais informações sobre compatibilidade.",
+    "descricao": "Kit Bolsa Flexível para Suspensão a Ar. Bolsa base cônica de alta qualidade, ideal para projetos de suspensão pneumática.\n\nProduto novo de extrema qualidade. Experiência de mais de 10 anos de fabricação de bolsas de ar.\n\nITENS INCLUSOS:\n• 01 bolsa flexível\n\nINFORMAÇÕES TÉCNICAS:\n• Conexão UNIVERSAL com rosca 1/8 padrão\n• Base usinada em CNC\n• Banho de Zinco\n• Tinta especial\n• Sob medida\n• Prensagem Hidráulica\n• Base de Alumínio\n• Mangote reforçado\n• Mais Conforto\n• Altíssima qualidade\n\n* Garantia de 3 meses\n* Imagens reais do produto\n* Recomendamos instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293383/carcrew/produtos/kits/kit-bolsa-flexivel-1.jpg",
     "category": "kits",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293383/carcrew/produtos/kits/kit-bolsa-flexivel-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293383/carcrew/produtos/kits/kit-bolsa-flexivel-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293384/carcrew/produtos/kits/kit-bolsa-flexivel-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293385/carcrew/produtos/kits/kit-bolsa-flexivel-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293385/carcrew/produtos/kits/kit-bolsa-flexivel-5.jpg"
+    ]
   },
   {
     "id": 30,
