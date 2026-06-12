@@ -529,54 +529,81 @@
   {
     "id": 32,
     "nome": "Pressostato Cebolinha Car Crew 120/160 PSI",
-    "descricao": "Pressostato Cebolinha Car Crew Original, responsável por controlar o acionamento do compressor no sistema de suspensão a ar. Garante que o compressor ligue e desligue automaticamente, evitando sobrecarga e aumentando a vida útil do sistema. 120/160 PSI.",
+    "descricao": "Pressostato Cebolinha Car Crew Original 120/160 PSI – Suspensão a Ar\n\nO Pressostato Cebolinha Car Crew Original é a peça responsável por controlar o acionamento do compressor no sistema de suspensão a ar. Ele garante que o compressor ligue e desligue automaticamente, evitando sobrecarga e aumentando a vida útil do equipamento.\n\nESPECIFICAÇÕES TÉCNICAS:\n• Marca: Car Crew – Original\n• Pressão de acionamento: Liga em 120 PSI / Desliga em 160 PSI\n• Rosca: 1/4 NPT\n• Compatível com compressores de 12V e 24V\n\nCONTEÚDO DA EMBALAGEM:\n• 1 Pressostato Cebolinha Car Crew 120/160 PSI\n\n* Produto original com nota fiscal\n* Garantia de 30 dias\n* Recomendamos instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293983/carcrew/produtos/componentes/pressostato-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293983/carcrew/produtos/componentes/pressostato-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293984/carcrew/produtos/componentes/pressostato-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293984/carcrew/produtos/componentes/pressostato-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293985/carcrew/produtos/componentes/pressostato-4.jpg"
+    ]
   },
   {
     "id": 33,
     "nome": "Cilindro Alumínio 11,6L Cromado p/ Suspensão a Ar",
-    "descricao": "Cilindro Premium em alumínio com suporte de fixação. Capacidade 11,6 litros, tampas billet usinadas, acabamento cromado. Comprimento 60cm, diâmetro 15,5cm, 4 saídas 1/4 NPT. Peso 3,5kg. Imagens reais do produto.",
+    "descricao": "CILINDRO DE ALUMÍNIO COM SUPORTE DE FIXAÇÃO 11,6L\n\nCilindro Premium ideal para projetos de alto padrão. Solda e acabamento de alto nível!\n\nESPECIFICAÇÃO TÉCNICA:\n• Capacidade 11,6 litros\n• Tampas Billit Usinadas\n• Acabamento com solda\n• Comprimento 60cm\n• Diâmetro 15,5cm\n• 4 Saídas de 1/4 NPT\n• Peso: 3,5kg\n• Cor Cromado\n• Cilindro em Alumínio com suporte de fixação\n\n* Garantia de 90 dias\n* Valor Unitário\n* Imagens reais do produto",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293986/carcrew/produtos/componentes/cilindro-11l-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293986/carcrew/produtos/componentes/cilindro-11l-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293986/carcrew/produtos/componentes/cilindro-11l-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293987/carcrew/produtos/componentes/cilindro-11l-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293987/carcrew/produtos/componentes/cilindro-11l-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293988/carcrew/produtos/componentes/cilindro-11l-5.jpg"
+    ]
   },
   {
     "id": 34,
     "nome": "Reservatório Slim — Suspensão a Ar",
-    "descricao": "Reservatório slim para suspensão a ar. Design compacto para instalação em espaços reduzidos. Ideal para projetos que exigem economia de espaço sem perder capacidade de armazenamento de ar.",
+    "descricao": "Reservatório Slim para Suspensão a Ar. Design compacto e elegante, ideal para projetos que exigem economia de espaço sem abrir mão da capacidade de armazenamento de ar. Produto de alta qualidade com acabamento premium.",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293989/carcrew/produtos/componentes/res-slim-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293989/carcrew/produtos/componentes/res-slim-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293990/carcrew/produtos/componentes/res-slim-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293990/carcrew/produtos/componentes/res-slim-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293991/carcrew/produtos/componentes/res-slim-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293992/carcrew/produtos/componentes/res-slim-5.jpg"
+    ]
   },
   {
     "id": 35,
     "nome": "Reservatório TF Imports — Suspensão a Ar",
-    "descricao": "Reservatório TF Imports para suspensão a ar. Componente de qualidade para armazenamento de ar comprimido no sistema pneumático. Consulte para informações técnicas completas.",
+    "descricao": "Reservatório TF Imports para Suspensão a Ar. Reservatório de alta qualidade, ideal para sistemas de suspensão pneumática. Resistente e durável, com acabamento premium. Perfeito para projetos personalizados.",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293992/carcrew/produtos/componentes/res-tf-1.webp",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293992/carcrew/produtos/componentes/res-tf-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293993/carcrew/produtos/componentes/res-tf-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293994/carcrew/produtos/componentes/res-tf-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293995/carcrew/produtos/componentes/res-tf-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293996/carcrew/produtos/componentes/res-tf-5.png"
+    ]
   },
   {
     "id": 36,
@@ -594,15 +621,22 @@
   {
     "id": 37,
     "nome": "Conexões Flexíveis — Suspensão a Ar",
-    "descricao": "Conexões flexíveis para sistema de suspensão a ar. Mangueiras e conexões de alta qualidade para instalação segura e durável do sistema pneumático.",
+    "descricao": "Flexível para bolsa de suspensão a ar. O uso do flexível na instalação da bolsa de ar é uma garantia de segurança, pois ele é muito mais reforçado que uma mangueira comum. Possui 2 camadas de borracha resistente entrelaçada com uma trama de linho garantindo resistência a pancadas, cortes, temperatura e etc.\n\nITENS INCLUSOS:\n• 01 Flexível com conexão 1/8 para bolsa de ar\n• 01 Conexão 1/8 para mangueira 08mm\n\nINFORMAÇÕES TÉCNICAS:\n• Comprimento 380mm\n• Altíssima qualidade\n• Já vai colado e pronto pra instalação\n\n* Garantia de 3 meses\n* Recomendamos instalação por profissional especializado",
     "preco": 0,
-    "imgUrl": "/produtos/kit-instalacao1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293997/carcrew/produtos/componentes/conexoes-flexiveis-1.jpg",
     "category": "componentes",
     "parcelamento": 12,
     "veiculos": [
       "Universal"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293997/carcrew/produtos/componentes/conexoes-flexiveis-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293998/carcrew/produtos/componentes/conexoes-flexiveis-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293999/carcrew/produtos/componentes/conexoes-flexiveis-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781293999/carcrew/produtos/componentes/conexoes-flexiveis-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781294000/carcrew/produtos/componentes/conexoes-flexiveis-5.jpg"
+    ]
   },
   {
     "id": 38,
