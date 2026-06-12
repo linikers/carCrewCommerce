@@ -248,9 +248,9 @@
   {
     "id": 19,
     "nome": "Ponta de Eixo VW G1-G4 Soldar — Freio Tambor",
-    "descricao": "Ponta de eixo VW G1 G2 G3 G4 Santana Parati — necessário soldar. Chapa em aço carbono 1020 cortada à laser, espessura 10mm. Par de pontas. Somente para veículos com freio traseiro a tambor.",
+    "descricao": "Ponta de Vw G1 G2 G3 G4 Santana Parati\nNECESSÁRIO SOLDAR\n\nChapa em aço carbono 1020 cortada à laser\nEspessura 10mm\n\nConteúdo da embalagem:\n• 01 Par de Ponta de Eixo de soldar 4 furos\n* Somente para veiculos com freio traseiro a tambor. Não serve para freio a disco.\n\n*EM CASO DE DÚVIDAS, ANTES DA AQUISIÇÃO DO PRODUTO, FAVOR NOS CONSULTAR, PARA CONFIRMARMOS A COMPATIBILIDADE COM SEU VEÍCULO*\n\n*PRONTA ENTREGA*\n\n*A GARANTIA DAS PEÇAS NÃO COBRE POR DANOS OU PROBLEMAS RESULTANTES DE MÁ INSTALAÇÃO E/OU USO INDEVIDO*",
     "preco": 0,
-    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289030/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-principal.webp",
     "category": "pontas-de-eixo",
     "parcelamento": 12,
     "veiculos": [
@@ -259,14 +259,23 @@
       "VW Santana",
       "VW Parati"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289030/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-principal.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288998/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-1.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288998/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-2.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288998/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-3.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288998/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-4.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288998/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-5.webp",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781288998/carcrew/produtos/ponta-eixo/ponta-eixo-g1-g4-6.webp"
+    ]
   },
   {
     "id": 20,
     "nome": "Ponta de Eixo G5/Golf Parafusar 12,5mm",
-    "descricao": "Suporte de ponta de eixo para parafusar. Exclusivo para parafusar, enviado com parafusos. Espessura 12,5mm, abaixa de 9 a 12cm. Compatível com aro 15\" a 18\". Não necessita reforço/mão francesa pela espessura da chapa.",
+    "descricao": "Suporte de ponta de eixo para parafusar.\nPerfeita para rebaixar seu carro com mais conforto!\n\nEsse suporte é exclusivamente para parafusar, é enviado a ponta de eixo juntamente com os parafusos.\n\nPor conta da espessura da chapa não é necessário reforço/mão francesa.\n\nAbaixa de 9 a 12 centímetros de acordo com a regulagem que usar.\n\nCompatível com Saveiro G5 a G8 Freio a Tambor e freio a disco\nGolf Mk4\n\nPossível usar aro 15\" 16\" 17\" 18\" ou maior\n\nEspessura da chapa 12,5mm\n\nAcabamento Pintura Eletrostática\n\nConteúdo da embalagem:\n- 02 suporte ponta de eixo (LADO DIREITO E LADO ESQUERDO)\n- 08 parafusos com porcas e arruelas",
     "preco": 0,
-    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289015/carcrew/produtos/ponta-eixo/ponta-eixo-g5-parafusada-1.jpg",
     "category": "pontas-de-eixo",
     "parcelamento": 12,
     "veiculos": [
@@ -274,14 +283,21 @@
       "VW Saveiro G5-G8",
       "VW Golf Mk4"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289015/carcrew/produtos/ponta-eixo/ponta-eixo-g5-parafusada-1.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289016/carcrew/produtos/ponta-eixo/ponta-eixo-g5-parafusada-2.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289017/carcrew/produtos/ponta-eixo/ponta-eixo-g5-parafusada-3.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289018/carcrew/produtos/ponta-eixo/ponta-eixo-g5-parafusada-4.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289018/carcrew/produtos/ponta-eixo/ponta-eixo-g5-parafusada-5.jpg"
+    ]
   },
   {
     "id": 21,
     "nome": "Ponta de Eixo G5/Golf Soldar com Reforço",
-    "descricao": "Ponta de eixo Saveiro G5-G8, Golf Mk4 e Sportline, Audi A3, Bora. Necessário soldar. Chapa aço carbono 1020 cortada à laser, 10mm, com reforço. Serve freio tambor e freio a disco. Indicado para rodas 17 acima.",
+    "descricao": "Ponta de Saveiro G5 G6 G7 G8 Golf Mk4 e Sportline Audi A3 Bora\n\nIndicado para Rodas 17 acima\nNECESSÁRIO SOLDAR\n\nChapa em aço carbono 1020 cortada à laser\nEspessura 10mm\n\nCom reforço\n\nConteúdo da embalagem:\n• 01 Par de Ponta de Eixo de soldar 4 furos\n• 01 Par de suportes para reforçar atrás da ponta\n• Serve para veiculos com freio traseiro a tambor e para freio a disco.\n\n*EM CASO DE DÚVIDAS, ANTES DA AQUISIÇÃO DO PRODUTO, FAVOR NOS CONSULTAR, PARA CONFIRMARMOS A COMPATIBILIDADE COM SEU VEÍCULO*\n\n*PRONTA ENTREGA*\n\n*A GARANTIA DAS PEÇAS NÃO COBRE POR DANOS OU PROBLEMAS RESULTANTES DE MÁ INSTALAÇÃO E/OU USO INDEVIDO*",
     "preco": 0,
-    "imgUrl": "/produtos/ponta-eixo1.svg",
+    "imgUrl": "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289019/carcrew/produtos/ponta-eixo/ponta-eixo-g5-soldar-grande-7712091f.jpg",
     "category": "pontas-de-eixo",
     "parcelamento": 12,
     "veiculos": [
@@ -290,7 +306,13 @@
       "Audi A3",
       "VW Bora"
     ],
-    "ativo": true
+    "ativo": true,
+    "galeria": [
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289019/carcrew/produtos/ponta-eixo/ponta-eixo-g5-soldar-grande-7712091f.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289020/carcrew/produtos/ponta-eixo/ponta-eixo-g5-soldar-grande-b31b49ae.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289021/carcrew/produtos/ponta-eixo/ponta-eixo-g5-soldar-grande-e88bad00.jpg",
+      "https://res.cloudinary.com/drvnlgib2/image/upload/v1781289021/carcrew/produtos/ponta-eixo/ponta-eixo-g5-soldar-grande-f064a358.jpg"
+    ]
   },
   {
     "id": 22,
