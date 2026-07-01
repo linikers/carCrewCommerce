@@ -26,6 +26,7 @@ import {
   Store,
   LocalShipping,
   ViewCarousel,
+  Payment,
 } from "@mui/icons-material";
 
 const menuItems = [
@@ -35,6 +36,7 @@ const menuItems = [
   { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners" },
   { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
   { label: "Frete", icon: <LocalShipping />, path: "/admin/frete" },
+  { label: "Pagamentos", icon: <Payment />, path: "/admin/pagamentos" },
   { label: "Clientes", icon: <People />, path: "/admin/clientes", disabled: true, tag: "Em breve" },
 ];
 

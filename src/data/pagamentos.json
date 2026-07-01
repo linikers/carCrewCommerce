@@ -1,0 +1,12 @@
+{
+  "pix": {
+    "habilitado": true,
+    "chaves": []
+  },
+  "boleto": {
+    "habilitado": false
+  },
+  "cartao": {
+    "habilitado": false
+  }
+}
