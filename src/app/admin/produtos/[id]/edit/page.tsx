@@ -22,6 +22,7 @@ import { ArrowBack, Save } from "@mui/icons-material";
 import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 import CloudinaryUpload from "@/components/CloudinaryUpload";
+import GalleryUpload from "@/components/GalleryUpload";
 
 const categorias = [
   { value: "compressores", label: "Compressores" },
@@ -46,7 +47,8 @@ export default function EditarProduto() {
     descricao: "",
     preco: "",
     imgUrl: "",
-    galeria: "",
+    galeria: [] as string[],
+    galeriaPrincipal: 0,
     category: "acessorio-instalacao",
     parcelamento: "12",
     estoque: "0",
@@ -68,7 +70,8 @@ export default function EditarProduto() {
           descricao: data.descricao,
           preco: String(data.preco),
           imgUrl: data.imgUrl,
-          galeria: data.galeria?.join(", ") || "",
+          galeria: data.galeria || [],
+          galeriaPrincipal: 0,
           category: data.category,
           parcelamento: String(data.parcelamento),
           estoque: String(data.estoque),
@@ -92,9 +95,7 @@ export default function EditarProduto() {
           preco: parseFloat(form.preco),
           parcelamento: parseInt(form.parcelamento),
           estoque: parseInt(form.estoque),
-          galeria: form.galeria
-            ? form.galeria.split(",").map((u: string) => u.trim()).filter(Boolean)
-            : [],
+          galeria: form.galeria,
         }),
       });
 
@@ -166,25 +167,28 @@ export default function EditarProduto() {
                   </TextField>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth label="URL da Imagem" value={form.imgUrl}
+                  <TextField fullWidth label="URL da Imagem Principal" value={form.imgUrl}
                     onChange={(e) => setForm({ ...form, imgUrl: e.target.value })} />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <TextField fullWidth label="URLs extras (galeria)" value={form.galeria}
-                    onChange={(e) => setForm({ ...form, galeria: e.target.value })}
-                    multiline rows={2} placeholder="https://... , https://..." size="small"
-                    helperText="URLs separadas por vírgula" />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <CloudinaryUpload
                     onUpload={(url) => setForm({ ...form, imgUrl: url })}
-                    label="Upload via Cloudinary"
+                    label="Upload Imagem Principal"
                   />
                   {form.imgUrl && form.imgUrl.includes("cloudinary") && (
                     <Box sx={{ mt: 1 }}>
                       <Box component="img" src={form.imgUrl} sx={{ width: 100, height: 100, objectFit: "cover", borderRadius: 2 }} />
                     </Box>
                   )}
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <GalleryUpload
+                    images={form.galeria}
+                    onChange={(galeria) => setForm({ ...form, galeria })}
+                    principalIndex={form.galeriaPrincipal}
+                    onPrincipalChange={(idx) => setForm({ ...form, galeriaPrincipal: idx })}
+                    maxImages={5}
+                  />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <FormControlLabel control={
