@@ -1,6 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { QrCodePix } from "qrcode-pix";
 import QRCode from "qrcode";
+import { readFileSync, existsSync } from "fs";
+import path from "path";
+
+interface PixKey {
+  id: string;
+  tipo: string;
+  chave: string;
+  titular: string;
+  banco: string;
+  ativo: boolean;
+}
+
+function getChavePixAtiva(): string | null {
+  try {
+    const configPath = path.join(process.cwd(), "src/data/pagamentos.json");
+    if (!existsSync(configPath)) return null;
+    const config = JSON.parse(readFileSync(configPath, "utf-8"));
+    const chavesAtivas = config.pix?.chaves?.filter((k: PixKey) => k.ativo) || [];
+    return chavesAtivas.length > 0 ? chavesAtivas[0].chave : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,16 +40,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Chave PIX — usar uma chave real no futuro
-    // Pode ser: CPF, CNPJ, email, telefone ou chave aleatória
-    const chavePix = "contato@carcrew.com.br";
+    // Busca chave PIX do config (fallback: chave antiga)
+    const chavePix = getChavePixAtiva() || "contato@carcrew.com.br";
 
     // Gera payload PIX (copia-e-cola)
     const payload = QrCodePix({
       version: "01",
       key: chavePix,
-      name: (nome || "Car Crew Garage").substring(0, 25), // máx 25 caracteres
-      city: (cidade || "SaoPaulo").substring(0, 15), // máx 15 caracteres
+      name: (nome || "Car Crew Garage").substring(0, 25),
+      city: (cidade || "SaoPaulo").substring(0, 15),
       value: Number(amount),
       message: "Pedido Car Crew Garage",
     });
