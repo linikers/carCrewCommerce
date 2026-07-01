@@ -10,6 +10,11 @@ export interface Produto {
   category: CategoriaSlug;
   parcelamento?: number;
   veiculos?: string[];
+  // Medidas para frete (gramas e centímetros)
+  peso?: number;
+  altura?: number;
+  largura?: number;
+  profundidade?: number;
 }
 
 export type CategoriaSlug =

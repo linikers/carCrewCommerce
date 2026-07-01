@@ -43,6 +43,23 @@ interface FormData {
   cidade: string;
 }
 
+interface FreightOption {
+  id: string;
+  transportadora: string;
+  modalidade: string;
+  prazo: string;
+  valor: number;
+}
+
+interface FreightResult {
+  cepOrigem: string;
+  cepDestino: string;
+  pesoTotal: string;
+  dimensoes: string;
+  opcoes: FreightOption[];
+  erro?: string;
+}
+
 interface PixData {
   qrCode: string;
   payload: string;
@@ -76,11 +93,60 @@ export default function CheckoutPage() {
   const [pixLoading, setPixLoading] = useState(false);
   const [pixError, setPixError] = useState("");
 
+  // Freight states
+  const [freightLoading, setFreightLoading] = useState(false);
+  const [freightResult, setFreightResult] = useState<FreightResult | null>(null);
+  const [selectedFreight, setSelectedFreight] = useState<FreightOption | null>(null);
+  const [freightError, setFreightError] = useState("");
+
   const isEmpty = items.length === 0 && !submitted;
 
   const updateField = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
+
+  const handleCalculateFreight = useCallback(async () => {
+    const cepLimpo = form.cep.replace(/\D/g, "");
+    if (cepLimpo.length !== 8) {
+      setFreightError("CEP inválido");
+      return;
+    }
+
+    setFreightLoading(true);
+    setFreightError("");
+    setSelectedFreight(null);
+
+    try {
+      // Montar itens com medidas
+      const itens = items.map((item) => ({
+        peso: item.produto.peso || 500, // padrão 500g se não tiver
+        altura: item.produto.altura || 10,
+        largura: item.produto.largura || 10,
+        profundidade: item.produto.profundidade || 10,
+        quantidade: item.quantidade,
+      }));
+
+      const response = await fetch("/api/frete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cepDestino: cepLimpo, itens }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.erro || "Erro ao calcular frete");
+      }
+
+      setFreightResult(data);
+    } catch (error) {
+      setFreightError(
+        error instanceof Error ? error.message : "Erro ao calcular frete"
+      );
+    } finally {
+      setFreightLoading(false);
+    }
+  }, [form.cep, items]);
 
   const handlePixPayment = useCallback(async () => {
     setPixLoading(true);
@@ -92,7 +158,7 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: total,
+          amount: total + (selectedFreight?.valor || 0),
           nome: form.nome || "CarCrew Cliente",
           cidade: form.cidade || "SaoPaulo",
         }),
@@ -231,12 +297,18 @@ export default function CheckoutPage() {
                 variant="h6"
                 sx={{ color: "#E65100", fontWeight: 700 }}
               >
-                R$ {total.toFixed(2)}
+                R$ {(total + (selectedFreight?.valor || 0)).toFixed(2)}
               </Typography>
             </Box>
+            {selectedFreight && (
+              <Typography variant="body2" sx={{ color: "#666", mt: 1 }}>
+                Frete: {selectedFreight.modalidade} ({selectedFreight.transportadora}) - R${" "}
+                {selectedFreight.valor.toFixed(2)}
+              </Typography>
+            )}
             <Typography variant="body2" sx={{ color: "#666", mt: 1 }}>
               Pagamento via:{" "}
-              {paymentMethod === "card" ? "Cartão" : "Boleto"}
+              {paymentMethod === "pix" ? "PIX" : paymentMethod === "card" ? "Cartão" : "Boleto"}
             </Typography>
           </Paper>
           <Button
@@ -333,10 +405,77 @@ export default function CheckoutPage() {
                       fullWidth
                       label="CEP"
                       placeholder="00000-000"
+                      required
                       value={form.cep}
                       onChange={(e) => updateField("cep", e.target.value)}
                     />
                   </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      onClick={handleCalculateFreight}
+                      disabled={freightLoading || form.cep.replace(/\D/g, "").length !== 8}
+                      sx={{
+                        height: "56px",
+                        borderColor: "#E65100",
+                        color: "#E65100",
+                        textTransform: "none",
+                        "&:hover": { borderColor: "#BF360C", backgroundColor: "#fff5f0" },
+                      }}
+                    >
+                      {freightLoading ? "Calculando..." : "Calcular Frete"}
+                    </Button>
+                  </Grid>
+
+                  {/* Opções de Frete */}
+                  {freightError && (
+                    <Grid size={{ xs: 12 }}>
+                      <Alert severity="error" sx={{ mt: 1 }}>{freightError}</Alert>
+                    </Grid>
+                  )}
+                  {freightResult && (
+                    <Grid size={{ xs: 12 }}>
+                      <Paper sx={{ p: 2, mt: 1, backgroundColor: "#f9f9f9" }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                          Opções de Frete
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#666", display: "block", mb: 2 }}>
+                          Origem: {freightResult.cepOrigem} | Peso: {freightResult.pesoTotal}
+                        </Typography>
+                        <Grid container spacing={1}>
+                          {freightResult.opcoes.map((opt) => (
+                            <Grid size={{ xs: 12, sm: 4 }} key={opt.id}>
+                              <Paper
+                                onClick={() => setSelectedFreight(opt)}
+                                sx={{
+                                  p: 1.5,
+                                  textAlign: "center",
+                                  cursor: "pointer",
+                                  border: selectedFreight?.id === opt.id
+                                    ? "2px solid #E65100"
+                                    : "2px solid transparent",
+                                  backgroundColor: selectedFreight?.id === opt.id ? "#fff5f0" : "#fff",
+                                  transition: "all 0.2s",
+                                  "&:hover": { borderColor: "#E65100" },
+                                }}
+                              >
+                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                  {opt.modalidade}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: "#666" }}>
+                                  {opt.transportadora} • {opt.prazo}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: "#E65100", fontWeight: 700, mt: 0.5 }}>
+                                  R$ {opt.valor.toFixed(2)}
+                                </Typography>
+                              </Paper>
+                            </Grid>
+                          ))}
+                        </Grid>
+                      </Paper>
+                    </Grid>
+                  )}
                   <Grid size={{ xs: 12, sm: 8 }}>
                     <TextField
                       fullWidth
@@ -532,7 +671,7 @@ export default function CheckoutPage() {
                 </List>
 
                 <Divider sx={{ my: 2 }} />
-
+                <Divider sx={{ my: 2 }} />
                 <Box
                   sx={{
                     display: "flex",
@@ -556,7 +695,9 @@ export default function CheckoutPage() {
                     Frete
                   </Typography>
                   <Typography variant="body2" sx={{ color: "#666" }}>
-                    Calcular no CEP
+                    {selectedFreight
+                      ? `${selectedFreight.modalidade} - R$ ${selectedFreight.valor.toFixed(2)}`
+                      : "Selecione uma opção"}
                   </Typography>
                 </Box>
                 <Divider sx={{ my: 2 }} />
@@ -573,14 +714,14 @@ export default function CheckoutPage() {
                     variant="h6"
                     sx={{ color: "#E65100", fontWeight: 700 }}
                   >
-                    R$ {total.toFixed(2)}
+                    R$ {(total + (selectedFreight?.valor || 0)).toFixed(2)}
                   </Typography>
                 </Box>
                 <Typography
                   variant="caption"
                   sx={{ color: "#999", display: "block", mt: 1 }}
                 >
-                  ou {maxParcelas}x de R$ {valorParcela.toFixed(2)} sem juros
+                  ou {maxParcelas}x de R$ {((total + (selectedFreight?.valor || 0)) / maxParcelas).toFixed(2)} sem juros
                 </Typography>
               </Paper>
             </Grid>
