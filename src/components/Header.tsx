@@ -107,7 +107,7 @@ export default function Header({
             {/* Hamburger (mobile only) */}
             <IconButton
               sx={{
-                display: { xs: "flex", md: "none" },
+                display: { xs: "flex", lg: "none" },
                 position: "absolute",
                 left: 0,
                 zIndex: 1,
@@ -245,10 +245,10 @@ export default function Header({
         <Box
           sx={{
             backgroundColor: "#1A1A1A",
-            display: { xs: "none", md: "block" },
+            display: { xs: "none", lg: "block" },
           }}
         >
-          <Container maxWidth="lg">
+          <Container maxWidth="xl">
             <Box
               sx={{
                 display: "flex",
@@ -278,7 +278,7 @@ export default function Header({
                       fontSize: "0.85rem",
                       whiteSpace: "nowrap",
                       flexShrink: 0,
-                      px: 2,
+                      px: { lg: 1.25, xl: 2 },
                       py: 1.25,
                       minHeight: 44,
                       borderRadius: 0,
@@ -320,7 +320,7 @@ export default function Header({
                     fontSize: "0.85rem",
                     whiteSpace: "nowrap",
                     flexShrink: 0,
-                    px: 2,
+                    px: { lg: 1.25, xl: 2 },
                     py: 1.25,
                     minHeight: 44,
                     borderRadius: 0,
