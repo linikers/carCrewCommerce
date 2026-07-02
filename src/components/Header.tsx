@@ -253,23 +253,16 @@ export default function Header({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                position: "relative",
                 minHeight: 44,
               }}
             >
-              {/* Categorias — centralizadas, com scroll interno se necessário */}
+              {/* Categorias — centralizadas no espaço disponível */}
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexWrap: "nowrap",
-                  justifyContent: "center",
                   flex: 1,
-                  overflowX: "auto",
-                  "&::-webkit-scrollbar": { height: 0 },
-                  scrollbarWidth: "none",
-                  // Reserva espaço à direita para não sobrepor o botão WhatsApp
-                  pr: { md: 22 },
+                  display: "flex",
+                  justifyContent: "center",
+                  flexWrap: "nowrap",
                 }}
               >
                 {categorias.map((cat) => (
@@ -394,7 +387,7 @@ export default function Header({
                 </Menu>
               </Box>
 
-              {/* WhatsApp — fixo à direita, não rola com as categorias */}
+              {/* WhatsApp — fixo à direita */}
               <Button
                 startIcon={<WhatsApp sx={{ fontSize: 16 }} />}
                 href="https://wa.me/5544998133182"
