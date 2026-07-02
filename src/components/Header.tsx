@@ -386,33 +386,6 @@ export default function Header({
                   ))}
                 </Menu>
               </Box>
-
-              {/* WhatsApp — fixo à direita */}
-              <Button
-                startIcon={<WhatsApp sx={{ fontSize: 16 }} />}
-                href="https://wa.me/5544998133182"
-                target="_blank"
-                sx={{
-                  color: "#25D366",
-                  textTransform: "none",
-                  fontSize: "0.8rem",
-                  whiteSpace: "nowrap",
-                  flexShrink: 0,
-                  fontWeight: 600,
-                  px: 2,
-                  py: 1.25,
-                  minHeight: 44,
-                  borderRadius: 0,
-                  letterSpacing: "0.01em",
-                  transition: "background-color 0.15s ease, color 0.15s ease",
-                  "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.08)",
-                    color: "#2ee87a",
-                  },
-                }}
-              >
-                💬 Dúvidas? Fale no WhatsApp
-              </Button>
             </Box>
           </Container>
         </Box>
@@ -505,6 +478,32 @@ export default function Header({
           </List>
         </Box>
       </Drawer>
+
+      {/* WhatsApp FAB — sempre visível, canto inferior direito */}
+      <IconButton
+        href="https://wa.me/5544998133182"
+        target="_blank"
+        aria-label="Fale no WhatsApp"
+        sx={{
+          position: "fixed",
+          bottom: { xs: 16, md: 24 },
+          right: { xs: 16, md: 24 },
+          zIndex: 1300,
+          backgroundColor: "#25D366",
+          color: "#fff",
+          width: { xs: 56, md: 64 },
+          height: { xs: 56, md: 64 },
+          boxShadow: "0 4px 12px rgba(37, 211, 102, 0.4)",
+          transition: "background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease",
+          "&:hover": {
+            backgroundColor: "#20ba5a",
+            boxShadow: "0 6px 16px rgba(37, 211, 102, 0.5)",
+            transform: "scale(1.05)",
+          },
+        }}
+      >
+        <WhatsApp sx={{ fontSize: { xs: 28, md: 32 } }} />
+      </IconButton>
     </>
   );
 }
