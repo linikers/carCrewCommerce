@@ -34,7 +34,7 @@ import {
   ExpandMore,
   Close,
 } from "@mui/icons-material";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Categoria } from "@/types";
 import CarCrewLogoText from "@/components/CarCrewLogoText";
 
@@ -69,47 +69,21 @@ export default function Header({
       .catch(() => {});
   }, []);
 
-  // Sincroniza searchValue quando o termo é limpo externamente (ex: ao selecionar categoria)
-  useEffect(() => {
-    if (!onSearch) return;
-    // Se activeCategory mudou e há um termo de busca, limpamos o input
-    // Isso é tratado via callback no onSearch
-  }, [activeCategory]);
+  const fireSearch = (term: string) => {
+    setSearchValue(term);
+    onSearch?.(term);
+  };
 
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      setSearchValue(value);
-      onSearch?.(value);
-    },
-    [onSearch],
-  );
-
-  const handleSearchClear = useCallback(() => {
-    setSearchValue("");
-    onSearch?.("");
-    searchInputRef.current?.focus();
-  }, [onSearch]);
-
-  const handleSearchKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter") {
-        // Já filtra em tempo real via onChange — Enter só mantém o foco visual
-        searchInputRef.current?.blur();
-      }
-      if (e.key === "Escape") {
-        handleSearchClear();
-      }
-    },
-    [handleSearchClear],
-  );
-
-  const handleCategoryClick = useCallback(
-    (slug: string) => {
-      onCategorySelect?.(activeCategory === slug ? null : slug);
-      setCategoriesMenuAnchor(null);
-    },
-    [activeCategory, onCategorySelect],
-  );
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      fireSearch(searchValue);
+      searchInputRef.current?.blur();
+    }
+    if (e.key === "Escape") {
+      fireSearch("");
+      searchInputRef.current?.focus();
+    }
+  };
 
   return (
     <>
@@ -207,6 +181,11 @@ export default function Header({
         >
           <Container maxWidth="lg">
             <Box
+              component="form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                fireSearch(searchValue);
+              }}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -230,8 +209,8 @@ export default function Header({
             >
               <IconButton
                 size="small"
+                type="submit"
                 sx={{ color: searchValue ? "#E65100" : "#999", mr: 0.5, p: 0.5 }}
-                onClick={() => searchInputRef.current?.focus()}
                 aria-label="Buscar"
               >
                 <SearchIcon sx={{ fontSize: 20 }} />
@@ -239,7 +218,7 @@ export default function Header({
               <InputBase
                 placeholder="O que deseja procurar?"
                 value={searchValue}
-                onChange={(e) => handleSearchChange(e.target.value)}
+                onChange={(e) => fireSearch(e.target.value)}
                 onKeyDown={handleSearchKeyDown}
                 inputRef={searchInputRef}
                 sx={{ flex: 1, fontSize: { xs: "0.85rem", md: "0.925rem" } }}
@@ -248,7 +227,10 @@ export default function Header({
               {searchValue && (
                 <IconButton
                   size="small"
-                  onClick={handleSearchClear}
+                  onClick={() => {
+                    fireSearch("");
+                    searchInputRef.current?.focus();
+                  }}
                   sx={{ color: "#999", ml: 0.5, p: 0.5 }}
                   aria-label="Limpar busca"
                 >
@@ -264,6 +246,9 @@ export default function Header({
           sx={{
             backgroundColor: "#1A1A1A",
             display: { xs: "none", md: "block" },
+            overflowX: "auto",
+            "&::-webkit-scrollbar": { height: 0 },
+            scrollbarWidth: "none",
           }}
         >
           <Container maxWidth="lg">
@@ -271,21 +256,26 @@ export default function Header({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: { xs: 0.5, md: 2 },
+                flexWrap: "nowrap",
+                minWidth: "fit-content",
               }}
             >
               {categorias.map((cat) => (
                 <Button
                   key={cat.slug}
-                  onClick={() => handleCategoryClick(cat.slug)}
+                  onClick={() =>
+                    onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug)
+                  }
                   sx={{
                     color:
                       activeCategory === cat.slug ? "#E65100" : "#ffffff",
                     textTransform: "none",
                     fontSize: "0.85rem",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
                     px: 2,
-                    py: 1,
-                    minHeight: 42,
+                    py: 1.25,
+                    minHeight: 44,
                     borderRadius: 0,
                     fontWeight: activeCategory === cat.slug ? 600 : 400,
                     borderBottom:
@@ -297,7 +287,7 @@ export default function Header({
                       "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
                     "&:hover": {
                       backgroundColor: "rgba(255,255,255,0.08)",
-                      color: "#fff",
+                      color: "#E65100",
                     },
                   }}
                 >
@@ -307,9 +297,7 @@ export default function Header({
 
               {/* Dropdown "+ Categorias" */}
               <Button
-                onClick={(e) =>
-                  setCategoriesMenuAnchor(e.currentTarget)
-                }
+                onClick={(e) => setCategoriesMenuAnchor(e.currentTarget)}
                 endIcon={
                   <ExpandMore
                     sx={{
@@ -325,9 +313,11 @@ export default function Header({
                   color: categoriesMenuAnchor ? "#E65100" : "#ffffff",
                   textTransform: "none",
                   fontSize: "0.85rem",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
                   px: 2,
-                  py: 1,
-                  minHeight: 42,
+                  py: 1.25,
+                  minHeight: 44,
                   borderRadius: 0,
                   fontWeight: 600,
                   letterSpacing: "0.01em",
@@ -366,18 +356,18 @@ export default function Header({
                 {categorias.map((cat) => (
                   <MenuItem
                     key={cat.slug}
-                    onClick={() => handleCategoryClick(cat.slug)}
+                    onClick={() => {
+                      onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug);
+                      setCategoriesMenuAnchor(null);
+                    }}
                     selected={activeCategory === cat.slug}
                     sx={{
                       py: 1.25,
                       px: 2.5,
                       fontSize: "0.9rem",
                       color:
-                        activeCategory === cat.slug
-                          ? "#E65100"
-                          : "text.primary",
-                      fontWeight:
-                        activeCategory === cat.slug ? 600 : 400,
+                        activeCategory === cat.slug ? "#E65100" : "text.primary",
+                      fontWeight: activeCategory === cat.slug ? 600 : 400,
                       "&.Mui-selected": {
                         backgroundColor: "rgba(230, 81, 0, 0.08)",
                       },
@@ -394,30 +384,29 @@ export default function Header({
               <Box sx={{ flex: 1 }} />
 
               <Button
-                startIcon={
-                  <WhatsApp sx={{ fontSize: 16 }} />
-                }
+                startIcon={<WhatsApp sx={{ fontSize: 16 }} />}
                 href="https://wa.me/5544998133182"
                 target="_blank"
                 sx={{
                   color: "#25D366",
                   textTransform: "none",
                   fontSize: "0.8rem",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
                   fontWeight: 600,
                   px: 2,
-                  py: 1,
-                  minHeight: 42,
+                  py: 1.25,
+                  minHeight: 44,
                   borderRadius: 0,
                   letterSpacing: "0.01em",
-                  transition:
-                    "background-color 0.15s ease, color 0.15s ease",
+                  transition: "background-color 0.15s ease, color 0.15s ease",
                   "&:hover": {
                     backgroundColor: "rgba(255,255,255,0.08)",
                     color: "#2ee87a",
                   },
                 }}
               >
-                Dúvidas? Fale no WhatsApp
+                💬 Dúvidas? Fale no WhatsApp
               </Button>
             </Box>
           </Container>
@@ -470,9 +459,7 @@ export default function Header({
                       primary={cat.nome}
                       sx={{
                         color:
-                          activeCategory === cat.slug
-                            ? "#E65100"
-                            : "inherit",
+                          activeCategory === cat.slug ? "#E65100" : "inherit",
                       }}
                     />
                   </ListItemButton>
