@@ -184,14 +184,36 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (paymentMethod === "pix") {
-      // Gera PIX e mostra QR Code
-      await handlePixPayment();
-    } else {
-      // Cartão ou Boleto — simula pedido
-      await new Promise((r) => setTimeout(r, 500));
-      setSubmitted(true);
-      window.scrollTo(0, 0);
+    try {
+      // Cria pedido e baixa estoque
+      const orderRes = await fetch("/api/pedidos/criar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items,
+          form,
+          paymentMethod,
+          total,
+          freight: selectedFreight?.valor || 0,
+        }),
+      });
+
+      const orderData = await orderRes.json();
+
+      if (!orderRes.ok) {
+        setPixError(orderData.error || "Erro ao criar pedido");
+        return;
+      }
+
+      if (paymentMethod === "pix") {
+        // Gera PIX após pedido criado
+        await handlePixPayment();
+      } else {
+        setSubmitted(true);
+        window.scrollTo(0, 0);
+      }
+    } catch {
+      setPixError("Erro de conexão ao processar pedido");
     }
   };
 
@@ -533,26 +555,28 @@ export default function CheckoutPage() {
                       key: "card",
                       label: "Cartão",
                       icon: <CreditCard />,
-                      desc: "Até 12x sem juros",
+                      desc: "Em breve — indisponível",
+                      disabled: true,
                     },
                     {
                       key: "boleto",
                       label: "Boleto",
                       icon: <AccountBalance />,
-                      desc: "Vence em 3 dias",
+                      desc: "Em breve — indisponível",
+                      disabled: true,
                     },
                   ].map((opt) => (
                     <Grid size={{ xs: 12, sm: 4 }} key={opt.key}>
                       <Paper
-                        onClick={() =>
-                          setPaymentMethod(
-                            opt.key as typeof paymentMethod
-                          )
-                        }
+                        onClick={() => {
+                          if (opt.disabled) return;
+                          setPaymentMethod(opt.key as typeof paymentMethod);
+                        }}
                         sx={{
                           p: 2,
                           textAlign: "center",
-                          cursor: "pointer",
+                          cursor: opt.disabled ? "not-allowed" : "pointer",
+                          opacity: opt.disabled ? 0.45 : 1,
                           border:
                             paymentMethod === opt.key
                               ? "2px solid #E65100"
