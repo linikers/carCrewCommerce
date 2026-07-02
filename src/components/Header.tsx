@@ -246,9 +246,6 @@ export default function Header({
           sx={{
             backgroundColor: "#1A1A1A",
             display: { xs: "none", md: "block" },
-            overflowX: "auto",
-            "&::-webkit-scrollbar": { height: 0 },
-            scrollbarWidth: "none",
           }}
         >
           <Container maxWidth="lg">
@@ -256,19 +253,76 @@ export default function Header({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                flexWrap: "nowrap",
-                minWidth: "fit-content",
+                position: "relative",
+                minHeight: 44,
               }}
             >
-              {categorias.map((cat) => (
+              {/* Categorias — centralizadas, com scroll interno se necessário */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "nowrap",
+                  justifyContent: "center",
+                  flex: 1,
+                  overflowX: "auto",
+                  "&::-webkit-scrollbar": { height: 0 },
+                  scrollbarWidth: "none",
+                  // Reserva espaço à direita para não sobrepor o botão WhatsApp
+                  pr: { md: 22 },
+                }}
+              >
+                {categorias.map((cat) => (
+                  <Button
+                    key={cat.slug}
+                    onClick={() =>
+                      onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug)
+                    }
+                    sx={{
+                      color:
+                        activeCategory === cat.slug ? "#E65100" : "#ffffff",
+                      textTransform: "none",
+                      fontSize: "0.85rem",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                      px: 2,
+                      py: 1.25,
+                      minHeight: 44,
+                      borderRadius: 0,
+                      fontWeight: activeCategory === cat.slug ? 600 : 400,
+                      borderBottom:
+                        activeCategory === cat.slug
+                          ? "2px solid #E65100"
+                          : "2px solid transparent",
+                      letterSpacing: "0.01em",
+                      transition:
+                        "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
+                      "&:hover": {
+                        backgroundColor: "rgba(255,255,255,0.08)",
+                        color: "#E65100",
+                      },
+                    }}
+                  >
+                    {cat.nome}
+                  </Button>
+                ))}
+
+                {/* Dropdown "+ Categorias" */}
                 <Button
-                  key={cat.slug}
-                  onClick={() =>
-                    onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug)
+                  onClick={(e) => setCategoriesMenuAnchor(e.currentTarget)}
+                  endIcon={
+                    <ExpandMore
+                      sx={{
+                        fontSize: 18,
+                        transition: "transform 0.2s ease",
+                        transform: categoriesMenuAnchor
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)",
+                      }}
+                    />
                   }
                   sx={{
-                    color:
-                      activeCategory === cat.slug ? "#E65100" : "#ffffff",
+                    color: categoriesMenuAnchor ? "#E65100" : "#ffffff",
                     textTransform: "none",
                     fontSize: "0.85rem",
                     whiteSpace: "nowrap",
@@ -277,112 +331,70 @@ export default function Header({
                     py: 1.25,
                     minHeight: 44,
                     borderRadius: 0,
-                    fontWeight: activeCategory === cat.slug ? 600 : 400,
-                    borderBottom:
-                      activeCategory === cat.slug
-                        ? "2px solid #E65100"
-                        : "2px solid transparent",
+                    fontWeight: 600,
                     letterSpacing: "0.01em",
+                    borderBottom: categoriesMenuAnchor
+                      ? "2px solid #E65100"
+                      : "2px solid transparent",
                     transition:
-                      "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
+                      "color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease",
                     "&:hover": {
                       backgroundColor: "rgba(255,255,255,0.08)",
                       color: "#E65100",
                     },
                   }}
                 >
-                  {cat.nome}
+                  + Categorias
                 </Button>
-              ))}
 
-              {/* Dropdown "+ Categorias" */}
-              <Button
-                onClick={(e) => setCategoriesMenuAnchor(e.currentTarget)}
-                endIcon={
-                  <ExpandMore
-                    sx={{
-                      fontSize: 18,
-                      transition: "transform 0.2s ease",
-                      transform: categoriesMenuAnchor
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    }}
-                  />
-                }
-                sx={{
-                  color: categoriesMenuAnchor ? "#E65100" : "#ffffff",
-                  textTransform: "none",
-                  fontSize: "0.85rem",
-                  whiteSpace: "nowrap",
-                  flexShrink: 0,
-                  px: 2,
-                  py: 1.25,
-                  minHeight: 44,
-                  borderRadius: 0,
-                  fontWeight: 600,
-                  letterSpacing: "0.01em",
-                  borderBottom: categoriesMenuAnchor
-                    ? "2px solid #E65100"
-                    : "2px solid transparent",
-                  transition:
-                    "color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease",
-                  "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.08)",
-                    color: "#E65100",
-                  },
-                }}
-              >
-                + Categorias
-              </Button>
-
-              <Menu
-                anchorEl={categoriesMenuAnchor}
-                open={Boolean(categoriesMenuAnchor)}
-                onClose={() => setCategoriesMenuAnchor(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                transformOrigin={{ vertical: "top", horizontal: "left" }}
-                slotProps={{
-                  paper: {
-                    sx: {
-                      mt: 0.5,
-                      borderRadius: 1.5,
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                      minWidth: 200,
-                      maxHeight: 360,
+                <Menu
+                  anchorEl={categoriesMenuAnchor}
+                  open={Boolean(categoriesMenuAnchor)}
+                  onClose={() => setCategoriesMenuAnchor(null)}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                  transformOrigin={{ vertical: "top", horizontal: "left" }}
+                  slotProps={{
+                    paper: {
+                      sx: {
+                        mt: 0.5,
+                        borderRadius: 1.5,
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                        minWidth: 200,
+                        maxHeight: 360,
+                      },
                     },
-                  },
-                }}
-              >
-                {categorias.map((cat) => (
-                  <MenuItem
-                    key={cat.slug}
-                    onClick={() => {
-                      onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug);
-                      setCategoriesMenuAnchor(null);
-                    }}
-                    selected={activeCategory === cat.slug}
-                    sx={{
-                      py: 1.25,
-                      px: 2.5,
-                      fontSize: "0.9rem",
-                      color:
-                        activeCategory === cat.slug ? "#E65100" : "text.primary",
-                      fontWeight: activeCategory === cat.slug ? 600 : 400,
-                      "&.Mui-selected": {
-                        backgroundColor: "rgba(230, 81, 0, 0.08)",
-                      },
-                      "&.Mui-selected:hover": {
-                        backgroundColor: "rgba(230, 81, 0, 0.12)",
-                      },
-                    }}
-                  >
-                    {cat.nome}
-                  </MenuItem>
-                ))}
-              </Menu>
+                  }}
+                >
+                  {categorias.map((cat) => (
+                    <MenuItem
+                      key={cat.slug}
+                      onClick={() => {
+                        onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug);
+                        setCategoriesMenuAnchor(null);
+                      }}
+                      selected={activeCategory === cat.slug}
+                      sx={{
+                        py: 1.25,
+                        px: 2.5,
+                        fontSize: "0.9rem",
+                        color:
+                          activeCategory === cat.slug ? "#E65100" : "text.primary",
+                        fontWeight: activeCategory === cat.slug ? 600 : 400,
+                        "&.Mui-selected": {
+                          backgroundColor: "rgba(230, 81, 0, 0.08)",
+                        },
+                        "&.Mui-selected:hover": {
+                          backgroundColor: "rgba(230, 81, 0, 0.12)",
+                        },
+                      }}
+                    >
+                      {cat.nome}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
 
-              <Box sx={{ flex: 1 }} />
-
+              {/* WhatsApp — fixo à direita, não rola com as categorias */}
               <Button
                 startIcon={<WhatsApp sx={{ fontSize: 16 }} />}
                 href="https://wa.me/5544998133182"
