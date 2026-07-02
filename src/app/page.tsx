@@ -347,6 +347,29 @@ export default function Home() {
 
       <Footer />
 
+      {/* SEO: texto descritivo visível para mecanismos de busca */}
+      <Box
+        component="section"
+        sx={{
+          backgroundColor: "#fafafa",
+          borderTop: "1px solid #f0f0f0",
+          py: { xs: 4, md: 6 },
+          px: 2,
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography variant="h2" sx={{ fontSize: { xs: "1.25rem", md: "1.5rem" }, fontWeight: 700, mb: 2, color: "#1A1A1A" }}>
+            Oficina de Suspensão Automotiva em Maringá — Especialista em Veículos Rebaixados e Customizados
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#555", lineHeight: 1.9, mb: 2 }}>
+            A <strong>Car Crew Garage</strong> é a oficina especializada em suspensão automotiva de Maringá/PR, referência em projetos de <strong>rebaixados</strong> e customização de veículos. Trabalhamos com <strong>suspensão a ar</strong>, <strong>suspensão fixa</strong> e <strong>suspensão rosca (coilover)</strong>, oferecendo soluções completas para quem busca performance, estilo e qualidade. Nossa equipe realiza desde a instalação de kits de suspensão de alto nível até projetos completos de customização automotiva, atendendo clientes de Maringá e de todo o Brasil.
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#555", lineHeight: 1.9 }}>
+            Seja para um projeto <strong>custom</strong> com <strong>air lift</strong>, uma suspensão preparada para pista, ou um rebaixamento preciso com <strong>coilover</strong>, a Car Crew Garage tem a experiência e as peças certas para transformar seu veículo. Visite nossa loja online e confira nossa linha completa de componentes para suspensão: bolsas de ar, amortecedores, bandejas, pontas de eixo, calços antirruído, kits e muito mais. <strong>Customizando seus sonhos desde 2014.</strong>
+          </Typography>
+        </Container>
+      </Box>
+
       {/* Snackbar de feedback */}
       <Snackbar
         open={snackOpen}

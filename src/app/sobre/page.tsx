@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Sobre a Car Crew Garage",
-  description: "Conheça a Car Crew Garage — mais de 10 anos de experiência em suspensão a ar, kits lift e customização automotiva em Maringá/PR.",
+  description: "Oficina de suspensão automotiva em Maringá/PR — especialista em veículos rebaixados, suspensão a ar, suspensão fixa, suspensão rosca, coilover e customização automotiva. Mais de 10 anos de experiência.",
   alternates: { canonical: "/sobre" },
 };
 
@@ -41,8 +41,11 @@ export default function SobrePage() {
           </Typography>
           <Typography variant="body1" sx={{ lineHeight: 1.9, color: "#444", mb: 2 }}>
             Somos especialistas em <strong>suspensão a ar</strong>,{" "}
+            <strong>suspensão fixa</strong>, <strong>suspensão rosca (coilover)</strong>,{" "}
             <strong>kits lift</strong> e projetos de personalização automotiva para quem
-            busca exclusividade, desempenho e um acabamento impecável. Mais do que
+            busca exclusividade, desempenho e um acabamento impecável. Nossa oficina atende
+            clientes de Maringá e região que buscam o melhor em <strong>rebaixados</strong>{" "}
+            e customização — mais do que
             instalar componentes, desenvolvemos soluções sob medida para que cada veículo
             reflita a personalidade do seu proprietário.
           </Typography>
