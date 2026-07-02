@@ -1,25 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { QrCodePix } from "qrcode-pix";
 import QRCode from "qrcode";
-import { readFileSync, existsSync } from "fs";
-import path from "path";
+import prisma from "@/lib/prisma";
 
-interface PixKey {
-  id: string;
-  tipo: string;
-  chave: string;
-  titular: string;
-  banco: string;
-  ativo: boolean;
-}
-
-function getChavePixAtiva(): string | null {
+async function getChavePixAtiva(): Promise<string | null> {
   try {
-    const configPath = path.join(process.cwd(), "src/data/pagamentos.json");
-    if (!existsSync(configPath)) return null;
-    const config = JSON.parse(readFileSync(configPath, "utf-8"));
-    const chavesAtivas = config.pix?.chaves?.filter((k: PixKey) => k.ativo) || [];
-    return chavesAtivas.length > 0 ? chavesAtivas[0].chave : null;
+    const row = await prisma.configuracao.findUnique({
+      where: { chave: "pagamentos" },
+    });
+    if (!row?.valor) return null;
+    const val = row.valor as any;
+    const chaves = val.pix?.chaves || [];
+    const ativa = chaves.find((k: any) => k.ativo);
+    return ativa?.chave || null;
   } catch {
     return null;
   }
@@ -34,16 +27,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (amount < 0.01) {
-      return NextResponse.json(
-        { error: "Valor mínimo para PIX é R$ 0,01" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Valor mínimo para PIX é R$ 0,01" }, { status: 400 });
     }
 
-    // Busca chave PIX do config (fallback: chave antiga)
-    const chavePix = getChavePixAtiva() || "contato@carcrew.com.br";
+    const chavePix = (await getChavePixAtiva()) || "contato@carcrew.com.br";
 
-    // Gera payload PIX (copia-e-cola)
     const payload = QrCodePix({
       version: "01",
       key: chavePix,
@@ -55,14 +43,10 @@ export async function POST(req: NextRequest) {
 
     const pixPayload = payload.payload();
 
-    // Gera QR Code como base64
     const qrCodeBase64 = await QRCode.toDataURL(pixPayload, {
       width: 350,
       margin: 2,
-      color: {
-        dark: "#1A1A1A",
-        light: "#ffffff",
-      },
+      color: { dark: "#1A1A1A", light: "#ffffff" },
     });
 
     return NextResponse.json({
@@ -74,9 +58,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Erro ao gerar PIX:", error);
-    return NextResponse.json(
-      { error: "Erro ao gerar pagamento PIX" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao gerar pagamento PIX" }, { status: 500 });
   }
 }
