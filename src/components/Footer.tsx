@@ -6,12 +6,14 @@ import {
   Typography,
   IconButton,
   Divider,
+  Link,
 } from "@mui/material";
 import {
   WhatsApp,
   Instagram,
   Facebook,
 } from "@mui/icons-material";
+import NextLink from "next/link";
 
 export default function Footer() {
   return (
@@ -111,23 +113,27 @@ export default function Footer() {
               Institucional
             </Typography>
             {[
-              "Sobre Nós",
-              "Política de Privacidade",
-              "Trocas e Devoluções",
-              "Frete e Entregas",
-              "Fale Conosco",
+              { label: "Sobre Nós", href: "/sobre" },
+              { label: "Política de Privacidade", href: "/privacidade" },
+              { label: "Trocas e Devoluções", href: "/trocas" },
+              { label: "Fale Conosco", href: "https://wa.me/5544998133182" },
             ].map((item) => (
               <Typography
-                key={item}
+                key={item.label}
                 variant="body2"
+                component={NextLink}
+                href={item.href}
+                target={item.href.startsWith("http") ? "_blank" : undefined}
                 sx={{
                   color: "#aaaaaa",
                   mb: 1,
                   cursor: "pointer",
+                  display: "block",
+                  textDecoration: "none",
                   "&:hover": { color: "#E65100" },
                 }}
               >
-                {item}
+                {item.label}
               </Typography>
             ))}
           </Box>
