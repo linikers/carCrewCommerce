@@ -111,6 +111,13 @@ model Produto {
   @@map("produtos")
 }
 
+model Configuracao {
+  chave String @id
+  valor Json
+
+  @@map("configuracoes")
+}
+
 model Banner {
   id         Int      @id @default(autoincrement())
   titulo     String
