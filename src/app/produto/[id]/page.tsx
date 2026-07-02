@@ -1,27 +1,8 @@
 import type { Metadata } from "next";
-import { readFileSync, existsSync } from "fs";
-import path from "path";
 import { notFound } from "next/navigation";
+import prisma from "@/lib/prisma";
 import ProdutoDetalheClient from "@/components/ProdutoDetalheClient";
 import type { Produto, Categoria } from "@/types";
-
-// ── Helpers ────────────────────────────────────────────
-
-function loadJSON<T>(relativePath: string): T[] {
-  try {
-    const filePath = path.join(process.cwd(), relativePath);
-    if (!existsSync(filePath)) return [];
-    return JSON.parse(readFileSync(filePath, "utf-8"));
-  } catch {
-    return [];
-  }
-}
-
-function findProduto(id: number): Produto | undefined {
-  return (loadJSON<Produto>("src/data/produtos.json") as any[]).find(
-    (p: any) => p.id === id && p.ativo !== false
-  );
-}
 
 // ── Metadata dinâmica por produto ──────────────────────
 
@@ -29,8 +10,11 @@ export async function generateMetadata(props: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await props.params;
-  const produto = findProduto(Number(id));
-  if (!produto) return {};
+  const produto = await prisma.produto.findUnique({
+    where: { id: Number(id) },
+  });
+
+  if (!produto || !produto.ativo) return {};
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
   const title = produto.nome;
@@ -74,16 +58,60 @@ export default async function ProdutoPage(props: {
 }) {
   const { id } = await props.params;
   const numericId = Number(id);
-  const produtos = loadJSON<Produto>("src/data/produtos.json") as Produto[];
-  const categorias = loadJSON<Categoria>("src/data/categorias.json") as Categoria[];
 
-  const produto = produtos.find((p) => p.id === numericId && (p as any).ativo !== false);
-  if (!produto) notFound();
+  // Buscar produto do banco
+  const dbProduto = await prisma.produto.findUnique({
+    where: { id: numericId },
+    include: { categoria: true },
+  });
 
-  const categoria = categorias.find((c) => c.slug === produto.category);
-  const relacionados = produtos
-    .filter((p) => p.category === produto.category && p.id !== numericId && (p as any).ativo !== false)
-    .slice(0, 3);
+  if (!dbProduto || !dbProduto.ativo) notFound();
+
+  // Converter pra tipo Produto
+  const produto: Produto = {
+    id: dbProduto.id,
+    nome: dbProduto.nome,
+    descricao: dbProduto.descricao || "",
+    preco: dbProduto.preco,
+    imgUrl: dbProduto.imgUrl || "/produtos/placeholder.svg",
+    category: dbProduto.categorySlug as any,
+    parcelamento: dbProduto.parcelamento || 12,
+    veiculos: dbProduto.veiculos || [],
+    peso: dbProduto.peso || undefined,
+    altura: dbProduto.altura || undefined,
+    largura: dbProduto.largura || undefined,
+    profundidade: dbProduto.profundidade || undefined,
+  };
+
+  // Buscar categoria
+  const categoria: Categoria | undefined = dbProduto.categoria
+    ? {
+        slug: dbProduto.categoria.slug as any,
+        nome: dbProduto.categoria.nome,
+        icone: dbProduto.categoria.icone,
+      }
+    : undefined;
+
+  // Buscar produtos relacionados (mesma categoria)
+  const relacionadosDb = await prisma.produto.findMany({
+    where: {
+      categorySlug: dbProduto.categorySlug,
+      id: { not: numericId },
+      ativo: true,
+    },
+    take: 3,
+  });
+
+  const relacionados: Produto[] = relacionadosDb.map((p) => ({
+    id: p.id,
+    nome: p.nome,
+    descricao: p.descricao || "",
+    preco: p.preco,
+    imgUrl: p.imgUrl || "/produtos/placeholder.svg",
+    category: p.categorySlug as any,
+    parcelamento: p.parcelamento || 12,
+    veiculos: p.veiculos || [],
+  }));
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
   const productUrl = `${siteUrl}/produto/${produto.id}`;
