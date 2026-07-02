@@ -32,8 +32,9 @@ import {
   Menu as MenuIcon,
   ExpandLess,
   ExpandMore,
+  Close,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Categoria } from "@/types";
 import CarCrewLogoText from "@/components/CarCrewLogoText";
 
@@ -55,6 +56,10 @@ export default function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [categoriesMenuAnchor, setCategoriesMenuAnchor] =
+    useState<null | HTMLElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -63,6 +68,48 @@ export default function Header({
       .then(setCategorias)
       .catch(() => {});
   }, []);
+
+  // Sincroniza searchValue quando o termo é limpo externamente (ex: ao selecionar categoria)
+  useEffect(() => {
+    if (!onSearch) return;
+    // Se activeCategory mudou e há um termo de busca, limpamos o input
+    // Isso é tratado via callback no onSearch
+  }, [activeCategory]);
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchValue(value);
+      onSearch?.(value);
+    },
+    [onSearch],
+  );
+
+  const handleSearchClear = useCallback(() => {
+    setSearchValue("");
+    onSearch?.("");
+    searchInputRef.current?.focus();
+  }, [onSearch]);
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        // Já filtra em tempo real via onChange — Enter só mantém o foco visual
+        searchInputRef.current?.blur();
+      }
+      if (e.key === "Escape") {
+        handleSearchClear();
+      }
+    },
+    [handleSearchClear],
+  );
+
+  const handleCategoryClick = useCallback(
+    (slug: string) => {
+      onCategorySelect?.(activeCategory === slug ? null : slug);
+      setCategoriesMenuAnchor(null);
+    },
+    [activeCategory, onCategorySelect],
+  );
 
   return (
     <>
@@ -165,27 +212,49 @@ export default function Header({
                 alignItems: "center",
                 backgroundColor: "#ffffff",
                 borderRadius: 1.5,
-                border: "1px solid #e0e0e0",
+                border: "1px solid",
+                borderColor: searchValue ? "#E65100" : "#e0e0e0",
                 px: 1.5,
                 py: 0.5,
                 maxWidth: 600,
                 mx: { xs: "auto" },
                 transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                boxShadow: searchValue
+                  ? "0 0 0 3px rgba(230, 81, 0, 0.1)"
+                  : "none",
                 "&:focus-within": {
                   borderColor: "#E65100",
                   boxShadow: "0 0 0 3px rgba(230, 81, 0, 0.1)",
                 },
               }}
             >
-              <SearchIcon
-                sx={{ color: "#999", mr: 1, fontSize: 20, flexShrink: 0 }}
-              />
+              <IconButton
+                size="small"
+                sx={{ color: searchValue ? "#E65100" : "#999", mr: 0.5, p: 0.5 }}
+                onClick={() => searchInputRef.current?.focus()}
+                aria-label="Buscar"
+              >
+                <SearchIcon sx={{ fontSize: 20 }} />
+              </IconButton>
               <InputBase
                 placeholder="O que deseja procurar?"
-                onChange={(e) => onSearch?.(e.target.value)}
+                value={searchValue}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                inputRef={searchInputRef}
                 sx={{ flex: 1, fontSize: { xs: "0.85rem", md: "0.925rem" } }}
                 inputProps={{ "aria-label": "buscar" }}
               />
+              {searchValue && (
+                <IconButton
+                  size="small"
+                  onClick={handleSearchClear}
+                  sx={{ color: "#999", ml: 0.5, p: 0.5 }}
+                  aria-label="Limpar busca"
+                >
+                  <Close sx={{ fontSize: 18 }} />
+                </IconButton>
+              )}
             </Box>
           </Container>
         </Box>
@@ -202,24 +271,21 @@ export default function Header({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: { xs: 0.5, md: 1 },
+                gap: { xs: 0.5, md: 2 },
               }}
             >
               {categorias.map((cat) => (
                 <Button
                   key={cat.slug}
-                  onClick={() =>
-                    onCategorySelect?.(
-                      activeCategory === cat.slug ? null : cat.slug,
-                    )
-                  }
+                  onClick={() => handleCategoryClick(cat.slug)}
                   sx={{
                     color:
                       activeCategory === cat.slug ? "#E65100" : "#ffffff",
                     textTransform: "none",
-                    fontSize: "0.825rem",
-                    px: 1.25,
-                    py: 0.75,
+                    fontSize: "0.85rem",
+                    px: 2,
+                    py: 1,
+                    minHeight: 42,
                     borderRadius: 0,
                     fontWeight: activeCategory === cat.slug ? 600 : 400,
                     borderBottom:
@@ -227,7 +293,8 @@ export default function Header({
                         ? "2px solid #E65100"
                         : "2px solid transparent",
                     letterSpacing: "0.01em",
-                    transition: "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
+                    transition:
+                      "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
                     "&:hover": {
                       backgroundColor: "rgba(255,255,255,0.08)",
                       color: "#fff",
@@ -237,23 +304,92 @@ export default function Header({
                   {cat.nome}
                 </Button>
               ))}
+
+              {/* Dropdown "+ Categorias" */}
               <Button
+                onClick={(e) =>
+                  setCategoriesMenuAnchor(e.currentTarget)
+                }
+                endIcon={
+                  <ExpandMore
+                    sx={{
+                      fontSize: 18,
+                      transition: "transform 0.2s ease",
+                      transform: categoriesMenuAnchor
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                }
                 sx={{
-                  color: "#E65100",
+                  color: categoriesMenuAnchor ? "#E65100" : "#ffffff",
                   textTransform: "none",
-                  fontSize: "0.825rem",
-                  px: 1.25,
-                  py: 0.75,
+                  fontSize: "0.85rem",
+                  px: 2,
+                  py: 1,
+                  minHeight: 42,
                   borderRadius: 0,
                   fontWeight: 600,
-                  transition: "background-color 0.15s ease",
+                  letterSpacing: "0.01em",
+                  borderBottom: categoriesMenuAnchor
+                    ? "2px solid #E65100"
+                    : "2px solid transparent",
+                  transition:
+                    "color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease",
                   "&:hover": {
                     backgroundColor: "rgba(255,255,255,0.08)",
+                    color: "#E65100",
                   },
                 }}
               >
                 + Categorias
               </Button>
+
+              <Menu
+                anchorEl={categoriesMenuAnchor}
+                open={Boolean(categoriesMenuAnchor)}
+                onClose={() => setCategoriesMenuAnchor(null)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                transformOrigin={{ vertical: "top", horizontal: "left" }}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      mt: 0.5,
+                      borderRadius: 1.5,
+                      boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                      minWidth: 200,
+                      maxHeight: 360,
+                    },
+                  },
+                }}
+              >
+                {categorias.map((cat) => (
+                  <MenuItem
+                    key={cat.slug}
+                    onClick={() => handleCategoryClick(cat.slug)}
+                    selected={activeCategory === cat.slug}
+                    sx={{
+                      py: 1.25,
+                      px: 2.5,
+                      fontSize: "0.9rem",
+                      color:
+                        activeCategory === cat.slug
+                          ? "#E65100"
+                          : "text.primary",
+                      fontWeight:
+                        activeCategory === cat.slug ? 600 : 400,
+                      "&.Mui-selected": {
+                        backgroundColor: "rgba(230, 81, 0, 0.08)",
+                      },
+                      "&.Mui-selected:hover": {
+                        backgroundColor: "rgba(230, 81, 0, 0.12)",
+                      },
+                    }}
+                  >
+                    {cat.nome}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Box sx={{ flex: 1 }} />
 
@@ -266,13 +402,15 @@ export default function Header({
                 sx={{
                   color: "#25D366",
                   textTransform: "none",
-                  fontSize: "0.775rem",
+                  fontSize: "0.8rem",
                   fontWeight: 600,
-                  px: 1.25,
-                  py: 0.75,
+                  px: 2,
+                  py: 1,
+                  minHeight: 42,
                   borderRadius: 0,
                   letterSpacing: "0.01em",
-                  transition: "background-color 0.15s ease, color 0.15s ease",
+                  transition:
+                    "background-color 0.15s ease, color 0.15s ease",
                   "&:hover": {
                     backgroundColor: "rgba(255,255,255,0.08)",
                     color: "#2ee87a",
@@ -359,7 +497,7 @@ export default function Header({
 
             <ListItemButton
               onClick={() => {
-                router.push("https://wa.me/5544998133182");
+                window.open("https://wa.me/5544998133182", "_blank");
                 setMobileMenuOpen(false);
               }}
               sx={{ mb: 0.5 }}
