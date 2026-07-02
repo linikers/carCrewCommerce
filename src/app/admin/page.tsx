@@ -14,6 +14,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
 } from "recharts";
 import AdminLayout from "@/components/admin/AdminLayout";
+import Ga4Dashboard from "@/components/admin/Ga4Dashboard";
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -86,6 +87,9 @@ export default function AdminDashboard() {
             </Grid>
           ))}
         </Grid>
+
+        {/* GA4 Analytics */}
+        <Ga4Dashboard />
 
         {/* Gráfico */}
         <Paper sx={{ p: 3, borderRadius: 3, mb: 4 }}>
