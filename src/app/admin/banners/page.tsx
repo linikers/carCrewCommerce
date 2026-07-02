@@ -1,46 +1,61 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   Container, Typography, Box, Paper, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Button, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Switch, FormControlLabel, CircularProgress, Alert, Chip,
 } from "@mui/material";
-import { Add, Edit, Delete, Visibility } from "@mui/icons-material";
+import { Add, Edit, Delete } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import CloudinaryUpload from "@/components/CloudinaryUpload";
 
 interface Banner {
   id: number; titulo: string; subtitulo: string; link: string;
+  imgDesktop: string; imgMobile: string;
   corFundo: string; corTexto: string; ativo: boolean; ordem: number;
 }
 
 export default function AdminBanners() {
-  const router = useRouter();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editando, setEditando] = useState<Banner | null>(null);
-  const [form, setForm] = useState({ titulo: "", subtitulo: "", link: "", corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true });
+  const [form, setForm] = useState({
+    titulo: "", subtitulo: "", link: "",
+    imgDesktop: "", imgMobile: "",
+    corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true,
+  });
   const [error, setError] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const carregar = async () => {
-    setBanners(await (await fetch("/api/admin/banners")).json());
+    const data = await (await fetch("/api/admin/banners")).json();
+    setBanners(data);
     setLoading(false);
   };
   useEffect(() => { carregar(); }, []);
 
+  const resetForm = () => ({
+    titulo: "", subtitulo: "", link: "",
+    imgDesktop: "", imgMobile: "",
+    corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true,
+  });
+
   const abrirNovo = () => {
     setEditando(null);
-    setForm({ titulo: "", subtitulo: "", link: "", corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true });
+    setForm(resetForm());
     setError(""); setModalOpen(true);
   };
 
   const abrirEditar = (b: Banner) => {
     setEditando(b);
-    setForm({ titulo: b.titulo, subtitulo: b.subtitulo, link: b.link, corFundo: b.corFundo, corTexto: b.corTexto, ativo: b.ativo });
+    setForm({
+      titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "",
+      imgDesktop: b.imgDesktop || "", imgMobile: b.imgMobile || "",
+      corFundo: b.corFundo, corTexto: b.corTexto, ativo: b.ativo,
+    });
     setError(""); setModalOpen(true);
   };
 
@@ -82,7 +97,7 @@ export default function AdminBanners() {
               <TableHead><TableRow sx={{ bgcolor: "#f5f5f5" }}>
                 <TableCell sx={{ fontWeight: 600 }}>Ordem</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Título</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Fundo</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Imagem</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Link</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Ativo</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Ações</TableCell>
@@ -92,8 +107,19 @@ export default function AdminBanners() {
                   <TableRow key={b.id} hover>
                     <TableCell>{b.ordem}</TableCell>
                     <TableCell sx={{ fontWeight: 500 }}>{b.titulo}</TableCell>
-                    <TableCell><Chip label={b.corFundo} size="small" sx={{ bgcolor: b.corFundo, color: b.corTexto }} /></TableCell>
-                    <TableCell sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#666" }}>{b.link}</TableCell>
+                    <TableCell>
+                      {b.imgDesktop ? (
+                        <Box
+                          component="img"
+                          src={b.imgDesktop}
+                          alt={b.titulo}
+                          sx={{ width: 120, height: 45, objectFit: "cover", borderRadius: 1, border: "1px solid #e0e0e0" }}
+                        />
+                      ) : (
+                        <Chip label={b.corFundo} size="small" sx={{ bgcolor: b.corFundo, color: b.corTexto }} />
+                      )}
+                    </TableCell>
+                    <TableCell sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#666" }}>{b.link || "—"}</TableCell>
                     <TableCell><Chip label={b.ativo ? "Sim" : "Não"} size="small" color={b.ativo ? "success" : "default"} /></TableCell>
                     <TableCell>
                       <IconButton size="small" onClick={() => abrirEditar(b)}><Edit fontSize="small" /></IconButton>
@@ -107,6 +133,7 @@ export default function AdminBanners() {
         )}
       </Container>
 
+      {/* Modal Criar/Editar */}
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="sm" fullWidth>
         <form onSubmit={salvar}>
           <DialogTitle>{editando ? "Editar Banner" : "Novo Banner"}</DialogTitle>
@@ -115,6 +142,61 @@ export default function AdminBanners() {
               <TextField label="Título" required value={form.titulo} onChange={(e) => setForm({...form, titulo: e.target.value})} />
               <TextField label="Subtítulo" value={form.subtitulo} onChange={(e) => setForm({...form, subtitulo: e.target.value})} />
               <TextField label="Link" value={form.link} onChange={(e) => setForm({...form, link: e.target.value})} helperText="URL para onde o banner leva" />
+
+              {/* Upload Imagem Desktop */}
+              <Box>
+                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>Imagem Desktop (1600×600)</Typography>
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <CloudinaryUpload
+                    onUpload={(url) => setForm({...form, imgDesktop: url})}
+                    label="Upload Desktop"
+                  />
+                  {form.imgDesktop && (
+                    <Box
+                      component="img"
+                      src={form.imgDesktop}
+                      alt="Preview"
+                      sx={{ width: 120, height: 45, objectFit: "cover", borderRadius: 1, border: "1px solid #e0e0e0" }}
+                    />
+                  )}
+                </Box>
+                <TextField
+                  size="small"
+                  placeholder="Ou cole a URL da imagem"
+                  value={form.imgDesktop}
+                  onChange={(e) => setForm({...form, imgDesktop: e.target.value})}
+                  sx={{ mt: 0.5 }}
+                  fullWidth
+                />
+              </Box>
+
+              {/* Upload Imagem Mobile */}
+              <Box>
+                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>Imagem Mobile (800×400)</Typography>
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <CloudinaryUpload
+                    onUpload={(url) => setForm({...form, imgMobile: url})}
+                    label="Upload Mobile"
+                  />
+                  {form.imgMobile && (
+                    <Box
+                      component="img"
+                      src={form.imgMobile}
+                      alt="Preview"
+                      sx={{ width: 120, height: 45, objectFit: "cover", borderRadius: 1, border: "1px solid #e0e0e0" }}
+                    />
+                  )}
+                </Box>
+                <TextField
+                  size="small"
+                  placeholder="Ou cole a URL da imagem"
+                  value={form.imgMobile}
+                  onChange={(e) => setForm({...form, imgMobile: e.target.value})}
+                  sx={{ mt: 0.5 }}
+                  fullWidth
+                />
+              </Box>
+
               <Box sx={{ display: "flex", gap: 2 }}>
                 <TextField label="Cor de fundo" value={form.corFundo} onChange={(e) => setForm({...form, corFundo: e.target.value})} sx={{ flex: 1 }} />
                 <TextField label="Cor do texto" value={form.corTexto} onChange={(e) => setForm({...form, corTexto: e.target.value})} sx={{ flex: 1 }} />
@@ -130,6 +212,7 @@ export default function AdminBanners() {
         </form>
       </Dialog>
 
+      {/* Modal Confirmar Exclusão */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
         <DialogTitle>Excluir banner?</DialogTitle>
         <DialogContent><Typography>Esta ação não pode ser desfeita.</Typography></DialogContent>
