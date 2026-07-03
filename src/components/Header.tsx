@@ -268,9 +268,14 @@ export default function Header({
                 {categorias.map((cat) => (
                   <Button
                     key={cat.slug}
-                    onClick={() =>
-                      onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug)
-                    }
+                    onClick={() => {
+                      // Redireciona pra home filtrada se não estiver na página principal
+                      if (!onCategorySelect) {
+                        router.push("/?cat=" + (activeCategory === cat.slug ? "" : cat.slug));
+                        return;
+                      }
+                      onCategorySelect(activeCategory === cat.slug ? null : cat.slug);
+                    }}
                     sx={{
                       color:
                         activeCategory === cat.slug ? "#E65100" : "#ffffff",
@@ -362,6 +367,10 @@ export default function Header({
                     <MenuItem
                       key={cat.slug}
                       onClick={() => {
+                        if (!onCategorySelect) {
+                          router.push("/?cat=" + (activeCategory === cat.slug ? "" : cat.slug));
+                          return;
+                        }
                         onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug);
                         setCategoriesMenuAnchor(null);
                       }}
@@ -429,6 +438,11 @@ export default function Header({
                     key={cat.slug}
                     sx={{ pl: 4 }}
                     onClick={() => {
+                      if (!onCategorySelect) {
+                        router.push("/?cat=" + cat.slug);
+                        setMobileMenuOpen(false);
+                        return;
+                      }
                       onCategorySelect?.(cat.slug);
                       setMobileMenuOpen(false);
                     }}

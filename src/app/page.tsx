@@ -54,6 +54,13 @@ export default function Home() {
   const [categorias, setCategorias] = useState<CategoriaData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Lê ?cat=slug da URL na inicialização (ex: vindo do Header fora da home)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get("cat");
+    if (cat) setCategoriaAtiva(cat as CategoriaSlug);
+  }, []);
+
   useEffect(() => {
     Promise.all([
       fetch("/api/produtos").then((r) => r.json()),
