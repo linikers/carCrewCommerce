@@ -33,7 +33,20 @@ export default function OffRoadHero() {
         }}
       />
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
-        <Box sx={{ maxWidth: { md: "45%" } }}>
+        {/* Painel escuro semi-transparente atrás do texto pra garantir legibilidade */}
+        <Box
+          sx={{
+            display: { xs: "none", md: "block" },
+            position: "absolute",
+            left: 0,
+            top: -60,
+            width: "42%",
+            height: "calc(100% + 120px)",
+            background: "linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%)",
+            pointerEvents: "none",
+          }}
+        />
+        <Box sx={{ position: "relative", maxWidth: { xs: "100%", md: "38%" } }}>
           <Chip
             label="MAIS QUE UM CAMINHO, UM ESTILO DE VIDA"
             sx={{
@@ -54,20 +67,21 @@ export default function OffRoadHero() {
               fontSize: { xs: "2.5rem", md: "4rem" },
               lineHeight: 1.1,
               mb: 2,
-              textShadow: "0 4px 12px rgba(0,0,0,0.5)",
+              textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.5)",
             }}
           >
-            POR QUE
+            <Box component="span" sx={{ color: "#fff" }}>POR QUE</Box>
             <br />
-            <Box component="span" sx={{ color: "#E65100" }}>OFF-ROAD?</Box>
+            <Box component="span" sx={{ color: "#FF7722" }}>OFF-ROAD?</Box>
           </Typography>
           <Typography
             variant="h6"
             sx={{
               fontWeight: 400,
               mb: 4,
-              color: "#eee",
+              color: "#fff",
               fontSize: { xs: "1rem", md: "1.25rem" },
+              textShadow: "0 1px 4px rgba(0,0,0,0.7)",
             }}
           >
             Prepare sua picape para qualquer terreno. Lift kits 4x4, suspensão off-road e acessórios para trilha em Maringá/PR.

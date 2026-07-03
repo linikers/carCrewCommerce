@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Box,
   Container,
@@ -308,6 +309,35 @@ export default function Home() {
                 </Typography>
               )}
             </Box>
+
+            {/* Link Off-Road */}
+            {!categoriaAtiva && !searchTerm && (
+              <Box component={Link} href="/off-road"
+                sx={{
+                  display: "flex", alignItems: "center", gap: 2,
+                  mb: 3, p: 2.5, borderRadius: 3,
+                  background: "linear-gradient(135deg, #1A1A1A 0%, #2c1810 50%)",
+                  color: "#fff", textDecoration: "none",
+                  transition: "transform 0.2s",
+                  "&:hover": { transform: "translateY(-2px)" },
+                }}
+              >
+                <Box sx={{ fontSize: 32, lineHeight: 1, color: "#E65100", fontWeight: 900 }}>
+                  4x4
+                </Box>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                    Suspensão Off-Road e Lift Kits
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#aaa" }}>
+                    Prepare sua picape para qualquer terreno
+                  </Typography>
+                </Box>
+                <Box sx={{ ml: "auto", color: "#E65100", fontWeight: 700, fontSize: "1.5rem" }}>
+                  →
+                </Box>
+              </Box>
+            )}
 
             {produtos.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
