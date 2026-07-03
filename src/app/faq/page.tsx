@@ -32,42 +32,42 @@ const faqItems: FaqItem[] = [
   {
     question: "Qual a diferença entre suspensão a ar, fixa e rosca?",
     answer:
-      "A suspensão a ar usa bolsas pneumáticas controladas por compressor, permitindo ajustar a altura do veículo em tempo real pelo painel. A suspensão fixa usa molas ou amortecedores convencionais, com altura fixa e manutenção mais simples. A suspensão rosca (coilover) é uma evolução da fixa, com regulagem de altura e pré-carga da mola por meio de anéis, ideal para quem quer precisão no rebaixamento.",
+      "A diferença principal é a regulagem de altura. A suspensão a ar e a rosca (coilover) são ajustáveis — no ar você controla a altura em tempo real por um painel (perfeito para qualquer terreno), e na rosca você regula manualmente girando o anel de pré-carga. A suspensão fixa tem altura definida de fábrica; qualquer mudança exige retrabalho mecânico (troca de molas, corte, etc). Resumindo: ar = regulagem dinâmica via controle; rosca = regulagem manual por ajuste mecânico; fixa = sem regulagem, alteração exige retrabalho.",
+  },
+  {
+    question: "Qual suspensão escolher para meu carro?",
+    answer:
+      "Depende do uso que você faz do veículo. Para uso urbano e versatilidade, a suspensão a ar é a mais comum — você ajusta a altura conforme o terreno ou situação (subindo em lombadas, rebaixando para estilo). Para quem anda na cidade e também vai para pista/autódromo, a rosca (coilover) ou a fixa são as mais indicadas, pela precisão em curvas e resposta esportiva. O ar entrega o melhor conforto e comodidade para os mais variados tipos de terreno, mas se o foco é performance pura em pista, rosca ou fixa são superiores. Cada projeto é conversado caso a caso — fale com a gente pelo WhatsApp para uma recomendação personalizada.",
   },
   {
     question: "Vocês entregam para todo o Brasil?",
     answer:
-      "Sim. Enviamos para todo o território nacional via Correios e transportadoras parceiras. O frete é calculado automaticamente pelo CEP no checkout, e o prazo de entrega varia conforme a região. Atendemos clientes em Maringá, Londrina, Curitiba, São Paulo, Rio de Janeiro e demais estados.",
+      "Sim. Enviamos para todo o território nacional via Correios e transportadoras parceiras. Já temos mais de 500 vendas concluídas para fora do nosso estado, com clientes satisfeitos em todas as regiões. O frete é calculado pelo CEP no checkout e o prazo varia conforme a região.",
   },
   {
-    question: "Quanto custa uma suspensão completa instalada?",
+    question: "Quanto custa uma suspensão instalada?",
     answer:
-      "O valor depende do tipo de suspensão, marca dos componentes e modelo do veículo. Trabalhamos com peças das principais marcas do mercado (BDS, Air Lift, AccuAir, QA1, Stance, Pro Comp) e montamos orçamentos personalizados. Entre em contato pelo WhatsApp (44) 99813-3182 com modelo e ano do carro para receber um orçamento detalhado.",
+      "Atualmente, modificar uma suspensão parte de R$ 900. O teto é definido pelo orçamento do cliente, porque trabalhamos com acessórios nacionais e importados das mais variadas faixas de preço. Cada projeto tem suas particularidades — tipo de suspensão, marca dos componentes, modelo do veículo e nível de personalização. Por isso fazemos um orçamento detalhado, sem compromisso, de acordo com o que você quer.",
   },
   {
-    question: "Quanto tempo leva a instalação de uma suspensão?",
+    question: "A suspensão rebaixada ou lift é legalizada?",
     answer:
-      "A instalação completa leva entre 4 e 8 horas dependendo do tipo de suspensão e complexidade do veículo. Para suspensão a ar o tempo médio é de 1 a 2 dias úteis (incluindo alinhamento, balanceamento e testes). Suspensão fixa ou coilover geralmente é instalada no mesmo dia. Agendamos a data e horário conforme sua disponibilidade.",
+      "Sim, é possível legalizar suspensão rebaixada e lift, respeitando os limites do CONTRAN. Para rebaixamento, o limite é de 10 cm em relação à altura original do veículo (Resolução CONTRAN nº 292/2008). Para lift (elevação), não há limite de altura fixado, mas o veículo precisa passar por vistoria técnica e homologação junto ao DETRAN/PR, com laudo de inspeção veicular. A Car Crew Garage orienta todos os clientes sobre a documentação e o processo de regularização.",
   },
   {
-    question: "A suspensão rebaixada é legalizada?",
+    question: "Posso parcelar a instalação?",
     answer:
-      "Sim, desde que respeite os limites do CONTRAN (Resolução 292/2008 e atualizações). O rebaixamento máximo permitido é de 10 cm em relação à altura original do veículo. Após a instalação, é necessário regularizar no DETRAN/PR com laudo de inspeção técnica veicular. A Car Crew Garage orienta todos os clientes sobre a documentação necessária.",
+      "Sim, aceitamos parcelamento da instalação. Entre em contato pelo WhatsApp (44) 99813-3182 para combinar as condições de pagamento direto. Para produtos da loja, parcelamos em até 12x sem juros no cartão.",
   },
   {
     question: "Vocês fazem orçamento sem compromisso?",
     answer:
-      "Sim. Entre em contato pelo WhatsApp (44) 99813-3182 informando modelo e ano do veículo, tipo de suspensão desejada e fotos do projeto. Enviamos orçamento detalhado em até 24 horas, sem compromisso de contratação.",
+      "Sim, fazemos orçamento sem compromisso. Mande pelo WhatsApp (44) 99813-3182 o modelo e ano do veículo, o tipo de suspensão desejada e (se possível) fotos do projeto. Respondemos com orçamento detalhado em até 24 horas.",
   },
   {
-    question: "Vocês parcelam a instalação?",
+    question: "Quanto tempo leva a instalação?",
     answer:
-      "Sim, aceitamos parcelamento em até 12x sem juros no cartão de crédito para produtos da loja. Para serviços de instalação, consulte condições de pagamento direto no WhatsApp. PIX à vista tem desconto especial.",
-  },
-  {
-    question: "Como funciona a garantia?",
-    answer:
-      "Todos os produtos da loja têm garantia do fabricante (varia de 3 meses a 1 ano conforme marca). A mão de obra de instalação tem garantia de 90 dias para defeitos relacionados à montagem. Em caso de problema, entre em contato pelo WhatsApp com o número do pedido.",
+      "Em média, 1 semana para instalar. Dependendo do tipo de suspensão e da complexidade do projeto, o prazo pode ser menor ou maior — uma suspensão fixa costuma ser instalada no mesmo dia, enquanto uma suspensão a ar completa (com compressor, manifolds, chicotes elétricos) pode levar 2 a 3 dias úteis. O agendamento é feito conforme sua disponibilidade.",
   },
 ];
 
