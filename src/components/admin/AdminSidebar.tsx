@@ -40,6 +40,11 @@ const menuItems = [
   { label: "Clientes", icon: <People />, path: "/admin/clientes", disabled: true, tag: "Em breve" },
 ];
 
+const pageLinks = [
+  { label: "Página FAQ", icon: <Category />, path: "/faq" },
+  { label: "Página Off-Road", icon: <Category />, path: "/off-road" },
+];
+
 interface AdminSidebarProps {
   open: boolean;
   onClose: () => void;
@@ -142,6 +147,31 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                 {item.tag}
               </Typography>
             )}
+          </ListItemButton>
+        ))}
+      </List>
+
+      <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
+
+      <List sx={{ px: 1 }}>
+        <Typography variant="caption" sx={{ color: "#666", px: 2, pb: 0.5, display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          Páginas do Site
+        </Typography>
+        {pageLinks.map((item) => (
+          <ListItemButton
+            key={item.path}
+            onClick={() => handleNav(item.path)}
+            sx={{ borderRadius: 2, mb: 0.5, color: "#ccc",
+              "&:hover": { backgroundColor: "rgba(255,255,255,0.05)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "inherit", minWidth: 40 }}>
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={item.label}
+              sx={{ "& .MuiListItemText-primary": { fontSize: "0.85rem" } }}
+            />
           </ListItemButton>
         ))}
       </List>

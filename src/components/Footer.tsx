@@ -114,6 +114,8 @@ export default function Footer() {
             </Typography>
             {[
               { label: "Sobre Nós", href: "/sobre" },
+              { label: "FAQ", href: "/faq" },
+              { label: "Suspensão Off-Road", href: "/off-road" },
               { label: "Política de Privacidade", href: "/privacidade" },
               { label: "Trocas e Devoluções", href: "/trocas" },
               { label: "Fale Conosco", href: "https://wa.me/5544998133182" },
