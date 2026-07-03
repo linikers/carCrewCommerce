@@ -70,7 +70,16 @@ export default async function OffRoadPage() {
     const keywords = ["lift", "off", "road", "trilha", "4x4", "elevação", "suspensao a ar", "bolsa", "coilover", "rosca"];
     produtos = allProdutos
       .filter((p) => keywords.some((k) => p.nome.toLowerCase().includes(k)))
-      .slice(0, 8)
+      .sort((a, b) => {
+        // Prioridade: produtos com 'off', 'road', 'lift' no nome primeiro
+        const pa = a.nome.toLowerCase();
+        const pb = b.nome.toLowerCase();
+        const scoreA = (pa.includes("off") ? 3 : 0) + (pa.includes("road") ? 3 : 0) + (pa.includes("lift") ? 3 : 0);
+        const scoreB = (pb.includes("off") ? 3 : 0) + (pb.includes("road") ? 3 : 0) + (pb.includes("lift") ? 3 : 0);
+        if (scoreA !== scoreB) return scoreB - scoreA;
+        return a.nome.localeCompare(b.nome);
+      })
+      .slice(0, 16)
       .map((p) => ({
         id: p.id,
         nome: p.nome,
