@@ -147,6 +147,7 @@ export default async function OffRoadPage() {
             </Grid>
           </Paper>
 
+          <Box id="produtos-offroad">
           <Typography variant="h3" sx={{ fontWeight: 700, mb: 1, color: "#1A1A1A" }}>
             Produtos para Off-Road
           </Typography>
@@ -178,6 +179,8 @@ export default async function OffRoadPage() {
               ))}
             </Grid>
           )}
+
+          </Box>
 
           <OffRoadCta />
         </Container>
