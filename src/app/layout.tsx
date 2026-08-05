@@ -97,6 +97,12 @@ export const metadata: Metadata = {
     },
   },
   category: "vehicles",
+  other: {
+    "geo.region": "BR-PR",
+    "geo.placename": "Maringá",
+    "geo.position": "-23.4205; -51.9331",
+    ICBM: "-23.4205, -51.9331",
+  },
   icons: {
     icon: [
       { url: "/favicon/favicon.ico", sizes: "any" },
