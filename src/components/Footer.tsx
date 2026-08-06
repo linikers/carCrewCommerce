@@ -83,23 +83,30 @@ export default function Footer() {
               Categorias
             </Typography>
             {[
-              "Amortecedores",
-              "Calço Antirruído",
-              "Ponta de Eixo",
-              "Bolsa de Ar",
-              "Molas",
+              { label: "Suspensão a Ar", href: "/suspensao-a-ar" },
+              { label: "Rebaixamento", href: "/rebaixamento" },
+              { label: "Suspensão Esportiva", href: "/suspensao-esportiva" },
+              { label: "Suspensão Off-Road", href: "/off-road" },
+              { label: "Bolsas de Ar", href: "/?cat=bolsas-de-ar" },
+              { label: "Amortecedores", href: "/?cat=amortecedores" },
+              { label: "Ponta de Eixo", href: "/?cat=pontas-de-eixo" },
+              { label: "Calço Antirruído", href: "/?cat=calcos-antirruido" },
             ].map((item) => (
               <Typography
-                key={item}
+                key={item.label}
                 variant="body2"
+                component={NextLink}
+                href={item.href}
                 sx={{
                   color: "#aaaaaa",
                   mb: 1,
                   cursor: "pointer",
+                  display: "block",
+                  textDecoration: "none",
                   "&:hover": { color: "#E65100" },
                 }}
               >
-                {item}
+                {item.label}
               </Typography>
             ))}
           </Box>

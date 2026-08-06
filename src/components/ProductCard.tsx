@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Card,
   CardMedia,
@@ -22,12 +22,15 @@ export default function ProductCard({
   produto,
   onAddToCart,
 }: ProductCardProps) {
-  const router = useRouter();
   const parcelas = produto.parcelamento || 12;
   const valorParcela = produto.preco / parcelas;
   const sobConsulta = produto.preco <= 0;
 
   return (
+    <Link
+      href={`/produto/${produto.id}`}
+      style={{ textDecoration: "none", height: "100%", display: "block", color: "inherit" }}
+    >
     <Card
       sx={{
         borderRadius: 3,
@@ -42,7 +45,6 @@ export default function ProductCard({
           transform: "translateY(-2px)",
         },
       }}
-      onClick={() => router.push(`/produto/${produto.id}`)}
     >
       {/* Imagem */}
       <Box sx={{ position: "relative", aspectRatio: "1/1" }}>
@@ -195,5 +197,6 @@ export default function ProductCard({
         </Box>
       </CardContent>
     </Card>
+    </Link>
   );
 }

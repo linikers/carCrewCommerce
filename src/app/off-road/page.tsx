@@ -16,7 +16,9 @@ import OffRoadCta from "@/components/off-road/OffRoadCta";
 import OffRoadNoProducts from "@/components/off-road/OffRoadNoProducts";
 
 export const metadata: Metadata = {
-  title: "Suspensão Off-Road e Lift 4x4 em Maringá | Car Crew Garage",
+  title: {
+    absolute: "Suspensão Off-Road e Lift 4x4 em Maringá | Car Crew Garage",
+  },
   description:
     "Especialistas em suspensão off-road, lift kits e elevação 4x4 em Maringá/PR. Trilha, lama, aventura — prepare sua picape com a Car Crew Garage.",
   alternates: { canonical: "/off-road" },

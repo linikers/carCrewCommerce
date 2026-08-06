@@ -7,8 +7,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Rotas estáticas
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1.0 },
-    { url: `${siteUrl}/checkout`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.3 },
     { url: `${siteUrl}/sobre`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${siteUrl}/faq`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.5 },
+    { url: `${siteUrl}/off-road`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    { url: `${siteUrl}/suspensao-a-ar`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+    { url: `${siteUrl}/rebaixamento`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+    { url: `${siteUrl}/suspensao-esportiva`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
     { url: `${siteUrl}/trocas`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.4 },
     { url: `${siteUrl}/privacidade`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.4 },
   ];
