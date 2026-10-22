@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, notFound, useRouter } from "next/navigation";
 import {
@@ -33,6 +33,7 @@ import { useCart } from "@/lib/CartContext";
 import { isCloudinaryUrl, detailUrl, thumbUrl, extractPublicId } from "@/lib/cloudinary";
 import type { Produto, Categoria, ItemCarrinho } from "@/types";
 import { formatBRL } from "@/lib/format";
+import { track, trackItem, trackWhatsApp } from "@/lib/analytics";
 
 interface ProdutoDetalheClientProps {
   produto: Produto;
@@ -62,7 +63,13 @@ export default function ProdutoDetalheClient({
   const valorParcela = produto.preco / parcelas;
   const sobConsulta = produto.preco <= 0;
 
+  // view_item — mede quais peças recebem visita
+  useEffect(() => {
+    if (produto) trackItem("view_item", produto);
+  }, [produto]);
+
   const handleAddToCart = () => {
+    trackItem("add_to_cart", produto, quantidade);
     // addToCart no contexto sempre adiciona 1, então chamamos N vezes
     for (let i = 0; i < quantidade; i++) {
       addToCart(produto);
@@ -331,6 +338,7 @@ export default function ProdutoDetalheClient({
                   : `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
               )}`}
               target="_blank"
+              onClick={() => trackWhatsApp(sobConsulta ? "pdp_orcamento" : "pdp_duvidas", produto.nome)}
               sx={{
                 borderColor: "#0E7A3F",
                 color: "#0E7A3F",

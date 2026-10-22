@@ -13,6 +13,7 @@ import { WhatsApp } from "@mui/icons-material";
 import { Produto } from "@/types";
 import { isCloudinaryUrl, thumbUrl, extractPublicId } from "@/lib/cloudinary";
 import { formatBRL } from "@/lib/format";
+import { trackItem, trackWhatsApp } from "@/lib/analytics";
 
 interface ProductCardProps {
   produto: Produto;
@@ -168,7 +169,10 @@ export default function ProductCard({
                   `Olá! Quero um orçamento para: ${produto.nome}`
                 )}`}
                 target="_blank"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trackWhatsApp(sobConsulta ? "card_orcamento" : "card_duvidas", produto.nome);
+                }}
                 sx={{
                   backgroundColor: "#BF360C",
                   "&:hover": { backgroundColor: "#8C2A09" },
@@ -192,7 +196,10 @@ export default function ProductCard({
               <Button
                 fullWidth
                 variant="contained"
-                onClick={() => onAddToCart(produto)}
+                onClick={() => {
+                  trackItem("add_to_cart", produto);
+                  onAddToCart(produto);
+                }}
                 sx={{
                   backgroundColor: "#BF360C",
                   "&:hover": { backgroundColor: "#8C2A09" },
@@ -213,7 +220,10 @@ export default function ProductCard({
                   `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
                 )}`}
                 target="_blank"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trackWhatsApp(sobConsulta ? "card_orcamento" : "card_duvidas", produto.nome);
+                }}
                 sx={{
                   borderColor: "#0E7A3F",
                   color: "#0E7A3F",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Container,
@@ -32,6 +32,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PixPayment from "@/components/PixPayment";
 import { useCart } from "@/lib/CartContext";
+import { track } from "@/lib/analytics";
 import { formatBRL } from "@/lib/format";
 
 interface FormData {
@@ -87,6 +88,14 @@ export default function CheckoutPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+
+  // begin_checkout — funil de compra
+  useEffect(() => {
+    if (items.length > 0) {
+      track("begin_checkout", { currency: "BRL", value: total, items: items.length });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // PIX states
   const [pixOpen, setPixOpen] = useState(false);
