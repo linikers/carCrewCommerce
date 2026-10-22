@@ -17,6 +17,7 @@ import {
   CheckCircleOutlined,
 } from "@mui/icons-material";
 import { useState } from "react";
+import { formatBRL } from "@/lib/format";
 
 interface PixData {
   qrCode: string;
@@ -113,7 +114,7 @@ export default function PixPayment({
                 mb: 3,
               }}
             >
-              R$ {pixData.amount.toFixed(2)}
+              {formatBRL(pixData.amount)}
             </Typography>
 
             {/* QR Code */}

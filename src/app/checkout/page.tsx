@@ -32,6 +32,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PixPayment from "@/components/PixPayment";
 import { useCart } from "@/lib/CartContext";
+import { formatBRL } from "@/lib/format";
 
 interface FormData {
   nome: string;
@@ -244,7 +245,7 @@ export default function CheckoutPage() {
   const formValido = form.nome && form.telefone && form.endereco && form.numero && form.bairro && form.cidade;
 
   const whatsappMsg = orderId
-    ? encodeURIComponent(`Olá! Acabei de fazer o pedido #${orderId.slice(0, 8)} na Car Crew Garage. Valor: R$ ${(total + (selectedFreight?.valor || 0)).toFixed(2)}`)
+    ? encodeURIComponent(`Olá! Acabei de fazer o pedido #${orderId.slice(0, 8)} na Car Crew Garage. Valor: ${formatBRL(total + (selectedFreight?.valor || 0))}`)
     : "";
 
   // Estado vazio
@@ -294,17 +295,17 @@ export default function CheckoutPage() {
             {items.map((item) => (
               <Box key={item.produto.id} sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
                 <Typography variant="body2">{item.produto.nome.substring(0, 40)} x{item.quantidade}</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>R$ {(item.produto.preco * item.quantidade).toFixed(2)}</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>{formatBRL((item.produto.preco * item.quantidade))}</Typography>
               </Box>
             ))}
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="h6" sx={{ fontWeight: 700 }}>Total</Typography>
-              <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>R$ {pixTotal.toFixed(2)}</Typography>
+              <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>{formatBRL(pixTotal)}</Typography>
             </Box>
             {selectedFreight && (
               <Typography variant="body2" sx={{ color: "#666", mt: 1 }}>
-                Frete: {selectedFreight.modalidade} ({selectedFreight.transportadora}) - R$ {selectedFreight.valor.toFixed(2)}
+                Frete: {selectedFreight.modalidade} ({selectedFreight.transportadora}) - {formatBRL(selectedFreight.valor)}
               </Typography>
             )}
           </Paper>
@@ -344,7 +345,7 @@ export default function CheckoutPage() {
           Voltar
         </Button>
 
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 4, color: "#1A1A1A" }}>Finalizar Compra</Typography>
+        <Typography component="h1" variant="h4" sx={{ fontWeight: 700, mb: 4, color: "#1A1A1A" }}>Finalizar Compra</Typography>
 
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
@@ -396,7 +397,7 @@ export default function CheckoutPage() {
                                 transition: "all 0.2s", "&:hover": { borderColor: "#E65100" } }}>
                                 <Typography variant="body2" sx={{ fontWeight: 600 }}>{opt.modalidade}</Typography>
                                 <Typography variant="caption" sx={{ color: "#666" }}>{opt.transportadora} • {opt.prazo}</Typography>
-                                <Typography variant="body2" sx={{ color: "#E65100", fontWeight: 700, mt: 0.5 }}>R$ {opt.valor.toFixed(2)}</Typography>
+                                <Typography variant="body2" sx={{ color: "#E65100", fontWeight: 700, mt: 0.5 }}>{formatBRL(opt.valor)}</Typography>
                               </Paper>
                             </Grid>
                           ))}
@@ -473,25 +474,25 @@ export default function CheckoutPage() {
                       <ListItemText
                         primary={<Typography variant="body2" sx={{ fontWeight: 500 }}>{item.produto.nome.substring(0, 50)}</Typography>}
                         secondary={`Qtd: ${item.quantidade}`} />
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>R$ {(item.produto.preco * item.quantidade).toFixed(2)}</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatBRL((item.produto.preco * item.quantidade))}</Typography>
                     </ListItem>
                   ))}
                 </List>
                 <Divider sx={{ my: 2 }} />
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
                   <Typography variant="body1">Subtotal</Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>R$ {total.toFixed(2)}</Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>{formatBRL(total)}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
                   <Typography variant="body2" sx={{ color: "#666" }}>Frete</Typography>
                   <Typography variant="body2" sx={{ color: "#666" }}>
-                    {selectedFreight ? `${selectedFreight.modalidade} - R$ ${selectedFreight.valor.toFixed(2)}` : "Selecione uma opção"}
+                    {selectedFreight ? `${selectedFreight.modalidade} - ${formatBRL(selectedFreight.valor)}` : "Selecione uma opção"}
                   </Typography>
                 </Box>
                 <Divider sx={{ my: 2 }} />
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Typography variant="h6" sx={{ fontWeight: 700 }}>Total</Typography>
-                  <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>R$ {(total + (selectedFreight?.valor || 0)).toFixed(2)}</Typography>
+                  <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>{formatBRL((total + (selectedFreight?.valor || 0)))}</Typography>
                 </Box>
               </Paper>
             </Grid>

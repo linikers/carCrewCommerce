@@ -14,6 +14,7 @@ import Footer from "@/components/Footer";
 import OffRoadHero from "@/components/off-road/OffRoadHero";
 import OffRoadCta from "@/components/off-road/OffRoadCta";
 import OffRoadNoProducts from "@/components/off-road/OffRoadNoProducts";
+import { formatBRL } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: {
@@ -178,10 +179,10 @@ export default async function OffRoadPage() {
                       <Box sx={{ p: 2 }}>
                         <Typography variant="body2" sx={{ fontWeight: 600, color: "#1A1A1A", mb: 1, minHeight: 40 }}>{p.nome}</Typography>
                         <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>
-                          R$ {p.preco.toFixed(2)}
+                          {formatBRL(p.preco)}
                         </Typography>
                         <Typography variant="caption" sx={{ color: "#999" }}>
-                          ou {p.parcelamento}x de R$ {(p.preco / p.parcelamento).toFixed(2)} sem juros
+                          Pagamento via PIX
                         </Typography>
                       </Box>
                     </Paper>

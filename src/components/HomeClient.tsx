@@ -93,6 +93,8 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
     const params = new URLSearchParams(window.location.search);
     const cat = params.get("cat");
     if (cat) setCategoriaAtiva(cat as CategoriaSlug);
+    const q = params.get("q");
+    if (q) setSearchTerm(q);
   }, []);
 
   const [bannerIndex, setBannerIndex] = useState(0);
@@ -180,6 +182,14 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
               inset: 0,
             }}
           />
+          {banners[bannerIndex]?.link && (
+            <Box
+              component="a"
+              href={banners[bannerIndex]?.link}
+              aria-label={banners[bannerIndex]?.titulo || "Ver oferta"}
+              sx={{ position: "absolute", inset: 0, zIndex: 1 }}
+            />
+          )}
           {banners.length > 1 && (
             <>
               <IconButton
@@ -253,8 +263,8 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
         <Container maxWidth="lg">
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2 }}>
             {[
-              { icon: <CreditCard sx={{ color: "#E65100" }} />, titulo: "Pague com Cartão", desc: "em até 12x sem juros" },
-              { icon: <Security sx={{ color: "#E65100" }} />, titulo: "Segurança", desc: "Loja oficial Car Crew Garage" },
+              { icon: <CreditCard sx={{ color: "#E65100" }} />, titulo: "Pagamento", desc: "via PIX" },
+              { icon: <Security sx={{ color: "#E65100" }} />, titulo: "Atendimento", desc: "direto no WhatsApp" },
               { icon: <LocalShipping sx={{ color: "#E65100" }} />, titulo: "Entrega", desc: "para todo o Brasil" },
             ].map((item) => (
               <Box

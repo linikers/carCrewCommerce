@@ -57,7 +57,7 @@ const faqItems: FaqItem[] = [
   {
     question: "Posso parcelar a instalação?",
     answer:
-      "Sim, aceitamos parcelamento da instalação. Entre em contato pelo WhatsApp (44) 99813-3182 para combinar as condições de pagamento direto. Para produtos da loja, parcelamos em até 12x sem juros no cartão.",
+      "Sim, aceitamos parcelamento da instalação. Entre em contato pelo WhatsApp (44) 99813-3182 para combinar as condições de pagamento direto. Para produtos da loja, o pagamento é via PIX.",
   },
   {
     question: "Vocês fazem orçamento sem compromisso?",
@@ -96,6 +96,7 @@ export default function FaqPage() {
 
         <Container maxWidth="md" sx={{ flex: 1, py: 6 }}>
           <Typography
+            component="h1"
             variant="h3"
             sx={{ fontWeight: 700, mb: 2, color: "#1A1A1A", textAlign: "center" }}
           >

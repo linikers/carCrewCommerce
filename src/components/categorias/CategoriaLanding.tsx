@@ -4,6 +4,7 @@ import { CheckCircle, WhatsApp } from "@mui/icons-material";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { formatBRL } from "@/lib/format";
 
 export interface CategoriaProduto {
   id: number;
@@ -113,10 +114,10 @@ export default function CategoriaLanding({
                         {p.preco > 0 ? (
                           <>
                             <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>
-                              R$ {p.preco.toFixed(2)}
+                              {formatBRL(p.preco)}
                             </Typography>
                             <Typography variant="caption" sx={{ color: "#999" }}>
-                              ou {p.parcelamento}x de R$ {(p.preco / p.parcelamento).toFixed(2)} sem juros
+                              Pagamento via PIX
                             </Typography>
                           </>
                         ) : (

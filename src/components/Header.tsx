@@ -74,9 +74,20 @@ export default function Header({
     onSearch?.(term);
   };
 
+  // Fora da home não existe filtro local: Enter/Submit leva para a home com o termo.
+  // (antes, o campo de busca não fazia nada em /produto, /faq, /checkout etc.)
+  const submitSearch = (term: string) => {
+    if (onSearch) {
+      onSearch(term);
+      return;
+    }
+    const q = term.trim();
+    router.push(q ? `/?q=${encodeURIComponent(q)}` : "/");
+  };
+
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      fireSearch(searchValue);
+      submitSearch(searchValue);
       searchInputRef.current?.blur();
     }
     if (e.key === "Escape") {
@@ -184,7 +195,7 @@ export default function Header({
               component="form"
               onSubmit={(e) => {
                 e.preventDefault();
-                fireSearch(searchValue);
+                submitSearch(searchValue);
               }}
               sx={{
                 display: "flex",
