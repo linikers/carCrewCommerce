@@ -2,20 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { formatBRL } from "@/lib/format";
 import { useRouter } from "next/navigation";
 import {
   Box, Container, Typography, Grid, Paper, Button, CircularProgress,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Alert,
 } from "@mui/material";
 import {
-  Inventory2, ShoppingBag, People, TrendingUp, Add, Category, ViewCarousel,
+  Inventory2, ShoppingBag, TrendingUp, Add, Category, ViewCarousel, WarningAmber,
 } from "@mui/icons-material";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
 } from "recharts";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Ga4Dashboard from "@/components/admin/Ga4Dashboard";
+import { formatBRL, formatDataCurta } from "@/lib/format";
+import { STATUS_LABEL, STATUS_COLOR } from "@/lib/pedido-status";
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -55,11 +56,19 @@ export default function AdminDashboard() {
   }
 
   const cards = [
-    { label: "Produtos", value: String(stats?.produtos || 0), icon: <Inventory2 />, color: "#BF360C", link: "/admin/produtos" },
-    { label: "Estoque total", value: String(stats?.estoque || 0), icon: <TrendingUp />, color: "#8C2A09", link: "/admin/produtos" },
-    { label: "Usuários", value: String(stats?.usuarios || 0), icon: <People />, color: "#0E7A3F", link: "/admin/produtos" },
-    { label: "Banners ativos", value: String(stats?.banners || 0), icon: <ViewCarousel />, color: "#666", link: "/admin/banners" },
+    { label: "Produtos ativos", value: String(stats?.produtos ?? 0), icon: <Inventory2 />, color: "#BF360C", link: "/admin/produtos" },
+    { label: "Pedidos abertos", value: String(stats?.pedidosAbertos ?? 0), icon: <ShoppingBag />, color: "#8C2A09", link: "/admin/pedidos" },
+    { label: "Vendas (6 meses)", value: formatBRL(stats?.totalVendas ?? 0), icon: <TrendingUp />, color: "#0E7A3F", link: "/admin/pedidos" },
+    { label: "Banners ativos", value: String(stats?.banners ?? 0), icon: <ViewCarousel />, color: "#666", link: "/admin/banners" },
   ];
+
+  const alertas = stats?.alertas || { semPreco: 0, esgotados: 0, estoqueBaixo: 0 };
+  const temAlerta = alertas.semPreco > 0 || alertas.esgotados > 0 || alertas.estoqueBaixo > 0;
+
+  const corStatus = (status: string) =>
+    (STATUS_COLOR as Record<string, "warning" | "info" | "primary" | "success" | "error">)[status] || "warning";
+  const rotuloStatus = (status: string) =>
+    (STATUS_LABEL as Record<string, string>)[status] || status;
 
   return (
     <AdminLayout>
@@ -89,12 +98,46 @@ export default function AdminDashboard() {
           ))}
         </Grid>
 
+        {/* Alertas de operação — 4.6 */}
+        {temAlerta && (
+          <Alert
+            severity="warning"
+            icon={<WarningAmber fontSize="inherit" />}
+            sx={{ mb: 4, borderRadius: 2, alignItems: "center" }}
+            action={
+              <Button
+                size="small"
+                onClick={() => router.push("/admin/produtos")}
+                sx={{ textTransform: "none", color: "#8C2A09" }}
+              >
+                Revisar produtos
+              </Button>
+            }
+          >
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+              Precisa de atenção antes de vender
+            </Typography>
+            <Typography variant="body2">
+              {[
+                alertas.semPreco > 0 ? `${alertas.semPreco} sem preço` : null,
+                alertas.esgotados > 0 ? `${alertas.esgotados} esgotado(s)` : null,
+                alertas.estoqueBaixo > 0 ? `${alertas.estoqueBaixo} com estoque baixo` : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </Typography>
+          </Alert>
+        )}
+
         {/* GA4 Analytics */}
         <Ga4Dashboard />
 
         {/* Gráfico */}
         <Paper sx={{ p: 3, borderRadius: 3, mb: 4 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>Vendas (simulado)</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>Vendas (6 meses)</Typography>
+          <Typography variant="body2" sx={{ color: "#666", mb: 3 }}>
+            Soma dos pedidos reais, sem os cancelados.
+          </Typography>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={stats?.vendasPorMes || []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
@@ -144,12 +187,52 @@ export default function AdminDashboard() {
           </TableContainer>
         </Paper>
 
-        {/* Pedidos recentes */}
+        {/* Pedidos recentes — 4.2: era texto fixo dizendo "nenhum pedido" */}
         <Paper sx={{ p: 3, borderRadius: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Pedidos Recentes</Typography>
-          <Typography variant="body2" sx={{ color: "#666", py: 3, textAlign: "center" }}>
-            Nenhum pedido registrado ainda. Quando houver pedidos, aparecerão aqui.
-          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>Pedidos Recentes</Typography>
+            <Button size="small" onClick={() => router.push("/admin/pedidos")}
+              sx={{ textTransform: "none", color: "#BF360C" }}>Ver todos</Button>
+          </Box>
+          {(!stats?.ultimosPedidos || stats.ultimosPedidos.length === 0) ? (
+            <Typography variant="body2" sx={{ color: "#666", py: 3, textAlign: "center" }}>
+              Nenhum pedido registrado ainda. Quando houver pedidos, aparecerão aqui.
+            </Typography>
+          ) : (
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                    <TableCell sx={{ fontWeight: 600 }}>Pedido</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Cliente</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Data</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }} align="right">Total</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {stats.ultimosPedidos.map((p: any) => (
+                    <TableRow
+                      key={p.id}
+                      hover
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => router.push(`/admin/pedidos/${p.id}`)}
+                    >
+                      <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>
+                        #{String(p.id).slice(-6).toUpperCase()}
+                      </TableCell>
+                      <TableCell>{p.cliente}</TableCell>
+                      <TableCell>{formatDataCurta(p.criadoEm)}</TableCell>
+                      <TableCell>
+                        <Chip size="small" label={rotuloStatus(p.status)} color={corStatus(p.status)} />
+                      </TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 600 }}>{formatBRL(p.total)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </Paper>
 
         {/* Ações rápidas */}

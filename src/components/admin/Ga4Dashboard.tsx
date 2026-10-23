@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import { TrendingUp, Visibility, People, Schedule, Public, Devices, Smartphone, Computer, Tablet } from "@mui/icons-material";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { formatDataGA4, formatDataGA4Completa } from "@/lib/format";
 
 interface Ga4Data {
   overview?: {
@@ -77,15 +78,17 @@ export default function Ga4Dashboard() {
     tablet: <Tablet fontSize="small" />,
   };
 
-  const dailyChart = (daily || []).map((d) => ({
-    ...d,
-    label: d.date?.slice(4, 6) + "/" + d.date?.slice(6, 8),
-  }));
+  const dailyChart = [...(daily || [])]
+    .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
+    .map((d) => ({
+      ...d,
+      label: formatDataGA4(d.date),
+    }));
 
   return (
     <Paper sx={{ p: 3, borderRadius: 3, mb: 4 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>Analytics (30 dias)</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>Analytics (últimos 30 dias)</Typography>
         <Chip label="Google Analytics" size="small" sx={{ bgcolor: "#f0f0f0", fontSize: 11 }} />
       </Box>
 
@@ -108,22 +111,34 @@ export default function Ga4Dashboard() {
       </Grid>
 
       {/* Daily chart */}
-      {dailyChart.length > 0 && (
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: "#555" }}>
-            Visitantes (7 dias)
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: "#555" }}>
+          Visitantes por dia (30 dias)
+        </Typography>
+        {dailyChart.length === 0 ? (
+          <Typography variant="body2" sx={{ color: "#666", py: 4, textAlign: "center" }}>
+            Nenhum acesso registrado nos últimos 30 dias.
           </Typography>
+        ) : (
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={dailyChart}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="label" stroke="#666" fontSize={12} />
+              <XAxis
+                dataKey="label"
+                stroke="#666"
+                fontSize={12}
+                minTickGap={16}
+                interval="preserveStartEnd"
+              />
               <YAxis stroke="#666" fontSize={12} allowDecimals={false} />
-              <Tooltip />
-              <Line type="monotone" dataKey="users" name="Visitantes" stroke="#BF360C" strokeWidth={2} dot={{ r: 4 }} />
+              <Tooltip
+                labelFormatter={(_, payload) => formatDataGA4Completa(payload?.[0]?.payload?.date)}
+              />
+              <Line type="monotone" dataKey="users" name="Visitantes" stroke="#BF360C" strokeWidth={2} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
-        </Box>
-      )}
+        )}
+      </Box>
 
       <Grid container spacing={3}>
         {/* Top pages */}

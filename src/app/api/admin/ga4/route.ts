@@ -58,12 +58,17 @@ async function getAccessToken(): Promise<string> {
 
     const tokenData = await tokenRes.json();
     return tokenData.access_token;
-  } catch (err: any) {
-    throw new Error(`Auth failed: ${err.message}`);
+  } catch (err) {
+    throw new Error(`Auth failed: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 
-async function runReport(propertyId: string, body: any, token: string) {
+type Ga4Row = {
+  dimensionValues?: { value?: string }[];
+  metricValues?: { value?: string }[];
+};
+
+async function runReport(propertyId: string, body: Record<string, unknown>, token: string) {
   const res = await fetch(
     `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
     {
@@ -97,7 +102,7 @@ export async function GET() {
 
     const token = await getAccessToken();
 
-    const parseMetric = (row: any, index: number) =>
+    const parseMetric = (row: Ga4Row | undefined, index: number) =>
       Number(row?.metricValues?.[index]?.value ?? 0);
 
     const [overview, topPages, sources, devices, daily] = await Promise.all([
@@ -130,11 +135,24 @@ export async function GET() {
         metrics: [{ name: "activeUsers" }],
       }, token),
       runReport(propertyId, {
-        dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
+        dateRanges: [{ startDate: "29daysAgo", endDate: "today" }],
         dimensions: [{ name: "date" }],
         metrics: [{ name: "activeUsers" }, { name: "screenPageViews" }],
+        // Sem `orderBys` o GA4 devolve as linhas em ordem indefinida — o
+        // gráfico saía em ziguezague (17, 09, 29, 18...). Ordenar aqui é a
+        // única forma de garantir a leitura da esquerda para a direita.
+        orderBys: [{ dimension: { dimensionName: "date" } }],
       }, token),
     ]);
+
+    const dailyRows: { date: string; users: number; pageViews: number }[] = (daily.rows || [])
+      .map((r: Ga4Row) => ({
+        date: r.dimensionValues?.[0]?.value || "",
+        users: parseMetric(r, 0),
+        pageViews: parseMetric(r, 1),
+      }))
+      // segunda camada: mesmo que a API ignore o orderBys, o eixo sai em ordem
+      .sort((a: { date: string }, b: { date: string }) => a.date.localeCompare(b.date));
 
     return NextResponse.json({
       overview: {
@@ -143,26 +161,27 @@ export async function GET() {
         sessions: parseMetric(overview.rows?.[0], 2),
         avgSessionDuration: parseMetric(overview.rows?.[0], 3),
       },
-      topPages: (topPages.rows || []).map((r: any) => ({
+      topPages: (topPages.rows || []).map((r: Ga4Row) => ({
         path: r.dimensionValues?.[0]?.value || "/",
         views: parseMetric(r, 0),
       })),
-      sources: (sources.rows || []).map((r: any) => ({
+      sources: (sources.rows || []).map((r: Ga4Row) => ({
         source: r.dimensionValues?.[0]?.value || "unknown",
         sessions: parseMetric(r, 0),
       })),
-      devices: (devices.rows || []).map((r: any) => ({
+      devices: (devices.rows || []).map((r: Ga4Row) => ({
         category: r.dimensionValues?.[0]?.value || "unknown",
         users: parseMetric(r, 0),
       })),
-      daily: (daily.rows || []).map((r: any) => ({
-        date: r.dimensionValues?.[0]?.value || "",
-        users: parseMetric(r, 0),
-        pageViews: parseMetric(r, 1),
-      })),
+      daily: dailyRows,
     });
-  } catch (error: any) {
-    console.error("GA4 API error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    // Detalhe só no log: a mensagem crua do Google devolve nome de variável
+    // de ambiente e resposta interna para quem chamar a rota.
+    console.error("[admin/ga4] falha:", error);
+    return NextResponse.json(
+      { error: "Não foi possível carregar o Analytics agora.", hint: "Tente de novo em alguns minutos." },
+      { status: 502 }
+    );
   }
 }

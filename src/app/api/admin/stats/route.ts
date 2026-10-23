@@ -27,6 +27,8 @@ export async function GET() {
       banners,
       totalEstoqueAgg,
       pedidosPeriodo,
+      pedidosRecentes,
+      pedidosAbertos,
     ] = await Promise.all([
       prisma.produto.findMany({ where: { ativo: true } }),
       prisma.user.count(),
@@ -35,6 +37,22 @@ export async function GET() {
       prisma.pedido.findMany({
         where: { createdAt: { gte: inicioPeriodo } },
         select: { total: true, createdAt: true, status: true },
+      }),
+      // 4.2: "Pedidos Recentes" era um texto fixo dizendo "nenhum pedido".
+      // Agora são os 5 últimos de verdade, com o cliente.
+      prisma.pedido.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: {
+          id: true,
+          total: true,
+          status: true,
+          createdAt: true,
+          user: { select: { name: true, email: true } },
+        },
+      }),
+      prisma.pedido.count({
+        where: { status: { in: ["aguardando_pagamento", "pago", "em_separacao"] } },
       }),
     ]);
 
@@ -66,6 +84,12 @@ export async function GET() {
     const pedidosValidos = pedidosPeriodo.filter((p) => p.status !== "cancelado");
     const totalVendas = pedidosValidos.reduce((s, p) => s + p.total, 0);
 
+    // 4.6: nenhum alerta de saúde da operação. Isto é o que trava venda:
+    // produto sem preço não fecha pedido, produto esgotado aparece na vitrine.
+    const semPreco = produtos.filter((p) => p.preco <= 0).length;
+    const esgotados = produtos.filter((p) => p.estoque <= 0).length;
+    const estoqueBaixo = produtos.filter((p) => p.estoque > 0 && p.estoque <= 2).length;
+
     return NextResponse.json({
       produtos: produtos.length,
       usuarios,
@@ -75,6 +99,15 @@ export async function GET() {
       vendasPorMes,
       pedidos: pedidosValidos.length,
       totalVendas,
+      pedidosAbertos,
+      ultimosPedidos: pedidosRecentes.map((p) => ({
+        id: p.id,
+        total: p.total,
+        status: p.status,
+        criadoEm: p.createdAt,
+        cliente: p.user?.name || p.user?.email || "Cliente sem nome",
+      })),
+      alertas: { semPreco, esgotados, estoqueBaixo },
       // deixa explícito na tela que o gráfico é receita real
       vendasFonte: "pedidos",
     });
