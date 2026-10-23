@@ -8,7 +8,7 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Alert,
 } from "@mui/material";
 import {
-  Inventory2, ShoppingBag, TrendingUp, Add, Category, ViewCarousel, WarningAmber,
+  Inventory2, ShoppingBag, TrendingUp, ViewCarousel, WarningAmber,
 } from "@mui/icons-material";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
@@ -235,31 +235,6 @@ export default function AdminDashboard() {
           )}
         </Paper>
 
-        {/* Ações rápidas */}
-        <Typography variant="h6" sx={{ fontWeight: 600, mt: 4, mb: 2 }}>Ações Rápidas</Typography>
-        <Grid container spacing={2}>
-          {[
-            { label: "Novo Produto", icon: <Add />, path: "/admin/produtos/novo", dashed: true },
-            { label: "Gerenciar Produtos", icon: <Inventory2 />, path: "/admin/produtos", dashed: false },
-            { label: "Categorias", icon: <Category />, path: "/admin/categorias", dashed: false },
-            { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners", dashed: false },
-          ].map((item) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={item.label}>
-              <Paper
-                onClick={() => router.push(item.path)}
-                sx={{
-                  p: 2.5, borderRadius: 3, textAlign: "center", cursor: "pointer",
-                  border: item.dashed ? "2px dashed #ddd" : "2px solid #ddd",
-                  transition: "0.2s",
-                  "&:hover": { borderColor: "#BF360C", bgcolor: "#fff5f0" },
-                }}
-              >
-                <Box sx={{ color: "#BF360C", fontSize: 32, mb: 1 }}>{item.icon}</Box>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>{item.label}</Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
       </Container>
     </AdminLayout>
   );
