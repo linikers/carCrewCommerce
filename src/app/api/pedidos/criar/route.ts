@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Criar pedido
+    // 6.1: o formulário do checkout já vem com endereço e telefone; antes tudo
+    // isso era descartado e o pedido nascia sem destino de entrega.
     const pedido = await prisma.pedido.create({
       data: {
         userId: "guest",
@@ -39,7 +41,19 @@ export async function POST(req: NextRequest) {
           quantidade: i.quantidade,
         })),
         total: total + (freight || 0),
+        frete: freight || 0,
         status: paymentMethod === "pix" ? "aguardando_pagamento" : "pago",
+        clienteNome: form?.nome || null,
+        clienteTelefone: form?.telefone || null,
+        enderecoEntrega: form
+          ? {
+              cep: form.cep || null,
+              logradouro: form.endereco || null,
+              numero: form.numero || null,
+              bairro: form.bairro || null,
+              cidade: form.cidade || null,
+            }
+          : undefined,
         createdAt: new Date(),
         updatedAt: new Date(),
       },

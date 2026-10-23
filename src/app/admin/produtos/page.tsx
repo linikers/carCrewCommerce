@@ -36,7 +36,6 @@ import {
   VisibilityOff,
   Inventory2,
 } from "@mui/icons-material";
-import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Produto {
@@ -60,6 +59,9 @@ export default function AdminProdutos() {
   const [porPagina, setPorPagina] = useState(20);
   const [ordemPor, setOrdemPor] = useState<"id" | "nome" | "preco" | "estoque">("id");
   const [ordemDir, setOrdemDir] = useState<"asc" | "desc">("desc");
+  // 6.3/6.4: sem visão de "sem preço" e "estoque baixo" a lista não servia
+  // para trabalhar. O filtro vem também pela URL (atalho do dashboard).
+  const [filtroRapido, setFiltroRapido] = useState<"todos" | "sem-preco" | "estoque-baixo">("todos");
 
   const carregar = async () => {
     try {
@@ -79,6 +81,11 @@ export default function AdminProdutos() {
   };
 
   useEffect(() => { carregar(); }, []);
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("filtro");
+    if (q === "sem-preco" || q === "estoque-baixo") setFiltroRapido(q);
+  }, []);
 
   const alternarAtivo = async (id: number, ativoAtual: boolean) => {
     try {
@@ -110,7 +117,6 @@ export default function AdminProdutos() {
   if (status === "unauthenticated" || (status === "authenticated" && !session?.user?.admin)) {
     return (
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <Header />
         <Container sx={{ flex: 1, py: 8, textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Acesso restrito</Typography>
           <Button variant="contained" onClick={() => router.push("/admin/login")}
@@ -122,10 +128,12 @@ export default function AdminProdutos() {
     );
   }
 
-  const filtrados = produtos.filter(
-    (p) =>
-      p.nome.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtrados = produtos.filter((p) => {
+    if (!p.nome.toLowerCase().includes(search.toLowerCase())) return false;
+    if (filtroRapido === "sem-preco") return p.preco <= 0;
+    if (filtroRapido === "estoque-baixo") return p.estoque <= 2;
+    return true;
+  });
 
   // Ordenação: clicar no cabeçalho alterna asc/desc.
   const ordenados = [...filtrados].sort((a, b) => {
@@ -180,8 +188,25 @@ export default function AdminProdutos() {
           placeholder="Buscar produto..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPagina(0); }}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2 }}
         />
+
+        <Box sx={{ display: "flex", gap: 1, mb: 3, flexWrap: "wrap" }}>
+          {[
+            { id: "todos" as const, label: `Todos (${produtos.length})` },
+            { id: "sem-preco" as const, label: `Sem preço (${produtos.filter((p) => p.preco <= 0).length})` },
+            { id: "estoque-baixo" as const, label: `Estoque baixo (${produtos.filter((p) => p.estoque <= 2).length})` },
+          ].map((f) => (
+            <Chip
+              key={f.id}
+              label={f.label}
+              onClick={() => { setFiltroRapido(f.id); setPagina(0); }}
+              color={filtroRapido === f.id ? "primary" : "default"}
+              variant={filtroRapido === f.id ? "filled" : "outlined"}
+              sx={{ cursor: "pointer" }}
+            />
+          ))}
+        </Box>
 
         {erro && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErro("")}>

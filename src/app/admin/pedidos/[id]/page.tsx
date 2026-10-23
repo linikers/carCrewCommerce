@@ -26,9 +26,9 @@ import {
   LocalShipping,
   Cancel,
 } from "@mui/icons-material";
-import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { labelStatus } from "@/lib/pedido-status";
+import { labelStatus, STATUS_COLOR } from "@/lib/pedido-status";
+import { formatBRL } from "@/lib/format";
 
 interface PedidoItem {
   nome: string;
@@ -45,6 +45,16 @@ interface Pedido {
   status: string;
   createdAt: string;
   updatedAt: string;
+  frete?: number | null;
+  clienteNome?: string | null;
+  clienteTelefone?: string | null;
+  enderecoEntrega?: {
+    cep?: string | null;
+    logradouro?: string | null;
+    numero?: string | null;
+    bairro?: string | null;
+    cidade?: string | null;
+  } | null;
   user?: { id: string; name: string | null; email: string | null };
 }
 
@@ -162,7 +172,6 @@ export default function PedidoDetalhe() {
 
   return (
     <>
-      <Header cartItemCount={0} />
       <AdminLayout title="Pedido">
         <Container maxWidth="md" sx={{ py: 4 }}>
           <Button
@@ -192,7 +201,7 @@ export default function PedidoDetalhe() {
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 2 }}>
                   <Box>
                     <Typography variant="h5" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
-                      Pedido #{pedido.id.slice(0, 8)}
+                      Pedido #{pedido.id.slice(-6).toUpperCase()}
                     </Typography>
                     <Typography variant="body2" sx={{ color: "#666", mt: 0.5 }}>
                       Criado em {formatDate(pedido.createdAt)}
@@ -201,7 +210,7 @@ export default function PedidoDetalhe() {
                   <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                     <Chip
                       label={labelStatus(pedido.status)}
-                      color={statusColors[MAPA_STATUS[pedido.status] ?? pedido.status] ?? "default"}
+                      color={STATUS_COLOR[pedido.status as keyof typeof STATUS_COLOR] ?? "default"}
                       sx={{ fontWeight: 600, fontSize: "0.85rem", py: 1 }}
                     />
                   </Box>
@@ -219,7 +228,7 @@ export default function PedidoDetalhe() {
                       Nome
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                      {pedido.user?.name || "—"}
+                      {pedido.clienteNome || pedido.user?.name || "—"}
                     </Typography>
                   </Box>
                   <Box sx={{ flex: "1 1 200px" }}>
@@ -230,7 +239,51 @@ export default function PedidoDetalhe() {
                       {pedido.user?.email || "—"}
                     </Typography>
                   </Box>
+                  <Box sx={{ flex: "1 1 200px" }}>
+                    <Typography variant="caption" sx={{ color: "#888" }}>
+                      Telefone
+                    </Typography>
+                    <Typography variant="body1">
+                      {pedido.clienteTelefone || "—"}
+                    </Typography>
+                  </Box>
                 </Box>
+              </Paper>
+
+              {/* Entrega — 6.1 */}
+              <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: "#1A1A1A" }}>
+                  Entrega
+                </Typography>
+                {pedido.enderecoEntrega ? (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+                    <Box sx={{ flex: "2 1 320px" }}>
+                      <Typography variant="caption" sx={{ color: "#888" }}>Endereço</Typography>
+                      <Typography variant="body1">
+                        {[
+                          pedido.enderecoEntrega.logradouro,
+                          pedido.enderecoEntrega.numero,
+                          pedido.enderecoEntrega.bairro,
+                          pedido.enderecoEntrega.cidade,
+                        ]
+                          .filter(Boolean)
+                          .join(", ") || "—"}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ flex: "1 1 120px" }}>
+                      <Typography variant="caption" sx={{ color: "#888" }}>CEP</Typography>
+                      <Typography variant="body1">{pedido.enderecoEntrega.cep || "—"}</Typography>
+                    </Box>
+                    <Box sx={{ flex: "1 1 120px" }}>
+                      <Typography variant="caption" sx={{ color: "#888" }}>Frete</Typography>
+                      <Typography variant="body1">{formatBRL(pedido.frete ?? 0)}</Typography>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Typography variant="body2" sx={{ color: "#666" }}>
+                    Este pedido não tem endereço registrado (anterior à correção do checkout).
+                  </Typography>
+                )}
               </Paper>
 
               {/* Itens */}
@@ -253,9 +306,9 @@ export default function PedidoDetalhe() {
                         <TableRow key={idx}>
                           <TableCell>{item.nome}</TableCell>
                           <TableCell align="center">{item.quantidade}</TableCell>
-                          <TableCell align="right">{formatPrice(item.preco)}</TableCell>
+                          <TableCell align="right">{formatBRL(item.preco)}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: 600 }}>
-                            {formatPrice(item.preco * item.quantidade)}
+                            {formatBRL(item.preco * item.quantidade)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -263,9 +316,14 @@ export default function PedidoDetalhe() {
                   </Table>
                 </TableContainer>
                 <Divider sx={{ my: 2 }} />
-                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 0.5 }}>
+                  {pedido.frete ? (
+                    <Typography variant="body2" sx={{ color: "#666" }}>
+                      Frete: {formatBRL(pedido.frete)}
+                    </Typography>
+                  ) : null}
                   <Typography variant="h6" sx={{ fontWeight: 700, color: "#BF360C" }}>
-                    Total: {formatPrice(pedido.total)}
+                    Total: {formatBRL(pedido.total)}
                   </Typography>
                 </Box>
               </Paper>
