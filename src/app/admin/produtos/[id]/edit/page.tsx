@@ -75,7 +75,7 @@ export default function EditarProduto() {
           descricao: data.descricao,
           preco: String(data.preco),
           imgUrl: data.imgUrl,
-          galeria: data.galeria || [],
+          galeria: Array.isArray(data.imagens) ? data.imagens : (data.galeria || []),
           galeriaPrincipal: 0,
           category: data.category,
           parcelamento: String(data.parcelamento),

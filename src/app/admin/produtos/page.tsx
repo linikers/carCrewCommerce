@@ -15,6 +15,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
+  TablePagination,
   Button,
   IconButton,
   Dialog,
@@ -53,6 +55,10 @@ export default function AdminProdutos() {
   const [search, setSearch] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [erro, setErro] = useState("");
+  const [pagina, setPagina] = useState(0);           // 0-based, como o TablePagination
+  const [porPagina, setPorPagina] = useState(20);
+  const [ordemPor, setOrdemPor] = useState<"id" | "nome" | "preco" | "estoque">("id");
+  const [ordemDir, setOrdemDir] = useState<"asc" | "desc">("desc");
 
   const carregar = async () => {
     try {
@@ -106,6 +112,34 @@ export default function AdminProdutos() {
       p.nome.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Ordenação: clicar no cabeçalho alterna asc/desc.
+  const ordenados = [...filtrados].sort((a, b) => {
+    const dir = ordemDir === "asc" ? 1 : -1;
+    switch (ordemPor) {
+      case "nome":
+        return a.nome.localeCompare(b.nome, "pt-BR") * dir;
+      case "preco":
+        return (a.preco - b.preco) * dir;
+      case "estoque":
+        return (a.estoque - b.estoque) * dir;
+      default:
+        return (a.id - b.id) * dir;
+    }
+  });
+
+  const total = ordenados.length;
+  const paginados = ordenados.slice(pagina * porPagina, pagina * porPagina + porPagina);
+
+  const mudarOrdem = (campo: typeof ordemPor) => {
+    if (ordemPor === campo) {
+      setOrdemDir(ordemDir === "asc" ? "desc" : "asc");
+    } else {
+      setOrdemPor(campo);
+      setOrdemDir("asc");
+    }
+    setPagina(0);
+  };
+
   return (
     <AdminLayout>
       <Container maxWidth="lg" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
@@ -130,7 +164,7 @@ export default function AdminProdutos() {
           fullWidth
           placeholder="Buscar produto..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPagina(0); }}
           sx={{ mb: 3 }}
         />
 
@@ -170,17 +204,25 @@ export default function AdminProdutos() {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-                  <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Preço</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "id" ? ordemDir : false}>
+                    <TableSortLabel active={ordemPor === "id"} direction={ordemPor === "id" ? ordemDir : "asc"} onClick={() => mudarOrdem("id")}>ID</TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "nome" ? ordemDir : false}>
+                    <TableSortLabel active={ordemPor === "nome"} direction={ordemPor === "nome" ? ordemDir : "asc"} onClick={() => mudarOrdem("nome")}>Nome</TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "preco" ? ordemDir : false}>
+                    <TableSortLabel active={ordemPor === "preco"} direction={ordemPor === "preco" ? ordemDir : "asc"} onClick={() => mudarOrdem("preco")}>Preço</TableSortLabel>
+                  </TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Categoria</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Estoque</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "estoque" ? ordemDir : false}>
+                    <TableSortLabel active={ordemPor === "estoque"} direction={ordemPor === "estoque" ? ordemDir : "asc"} onClick={() => mudarOrdem("estoque")}>Estoque</TableSortLabel>
+                  </TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Ações</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filtrados.map((p) => (
+                {paginados.map((p) => (
                   <TableRow key={p.id} hover>
                     <TableCell>#{p.id}</TableCell>
                     <TableCell sx={{ maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -223,6 +265,17 @@ export default function AdminProdutos() {
                 ))}
               </TableBody>
             </Table>
+            <TablePagination
+              component="div"
+              count={total}
+              page={pagina}
+              onPageChange={(_, novaPagina) => setPagina(novaPagina)}
+              rowsPerPage={porPagina}
+              onRowsPerPageChange={(e) => { setPorPagina(parseInt(e.target.value, 10)); setPagina(0); }}
+              rowsPerPageOptions={[10, 20, 50, 100]}
+              labelRowsPerPage="Por página"
+              labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+            />
           </TableContainer>
         )}
       </Container>

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { nome, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos } = body;
+    const { nome, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria } = body;
 
     if (!nome || !preco) {
       return NextResponse.json(
@@ -46,6 +46,9 @@ export async function POST(req: NextRequest) {
       veiculos: Array.isArray(veiculos)
         ? veiculos
         : String(veiculos || "").split(",").map((v) => v.trim()).filter(Boolean),
+      // A galeria era coletada na tela e descartada aqui: o schema só tinha
+      // imgUrl. Agora persiste.
+      imagens: Array.isArray(galeria) ? galeria.filter(Boolean) : [],
     };
 
     await salvarProdutos([novoProduto]);

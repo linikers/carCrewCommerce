@@ -68,6 +68,9 @@ export async function PUT(
         altura: body.altura !== undefined ? (body.altura === "" || body.altura === null ? null : Number(body.altura)) : existente.altura,
         largura: body.largura !== undefined ? (body.largura === "" || body.largura === null ? null : Number(body.largura)) : existente.largura,
         profundidade: body.profundidade !== undefined ? (body.profundidade === "" || body.profundidade === null ? null : Number(body.profundidade)) : existente.profundidade,
+        imagens: body.galeria !== undefined
+          ? (Array.isArray(body.galeria) ? body.galeria.filter(Boolean) : [])
+          : existente.imagens,
         veiculos: body.veiculos !== undefined
           ? (Array.isArray(body.veiculos)
               ? body.veiculos

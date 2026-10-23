@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { STATUS_PEDIDO, statusValido } from "@/lib/pedido-status";
 
 /**
  * Lista de pedidos.
@@ -49,12 +50,9 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const statusValidos = [
-      "pendente", "pago", "preparando", "enviado", "entregue", "cancelado",
-    ];
-    if (!statusValidos.includes(status)) {
+    if (!statusValido(status)) {
       return NextResponse.json(
-        { error: `Status inválido. Valores: ${statusValidos.join(", ")}` },
+        { error: `Status inválido. Valores: ${STATUS_PEDIDO.join(", ")}` },
         { status: 400 },
       );
     }

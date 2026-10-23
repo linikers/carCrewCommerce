@@ -28,6 +28,7 @@ import {
 } from "@mui/icons-material";
 import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { labelStatus } from "@/lib/pedido-status";
 
 interface PedidoItem {
   nome: string;
@@ -46,6 +47,12 @@ interface Pedido {
   updatedAt: string;
   user?: { id: string; name: string | null; email: string | null };
 }
+
+const MAPA_STATUS: Record<string, string> = {
+  pendente: "aguardando_pagamento",
+  preparando: "em_separacao",
+  confirmado: "pago",
+};
 
 const statusColors: Record<string, "warning" | "info" | "primary" | "success" | "error"> = {
   pendente: "warning",
@@ -142,9 +149,12 @@ export default function PedidoDetalhe() {
 
   const proximoStatus = (): { status: string; label: string; color: "info" | "success"; icon: React.ReactNode } | null => {
     if (!pedido) return null;
+    // acompanha o vocabulário de src/lib/pedido-status.ts
     const map: Record<string, { status: string; label: string; color: "info" | "success"; icon: React.ReactNode }> = {
       pendente: { status: "pago", label: "Marcar como Pago", color: "info", icon: <CheckCircle /> },
-      pago: { status: "enviado", label: "Marcar como Enviado", color: "info", icon: <LocalShipping /> },
+      aguardando_pagamento: { status: "pago", label: "Marcar como Pago", color: "info", icon: <CheckCircle /> },
+      pago: { status: "em_separacao", label: "Separar para envio", color: "info", icon: <LocalShipping /> },
+      em_separacao: { status: "enviado", label: "Marcar como Enviado", color: "info", icon: <LocalShipping /> },
       enviado: { status: "entregue", label: "Marcar como Entregue", color: "success", icon: <LocalShipping /> },
     };
     return map[pedido.status] || null;
@@ -190,8 +200,8 @@ export default function PedidoDetalhe() {
                   </Box>
                   <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                     <Chip
-                      label={pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1)}
-                      color={statusColors[pedido.status] || "default"}
+                      label={labelStatus(pedido.status)}
+                      color={statusColors[MAPA_STATUS[pedido.status] ?? pedido.status] ?? "default"}
                       sx={{ fontWeight: 600, fontSize: "0.85rem", py: 1 }}
                     />
                   </Box>
@@ -278,7 +288,7 @@ export default function PedidoDetalhe() {
                       {proximoStatus()!.label}
                     </Button>
                   )}
-                  {(pedido.status === "pendente" || pedido.status === "pago") && (
+                  {(pedido.status === "pendente" || pedido.status === "aguardando_pagamento" || pedido.status === "pago" || pedido.status === "em_separacao") && (
                     <Button
                       variant="outlined"
                       color="error"
