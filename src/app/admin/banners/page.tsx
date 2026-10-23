@@ -100,7 +100,7 @@ export default function AdminBanners() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Banners">
       <Container maxWidth="lg" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Box>

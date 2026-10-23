@@ -156,7 +156,7 @@ export default function AdminProdutos() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Produtos">
       <Container maxWidth="lg" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Box>

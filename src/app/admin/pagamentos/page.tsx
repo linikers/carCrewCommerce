@@ -185,7 +185,7 @@ export default function AdminPagamentos() {
   }
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Pagamentos">
       <Container maxWidth="md" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Button startIcon={<ArrowBack />} onClick={() => router.push("/admin")}
           sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#BF360C" } }}>

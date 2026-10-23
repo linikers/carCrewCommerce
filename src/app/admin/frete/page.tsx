@@ -167,7 +167,7 @@ function AdminFreteContent() {
   return (
     <>
       <Header cartItemCount={0} />
-      <AdminLayout>
+      <AdminLayout title="Frete">
         <Container maxWidth="md" sx={{ py: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
             <Box>

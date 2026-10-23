@@ -121,7 +121,7 @@ export default function NovoProduto() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Novo produto">
       <Container maxWidth="md" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Breadcrumbs sx={{ mb: 2, fontSize: "0.85rem" }}>
           <MuiLink component="button" onClick={() => router.push("/admin")} underline="hover" sx={{ color: "#666" }}>

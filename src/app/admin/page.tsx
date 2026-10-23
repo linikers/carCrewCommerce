@@ -33,7 +33,7 @@ export default function AdminDashboard() {
 
   if (status === "loading" || loading) {
     return (
-      <AdminLayout>
+      <AdminLayout title="Dashboard">
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
           <CircularProgress sx={{ color: "#BF360C" }} />
         </Box>
@@ -43,7 +43,7 @@ export default function AdminDashboard() {
 
   if (status === "unauthenticated" || !session?.user?.admin) {
     return (
-      <AdminLayout>
+      <AdminLayout title="Dashboard">
         <Box sx={{ textAlign: "center", py: 8 }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Acesso restrito</Typography>
           <Button variant="contained" onClick={() => router.push("/admin/login")}
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
     (STATUS_LABEL as Record<string, string>)[status] || status;
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Dashboard">
       <Container maxWidth="lg" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: "#1A1A1A" }}>
           Painel Admin

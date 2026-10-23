@@ -154,7 +154,7 @@ export default function AdminPedidos() {
   return (
     <>
       <Header cartItemCount={0} />
-      <AdminLayout>
+      <AdminLayout title="Pedidos">
         <Container maxWidth="lg" sx={{ py: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
             <Box>

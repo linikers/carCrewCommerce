@@ -8,21 +8,29 @@ import { NextResponse } from "next/server";
  * Sem isso, um visitante anônimo que digitasse /admin/categorias recebia o
  * painel inteiro renderizado — 4 das 9 telas não tinham nem checagem no
  * cliente.
+ *
+ * A tela de login fica de fora: sem essa exceção, quem não estava logado
+ * pedia /admin/login e era mandado para /login (a entrada do cliente), então
+ * não havia como entrar no painel a partir de uma sessão expirada.
  */
 export default withAuth(
   function middleware(req) {
+    const { pathname } = req.nextUrl;
+
+    if (pathname === "/admin/login") return NextResponse.next();
+
     const isAdmin = Boolean(req.nextauth.token?.admin);
-    const isApi = req.nextUrl.pathname.startsWith("/api/admin");
+    const isApi = pathname.startsWith("/api/admin");
 
     if (isAdmin) return NextResponse.next();
 
-    // API responde JSON; página redireciona para o login
+    // API responde JSON; página redireciona para o login do painel
     if (isApi) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const login = new URL("/login", req.url);
-    login.searchParams.set("callbackUrl", req.nextUrl.pathname);
+    const login = new URL("/admin/login", req.url);
+    login.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(login);
   },
   {

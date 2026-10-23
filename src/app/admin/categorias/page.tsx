@@ -112,7 +112,7 @@ export default function AdminCategorias() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Categorias">
       <Container maxWidth="lg" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Box>
