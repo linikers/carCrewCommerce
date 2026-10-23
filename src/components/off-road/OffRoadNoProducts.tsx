@@ -18,7 +18,7 @@ export default function OffRoadNoProducts() {
       <Typography variant="h6" sx={{ color: "#666", mb: 2 }}>
         Catálogo off-road em construção
       </Typography>
-      <Typography variant="body2" sx={{ color: "#999", mb: 3 }}>
+      <Typography variant="body2" sx={{ color: "#666", mb: 3 }}>
         Estamos preparando uma seleção especial de peças para off-road. Entre em contato para orçamentos personalizados.
       </Typography>
       <Button

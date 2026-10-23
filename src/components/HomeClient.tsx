@@ -18,7 +18,17 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos, LocalShipping, Security, CreditCard } from "@mui/icons-material";
+import {
+  ArrowBackIos,
+  ArrowForwardIos,
+  LocalShipping,
+  Security,
+  CreditCard,
+  Air,
+  ArrowDownward,
+  SportsScore,
+  Terrain,
+} from "@mui/icons-material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -59,25 +69,25 @@ const seoLinks = [
     href: "/suspensao-a-ar",
     titulo: "Suspensão a Ar",
     desc: "Bolsas de ar, compressores e controles para sistema pneumático",
-    emoji: "🎈",
+    icone: <Air sx={{ fontSize: 30 }} />,
   },
   {
     href: "/rebaixamento",
     titulo: "Rebaixamento",
     desc: "Calços antirruído, kits, bandejas e pontas de eixo",
-    emoji: "⬇️",
+    icone: <ArrowDownward sx={{ fontSize: 30 }} />,
   },
   {
     href: "/suspensao-esportiva",
     titulo: "Suspensão Esportiva",
     desc: "Amortecedores e kits para um carro mais estável e esportivo",
-    emoji: "🏁",
+    icone: <SportsScore sx={{ fontSize: 30 }} />,
   },
   {
     href: "/off-road",
     titulo: "Off-Road 4x4",
     desc: "Lift kits e preparação para trilha e aventura",
-    emoji: "4x4",
+    icone: <Terrain sx={{ fontSize: 30 }} />,
   },
 ];
 
@@ -335,9 +345,9 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
                     "&:hover": { borderColor: "#E65100", boxShadow: "0 4px 16px rgba(230,81,0,0.12)", transform: "translateY(-2px)" },
                   }}
                 >
-                  <Typography sx={{ fontSize: 28, lineHeight: 1, mb: 1, color: "#E65100", fontWeight: 900 }}>
-                    {l.emoji}
-                  </Typography>
+                  <Box sx={{ color: "#E65100", mb: 1, lineHeight: 1, display: "flex" }}>
+                    {l.icone}
+                  </Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
                     {l.titulo}
                   </Typography>
@@ -388,7 +398,7 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
               : "Novidades"}
           </Typography>
           {!categoriaAtiva && !searchTerm && produtos.length > 0 && (
-            <Typography variant="body2" sx={{ color: "#999" }}>
+            <Typography variant="body2" sx={{ color: "#666" }}>
               {produtos.length} produto(s)
             </Typography>
           )}
@@ -413,14 +423,14 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
         )}
 
         {produtos.length === 0 ? (
-          <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
+          <Box sx={{ textAlign: "center", py: 8, color: "#666" }}>
             <Typography variant="h6">Nenhum produto cadastrado</Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
               Acesse o painel admin para cadastrar seus produtos
             </Typography>
           </Box>
         ) : filteredProdutos.length === 0 ? (
-          <Box sx={{ textAlign: "center", py: 8, color: "#999" }}>
+          <Box sx={{ textAlign: "center", py: 8, color: "#666" }}>
             <Typography variant="h6">Nenhum produto encontrado</Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
               Tente buscar por outro termo ou limpe os filtros
