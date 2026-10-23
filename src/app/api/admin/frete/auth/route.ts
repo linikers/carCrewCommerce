@@ -1,9 +1,6 @@
 import { requireAdmin } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-
-const CONFIG_PATH = path.join(process.cwd(), "src/data/frete.json");
+import { readFreteConfig } from "@/lib/frete-config";
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 
 export async function GET() {
@@ -11,8 +8,7 @@ export async function GET() {
   if (denied) return denied;
 
   try {
-    const raw = await fs.readFile(CONFIG_PATH, "utf-8");
-    const config = JSON.parse(raw);
+    const config = await readFreteConfig();
 
     if (!config.clientId) {
       return NextResponse.json(

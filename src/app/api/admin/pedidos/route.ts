@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { STATUS_PEDIDO, statusValido } from "@/lib/pedido-status";
+import { auditar } from "@/lib/auditoria";
 
 /**
  * Lista de pedidos.
@@ -68,6 +69,13 @@ export async function PATCH(request: NextRequest) {
     if (count === 0) {
       return NextResponse.json({ error: "Pedido não encontrado" }, { status: 404 });
     }
+
+    await auditar({
+      entidade: "pedido",
+      entidadeId: id,
+      acao: "alterar",
+      depois: { status },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

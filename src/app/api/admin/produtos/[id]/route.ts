@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { auditar } from "@/lib/auditoria";
 
 // GET /api/admin/produtos/[id] — um produto
 export async function GET(
@@ -80,6 +81,14 @@ export async function PUT(
       },
     });
 
+    await auditar({
+      entidade: "produto",
+      entidadeId: atualizado.id,
+      acao: "alterar",
+      antes: { preco: existente.preco, estoque: existente.estoque, ativo: existente.ativo, nome: existente.nome },
+      depois: { preco: atualizado.preco, estoque: atualizado.estoque, ativo: atualizado.ativo, nome: atualizado.nome },
+    });
+
     return NextResponse.json({
       id: atualizado.id,
       nome: atualizado.nome,
@@ -121,6 +130,14 @@ export async function DELETE(
     await prisma.produto.update({
       where: { id: Number(id) },
       data: { ativo: false },
+    });
+
+    await auditar({
+      entidade: "produto",
+      entidadeId: id,
+      acao: "excluir",
+      antes: { nome: existente.nome, preco: existente.preco, ativo: existente.ativo },
+      depois: { ativo: false },
     });
 
     return NextResponse.json({ message: "Produto desativado" });

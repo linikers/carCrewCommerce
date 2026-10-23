@@ -119,6 +119,33 @@ model Configuracao {
   @@map("configuracoes")
 }
 
+/// 7.7: login sem limite de tentativas. Contador por conta (o callback do
+/// NextAuth não recebe o IP), com janela deslizante de 15 minutos.
+model TentativaLogin {
+  chave        String   @id
+  falhas       Int      @default(0)
+  primeiraEm   DateTime @default(now()) @map("primeira_em")
+  bloqueadoAte DateTime? @map("bloqueado_ate")
+
+  @@map("tentativas_login")
+}
+
+/// 7.8: nenhum registro de quem mudou o quê. Preço alterado errado, produto
+/// apagado, status trocado — sem prova e sem desfazer.
+model Auditoria {
+  id        Int      @id @default(autoincrement())
+  entidade  String
+  entidadeId String  @map("entidade_id")
+  acao      String
+  antes     Json?
+  depois    Json?
+  userId    String?  @map("user_id")
+  criadoEm  DateTime @default(now()) @map("criado_em")
+
+  @@index([entidade, entidadeId])
+  @@map("auditoria")
+}
+
 model Banner {
   id         Int      @id @default(autoincrement())
   titulo     String

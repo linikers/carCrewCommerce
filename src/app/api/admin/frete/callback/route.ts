@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-
-const CONFIG_PATH = path.join(process.cwd(), "src/data/frete.json");
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { readFreteConfig, writeFreteConfig } from "@/lib/frete-config";
+import { auditar } from "@/lib/auditoria";
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 
 export async function GET(request: NextRequest) {
+  // 7.11: o callback gravava o token de qualquer origem. Agora exige sessão
+  // de admin — o redirect do provedor é top-level, então o cookie vem junto.
+  const session = await getServerSession(authOptions);
+  if (!(session?.user as { admin?: boolean } | undefined)?.admin) {
+    return NextResponse.redirect(`${BASE_URL}/admin/login`);
+  }
+
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
@@ -17,8 +24,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const raw = await fs.readFile(CONFIG_PATH, "utf-8");
-    const config = JSON.parse(raw);
+    const config = await readFreteConfig();
 
     const sandbox = config.sandbox !== false;
     const tokenUrl = sandbox
@@ -55,7 +61,13 @@ export async function GET(request: NextRequest) {
       ? new Date(Date.now() + tokenData.expires_in * 1000).toISOString()
       : null;
 
-    await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), "utf-8");
+    await writeFreteConfig(config);
+    await auditar({
+      entidade: "frete",
+      entidadeId: "melhor-envio",
+      acao: "alterar",
+      depois: { evento: "oauth_autorizado" },
+    });
 
     return NextResponse.redirect(`${BASE_URL}/admin/frete?success=authorized`);
   } catch (err) {
