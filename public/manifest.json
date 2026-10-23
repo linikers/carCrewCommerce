@@ -1,13 +1,17 @@
 {
-  "name": "CarCrew Suspensões",
-  "short_name": "CarCrew",
+  "name": "Car Crew Garage",
+  "short_name": "Car Crew",
   "description": "Loja especializada em peças para suspensão automotiva. Amortecedores, molas, calços e muito mais. Entrega para todo Brasil.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#E65100",
+  "theme_color": "#BF360C",
   "orientation": "portrait-primary",
-  "categories": ["shopping", "automotive", "vehicles"],
+  "categories": [
+    "shopping",
+    "automotive",
+    "vehicles"
+  ],
   "lang": "pt-BR",
   "scope": "/",
   "icons": [

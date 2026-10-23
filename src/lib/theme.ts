@@ -5,9 +5,11 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#E65100",
-      light: "#FF8A3D",
-      dark: "#BF360C",
+      // #E65100 dava 3,79:1 com texto branco (reprova AA).
+      // #BF360C dá 5,6:1 e continua na mesma família de laranja.
+      main: "#BF360C",
+      light: "#E65100",
+      dark: "#8C2A09",
       contrastText: "#ffffff",
     },
     secondary: {

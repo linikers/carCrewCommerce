@@ -12,6 +12,9 @@ import {
   WhatsApp,
   Instagram,
   Facebook,
+  Phone,
+  Email,
+  AccessTime,
 } from "@mui/icons-material";
 import NextLink from "next/link";
 
@@ -155,15 +158,24 @@ export default function Footer() {
             >
               Atendimento
             </Typography>
-            <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              📞 (44) 99813-3182
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              ✉️ carcrewgarage@gmail.com
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 1 }}>
-              🕐 Seg–Sex: 08h–18h | Sáb: 09h–11h
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+              <Phone sx={{ fontSize: 16, color: "#888" }} />
+              <Typography variant="body2" sx={{ color: "#aaaaaa" }}>
+                (44) 99813-3182
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+              <Email sx={{ fontSize: 16, color: "#888" }} />
+              <Typography variant="body2" sx={{ color: "#aaaaaa" }}>
+                carcrewgarage@gmail.com
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+              <AccessTime sx={{ fontSize: 16, color: "#888" }} />
+              <Typography variant="body2" sx={{ color: "#aaaaaa" }}>
+                Seg–Sex: 08h–18h | Sáb: 09h–11h
+              </Typography>
+            </Box>
             <Box
               sx={{
                 mt: 2,

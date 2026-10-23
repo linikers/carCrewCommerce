@@ -147,7 +147,7 @@ export default function PixPayment({
             >
               <Typography
                 variant="caption"
-                sx={{ color: "#999", fontWeight: 500, mb: 1, display: "block" }}
+                sx={{ color: "#666", fontWeight: 500, mb: 1, display: "block" }}
               >
                 Código PIX (copia e cola)
               </Typography>
@@ -189,16 +189,16 @@ export default function PixPayment({
 
             <Divider sx={{ mb: 2 }} />
 
-            <Typography variant="caption" sx={{ color: "#999" }}>
-              🔒 Pagamento processado com segurança
+            <Typography variant="caption" sx={{ color: "#666" }}>
+              Pagamento processado com segurança
             </Typography>
-            <Typography variant="caption" sx={{ color: "#999", display: "block" }}>
-              ⏱ Código válido por {pixData.expiration}
+            <Typography variant="caption" sx={{ color: "#666", display: "block" }}>
+              Código válido por {pixData.expiration}
             </Typography>
           </>
         ) : (
           <Box sx={{ py: 6 }}>
-            <Typography variant="body1" sx={{ color: "#999" }}>
+            <Typography variant="body1" sx={{ color: "#666" }}>
               Erro ao gerar PIX. Tente novamente.
             </Typography>
           </Box>

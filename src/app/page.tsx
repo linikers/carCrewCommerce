@@ -48,7 +48,7 @@ export default async function HomePage() {
     const dbData = dbCategorias.map((c) => ({
       slug: c.slug,
       nome: c.nome,
-      icone: c.icone || "🔧",
+      icone: c.icone || "",
     }));
     const dbSlugs = new Set(dbData.map((c) => c.slug));
     categorias = [

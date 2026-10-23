@@ -186,7 +186,7 @@ export default function CategoriaLanding({
             p: { xs: 4, md: 6 },
             borderRadius: 3,
             textAlign: "center",
-            background: "linear-gradient(135deg, #E65100 0%, #ff8f3d 100%)",
+            backgroundColor: "#BF360C",
             color: "#fff",
           }}
         >

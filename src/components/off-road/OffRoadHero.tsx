@@ -10,7 +10,7 @@ export default function OffRoadHero() {
       sx={{
         position: "relative",
         minHeight: { xs: 400, md: 550 },
-        background: "linear-gradient(135deg, #1A1A1A 0%, #2c1810 50%, #E65100 100%)",
+        backgroundColor: "#1A1A1A",
         color: "#fff",
         display: "flex",
         alignItems: "center",
