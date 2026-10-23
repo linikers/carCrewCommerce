@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
+import { compare, hash } from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -24,20 +25,36 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-        if (usuario && usuario.senha === credentials.password) {
-          return {
-            id: usuario.id,
-            name: usuario.name,
-            email: usuario.email,
-            admin: usuario.admin,
-          };
+        if (!usuario?.senha) return null;
+
+        // A senha era gravada e comparada em texto puro. Contas antigas
+        // continuam entrando e são migradas para hash no primeiro login.
+        const senhaEmHash = usuario.senha.startsWith("$2");
+        const confere = senhaEmHash
+          ? await compare(credentials.password, usuario.senha)
+          : usuario.senha === credentials.password;
+
+        if (!confere) return null;
+
+        if (!senhaEmHash) {
+          await prisma.user.update({
+            where: { id: usuario.id },
+            data: { senha: await hash(credentials.password, 12) },
+          });
         }
 
-        return null;
+        return {
+          id: usuario.id,
+          name: usuario.name,
+          email: usuario.email,
+          admin: usuario.admin,
+        };
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET || "carcrew-dev-secret",
+  // Sem fallback: um segredo público no código permitia forjar JWT com
+  // admin:true quando a env faltasse. Se faltar, o NextAuth falha alto.
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },

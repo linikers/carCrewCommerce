@@ -1,14 +1,21 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { lerProdutos, salvarProdutos, proximoId, ProdutoData } from "@/lib/produtos-admin";
 
 // GET /api/admin/produtos — listar todos
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const produtos = await lerProdutos();
   return NextResponse.json(produtos);
 }
 
 // POST /api/admin/produtos — criar novo
 export async function POST(req: NextRequest) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await req.json();
     const { nome, descricao, preco, imgUrl, category, parcelamento, estoque } = body;
