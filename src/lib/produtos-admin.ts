@@ -21,6 +21,8 @@ export interface ProdutoData {
   profundidade?: number | null;
   veiculos?: string[];
   imagens?: string[];
+  destaque?: boolean;
+  ordem?: number;
 }
 
 export async function lerProdutos(): Promise<ProdutoData[]> {
