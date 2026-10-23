@@ -2,6 +2,14 @@ import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+/**
+ * Lista de pedidos.
+ *
+ * Antes, qualquer falha do banco caía num fallback com TRÊS PEDIDOS
+ * INVENTADOS ("Cliente Exemplo", "Oficina do João"). O admin mostrava venda
+ * que não existia, com valor e status — e isso é pior do que mostrar erro.
+ * Agora falha alto.
+ */
 export async function GET() {
   const denied = await requireAdmin();
   if (denied) return denied;
@@ -14,54 +22,16 @@ export async function GET() {
         },
       },
       orderBy: { createdAt: "desc" },
+      take: 200,
     });
 
     return NextResponse.json(pedidos);
-  } catch {
-    // Fallback: dados mockados se o banco não estiver disponível
-    const mockPedidos = [
-      {
-        id: "mock_1",
-        userId: "mock_user",
-        total: 349.90,
-        status: "pendente",
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        updatedAt: new Date().toISOString(),
-        items: [
-          { nome: "Amortecedor Dianteiro", preco: 189.90, quantidade: 1, imgUrl: null },
-          { nome: "Kit Coxim", preco: 160.00, quantidade: 1, imgUrl: null },
-        ],
-        user: { id: "mock_user", name: "Cliente Exemplo", email: "cliente@teste.com" },
-      },
-      {
-        id: "mock_2",
-        userId: "mock_user2",
-        total: 89.90,
-        status: "pago",
-        createdAt: new Date(Date.now() - 86400000).toISOString(),
-        updatedAt: new Date().toISOString(),
-        items: [
-          { nome: "Calço Antirruído Universal", preco: 89.90, quantidade: 1, imgUrl: null },
-        ],
-        user: { id: "mock_user2", name: "Oficina do João", email: "joao@oficina.com" },
-      },
-      {
-        id: "mock_3",
-        userId: "mock_user3",
-        total: 1250.00,
-        status: "enviado",
-        createdAt: new Date(Date.now() - 172800000).toISOString(),
-        updatedAt: new Date().toISOString(),
-        items: [
-          { nome: "Bolsa de Ar", preco: 650.00, quantidade: 1, imgUrl: null },
-          { nome: "Válvula Solenoide", preco: 350.00, quantidade: 1, imgUrl: null },
-          { nome: "Mangueira 1/4", preco: 250.00, quantidade: 1, imgUrl: null },
-        ],
-        user: { id: "mock_user3", name: "Carros Rebaixados LTDA", email: "contato@rebaixados.com" },
-      },
-    ];
-
-    return NextResponse.json(mockPedidos);
+  } catch (error) {
+    console.error("[admin/pedidos] falha ao listar:", error);
+    return NextResponse.json(
+      { error: "Não foi possível carregar os pedidos. Tente de novo." },
+      { status: 503 }
+    );
   }
 }
 
@@ -89,14 +59,24 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    await prisma.pedido.update({
+    // updateMany: se o pedido não existir, count vem 0 — antes o `update`
+    // estourava, caía no catch e devolvia { success: true, mock: true }.
+    // A tela mostrava "status alterado" sem ter alterado nada.
+    const { count } = await prisma.pedido.updateMany({
       where: { id },
       data: { status, updatedAt: new Date() },
     });
 
+    if (count === 0) {
+      return NextResponse.json({ error: "Pedido não encontrado" }, { status: 404 });
+    }
+
     return NextResponse.json({ success: true });
-  } catch {
-    // Fallback mock
-    return NextResponse.json({ success: true, mock: true });
+  } catch (error) {
+    console.error("[admin/pedidos] falha ao alterar status:", error);
+    return NextResponse.json(
+      { error: "Não foi possível alterar o status." },
+      { status: 500 }
+    );
   }
 }
