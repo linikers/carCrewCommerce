@@ -39,15 +39,32 @@ interface MenuItem {
   tag?: string;
 }
 
-const menuItems: MenuItem[] = [
-  { label: "Dashboard", icon: <Dashboard />, path: "/admin" },
-  { label: "Produtos", icon: <Inventory2 />, path: "/admin/produtos" },
-  { label: "Categorias", icon: <Category />, path: "/admin/categorias" },
-  { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners" },
-  { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
-  { label: "Frete", icon: <LocalShipping />, path: "/admin/frete" },
-  { label: "Pagamentos", icon: <Payment />, path: "/admin/pagamentos" },
-  { label: "Clientes", icon: <People />, path: "/admin/clientes" },
+// 5.3: a lista era um bloco só, sem hierarquia. Agrupada por área de
+// trabalho — o que se usa junto fica junto.
+const gruposMenu: { titulo: string | null; itens: MenuItem[] }[] = [
+  { titulo: null, itens: [{ label: "Dashboard", icon: <Dashboard />, path: "/admin" }] },
+  {
+    titulo: "Catálogo",
+    itens: [
+      { label: "Produtos", icon: <Inventory2 />, path: "/admin/produtos" },
+      { label: "Categorias", icon: <Category />, path: "/admin/categorias" },
+      { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners" },
+    ],
+  },
+  {
+    titulo: "Operação",
+    itens: [
+      { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
+      { label: "Clientes", icon: <People />, path: "/admin/clientes" },
+    ],
+  },
+  {
+    titulo: "Configuração",
+    itens: [
+      { label: "Frete", icon: <LocalShipping />, path: "/admin/frete" },
+      { label: "Pagamentos", icon: <Payment />, path: "/admin/pagamentos" },
+    ],
+  },
 ];
 
 const pageLinks: MenuItem[] = [
@@ -137,8 +154,19 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
       <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
 
       {/* Menu */}
-      <List sx={{ flex: 1, px: 1, pt: 1 }}>
-        {menuItems.map((item) => (
+      <Box sx={{ flex: 1, px: 1, pt: 1, overflowY: "auto" }}>
+        {gruposMenu.map((grupo) => (
+          <Box key={grupo.titulo ?? "principal"} sx={{ mb: grupo.titulo ? 1.5 : 0 }}>
+            {grupo.titulo && (
+              <Typography
+                variant="caption"
+                sx={{ color: "#666", px: 2, pt: 1, pb: 0.5, display: "block", textTransform: "uppercase", letterSpacing: "0.06em", fontSize: "0.62rem" }}
+              >
+                {grupo.titulo}
+              </Typography>
+            )}
+            <List disablePadding>
+              {grupo.itens.map((item) => (
           <ListItemButton
             key={item.path}
             onClick={() => !item.disabled && handleNav(item.path)}
@@ -190,8 +218,11 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               </Typography>
             )}
           </ListItemButton>
+              ))}
+            </List>
+          </Box>
         ))}
-      </List>
+      </Box>
 
       <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
 

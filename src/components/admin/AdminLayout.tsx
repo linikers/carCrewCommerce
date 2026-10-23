@@ -54,6 +54,42 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           minHeight: "100vh",
         }}
       >
+        {/* 5.5: breadcrumb só existia em 2 das 9 telas. Agora toda tela do
+            painel tem o caminho, discreto, acima do conteúdo. */}
+        {title && (
+          <Box
+            component="nav"
+            aria-label="Você está em"
+            sx={{
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+              gap: 0.75,
+              px: 4,
+              pt: 1.5,
+              pb: 0,
+            }}
+          >
+            <Box
+              component="a"
+              href="/admin"
+              sx={{
+                color: "#8a8a8a",
+                fontSize: "0.75rem",
+                textDecoration: "none",
+                "&:hover": { color: "primary.main", textDecoration: "underline" },
+              }}
+            >
+              Painel
+            </Box>
+            <Typography component="span" sx={{ color: "#c4c4c4", fontSize: "0.75rem" }}>
+              /
+            </Typography>
+            <Typography component="span" sx={{ color: "#444", fontSize: "0.75rem", fontWeight: 600 }}>
+              {title}
+            </Typography>
+          </Box>
+        )}
+
         {children}
       </Box>
     </Box>
