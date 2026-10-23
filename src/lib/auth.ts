@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { compare, hash } from "bcryptjs";
+import { limparTentativas, registrarFalha, segundosBloqueado } from "@/lib/rate-limit";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -21,6 +22,15 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
+        // 7.7: 5 falhas em 15 min bloqueiam a conta por 15 min. Devolvemos
+        // null (mesma mensagem de senha errada) para não revelar a quem
+        // estiver tentando que a conta existe e está bloqueada.
+        const bloqueio = await segundosBloqueado(credentials.email);
+        if (bloqueio > 0) {
+          console.warn(`[auth] login bloqueado por tentativas: ${credentials.email}`);
+          return null;
+        }
+
         const usuario = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
@@ -34,7 +44,12 @@ export const authOptions: NextAuthOptions = {
           ? await compare(credentials.password, usuario.senha)
           : usuario.senha === credentials.password;
 
-        if (!confere) return null;
+        if (!confere) {
+          await registrarFalha(credentials.email);
+          return null;
+        }
+
+        await limparTentativas(credentials.email);
 
         if (!senhaEmHash) {
           await prisma.user.update({
@@ -57,6 +72,10 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+    // 7.13: o default do NextAuth é 30 dias — notebook da loja logado por um
+    // mês. Um turno de 8h cobre o uso real e reduz a janela de um token
+    // roubado. Revogação por `tokenVersion` fica como próximo passo.
+    maxAge: 8 * 60 * 60,
   },
   pages: {
     signIn: "/login",

@@ -58,3 +58,6 @@ public/produtos/kits/
 public/produtos/pontas/
 public/produtos/calcos/
 public/produtos/terminais/
+
+# configuração de integração (contém token) — agora vive na tabela configuracoes
+/src/data/frete.json
