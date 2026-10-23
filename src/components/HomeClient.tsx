@@ -137,7 +137,17 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
   const todosVeiculos = [...new Set(produtos.flatMap((p) => p.veiculos || []))].sort();
 
   // Filtro por busca + categoria + veículo
-  const filteredProdutos = produtos.filter((p) => {
+  // 1.5: curadoria. Destaque primeiro, depois a ordem manual, depois id.
+  // Sem nada marcado no admin, cai no comportamento antigo (ordem de id).
+  const produtosOrdenados = [...produtos].sort((a, b) => {
+    const d = Number(Boolean(b.destaque)) - Number(Boolean(a.destaque));
+    if (d !== 0) return d;
+    const o = (a.ordem ?? 0) - (b.ordem ?? 0);
+    if (o !== 0) return o;
+    return a.id - b.id;
+  });
+
+  const filteredProdutos = produtosOrdenados.filter((p) => {
     const matchSearch =
       !searchTerm ||
       p.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||

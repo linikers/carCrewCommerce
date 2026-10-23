@@ -56,6 +56,8 @@ export default function EditarProduto() {
     largura: "",
     profundidade: "",
     veiculos: "",
+    destaque: false,
+    ordem: "0",
     ativo: true,
   });
   const [error, setError] = useState("");
@@ -79,6 +81,8 @@ export default function EditarProduto() {
           category: data.category,
           parcelamento: String(data.parcelamento),
           estoque: String(data.estoque),
+          destaque: Boolean(data.destaque),
+          ordem: String(data.ordem ?? 0),
           peso: data.peso != null ? String(data.peso) : "",
           altura: data.altura != null ? String(data.altura) : "",
           largura: data.largura != null ? String(data.largura) : "",
@@ -105,6 +109,8 @@ export default function EditarProduto() {
           parcelamento: parseInt(form.parcelamento),
           estoque: parseInt(form.estoque),
           galeria: form.galeria,
+          ordem: parseInt(form.ordem || "0"),
+          destaque: Boolean(form.destaque),
         }),
       });
 
@@ -166,6 +172,21 @@ export default function EditarProduto() {
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <TextField fullWidth label="Estoque" type="number" value={form.estoque}
                     onChange={(e) => setForm({ ...form, estoque: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Ordem na home" type="number" value={form.ordem}
+                    helperText="Menor aparece antes"
+                    slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                    onChange={(e) => setForm({ ...form, ordem: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex", alignItems: "center" }}>
+                  <FormControlLabel
+                    control={
+                      <Switch checked={form.destaque}
+                        onChange={(e) => setForm({ ...form, destaque: e.target.checked })} />
+                    }
+                    label="Destaque na home"
+                  />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 3 }}>
                   <TextField fullWidth label="Peso (g)" type="number" value={form.peso}
