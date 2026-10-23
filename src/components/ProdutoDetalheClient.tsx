@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, notFound, useRouter } from "next/navigation";
 import {
   Container,
@@ -31,6 +32,8 @@ import CartDrawer from "@/components/CartDrawer";
 import { useCart } from "@/lib/CartContext";
 import { isCloudinaryUrl, detailUrl, thumbUrl, extractPublicId } from "@/lib/cloudinary";
 import type { Produto, Categoria, ItemCarrinho } from "@/types";
+import { formatBRL } from "@/lib/format";
+import { track, trackItem, trackWhatsApp } from "@/lib/analytics";
 
 interface ProdutoDetalheClientProps {
   produto: Produto;
@@ -44,7 +47,7 @@ export default function ProdutoDetalheClient({
   relacionados,
 }: ProdutoDetalheClientProps) {
   const router = useRouter();
-  const { addToCart, items, removeFromCart, clearCart } = useCart();
+  const { addToCart, items, removeFromCart, clearCart, totalItens } = useCart();
 
   const [quantidade, setQuantidade] = useState(1);
   const [selectedImg, setSelectedImg] = useState(0);
@@ -60,7 +63,13 @@ export default function ProdutoDetalheClient({
   const valorParcela = produto.preco / parcelas;
   const sobConsulta = produto.preco <= 0;
 
+  // view_item — mede quais peças recebem visita
+  useEffect(() => {
+    if (produto) trackItem("view_item", produto);
+  }, [produto]);
+
   const handleAddToCart = () => {
+    trackItem("add_to_cart", produto, quantidade);
     // addToCart no contexto sempre adiciona 1, então chamamos N vezes
     for (let i = 0; i < quantidade; i++) {
       addToCart(produto);
@@ -73,7 +82,7 @@ export default function ProdutoDetalheClient({
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header onCartOpen={() => setCartOpen(true)} cartItemCount={items.length} />
+      <Header onCartOpen={() => setCartOpen(true)} cartItemCount={totalItens} />
 
       <Container maxWidth="lg" sx={{ mt: 3, mb: 6, flex: 1 }}>
         {/* Breadcrumb */}
@@ -88,7 +97,8 @@ export default function ProdutoDetalheClient({
           </MuiLink>
           {categoria && (
             <MuiLink
-              component="button"
+              component={Link}
+              href={`/?cat=${categoria.slug}`}
               underline="hover"
               sx={{ color: "#666", fontSize: "0.85rem" }}
             >
@@ -102,8 +112,9 @@ export default function ProdutoDetalheClient({
 
         {/* Botão voltar */}
         <Button
+          component={Link}
+          href="/"
           startIcon={<ArrowBack />}
-          onClick={() => router.back()}
           sx={{
             textTransform: "none",
             color: "#666",
@@ -111,7 +122,7 @@ export default function ProdutoDetalheClient({
             "&:hover": { color: "#E65100" },
           }}
         >
-          Voltar
+          Ver todas as peças
         </Button>
 
         <Grid container spacing={4}>
@@ -213,7 +224,7 @@ export default function ProdutoDetalheClient({
               />
             )}
 
-            <Typography variant="h4" sx={{ fontWeight: 700, mb: 2, color: "#1A1A1A" }}>
+            <Typography component="h1" variant="h4" sx={{ fontWeight: 700, mb: 2, color: "#1A1A1A" }}>
               {produto.nome}
             </Typography>
 
@@ -224,6 +235,7 @@ export default function ProdutoDetalheClient({
             <Divider sx={{ mb: 3 }} />
 
             <Typography
+              component="p"
               variant="h3"
               sx={{
                 color: "#E65100",
@@ -232,21 +244,38 @@ export default function ProdutoDetalheClient({
                 mb: 1,
               }}
             >
-              {sobConsulta ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
+              {sobConsulta ? "Sob Consulta" : formatBRL(produto.preco)}
             </Typography>
 
             {!sobConsulta && (
               <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
-                ou{" "}
-                <Box component="span" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
-                  {parcelas}x de R$ {valorParcela.toFixed(2)}
-                </Box>{" "}
-                sem juros
+                Pagamento via PIX
               </Typography>
             )}
 
+            {/* Aplicação veicular — dado que já existe no banco */}
+            {produto.veiculos && produto.veiculos.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+                  Aplicação
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+                  {produto.veiculos.map((v) => (
+                    <Chip key={v} label={v} size="small" variant="outlined" />
+                  ))}
+                </Box>
+              </Box>
+            )}
+
             {/* Quantidade */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+            <Box
+              sx={{
+                display: sobConsulta ? "none" : "flex",
+                alignItems: "center",
+                gap: 2,
+                mb: 3,
+              }}
+            >
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 Quantidade:
               </Typography>
@@ -285,8 +314,9 @@ export default function ProdutoDetalheClient({
               startIcon={<ShoppingCartOutlined />}
               onClick={handleAddToCart}
               sx={{
-                backgroundColor: "#E65100",
-                "&:hover": { backgroundColor: "#BF360C" },
+                display: sobConsulta ? "none" : "inline-flex",
+                backgroundColor: "#BF360C",
+                "&:hover": { backgroundColor: "#8C2A09" },
                 textTransform: "none",
                 fontWeight: 600,
                 py: 1.5,
@@ -302,11 +332,16 @@ export default function ProdutoDetalheClient({
               variant="outlined"
               size="large"
               startIcon={<WhatsApp />}
-              href={`https://wa.me/5544998133182?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
+              href={`https://wa.me/5544998133182?text=${encodeURIComponent(
+                sobConsulta
+                  ? `Olá! Quero um orçamento para: ${produto.nome}`
+                  : `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
+              )}`}
               target="_blank"
+              onClick={() => trackWhatsApp(sobConsulta ? "pdp_orcamento" : "pdp_duvidas", produto.nome)}
               sx={{
-                borderColor: "#25D366",
-                color: "#25D366",
+                borderColor: "#0E7A3F",
+                color: "#0E7A3F",
                 textTransform: "none",
                 fontWeight: 500,
                 py: 1.5,
@@ -316,7 +351,7 @@ export default function ProdutoDetalheClient({
                 },
               }}
             >
-              Dúvidas? Fale no WhatsApp
+              {sobConsulta ? "Solicitar orçamento no WhatsApp" : "Dúvidas? Fale no WhatsApp"}
             </Button>
 
             <Box
@@ -330,19 +365,19 @@ export default function ProdutoDetalheClient({
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                 <LocalShipping sx={{ color: "#E65100", fontSize: 20 }} />
                 <Typography variant="body2" sx={{ color: "#555" }}>
-                  Frete calculado no carrinho
+                  Envio para todo o Brasil — frete no checkout
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                 <CreditCard sx={{ color: "#E65100", fontSize: 20 }} />
                 <Typography variant="body2" sx={{ color: "#555" }}>
-                  Parcele em até {parcelas}x sem juros
+                  Pagamento via PIX
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Security sx={{ color: "#E65100", fontSize: 20 }} />
                 <Typography variant="body2" sx={{ color: "#555" }}>
-                  Compra segura — loja oficial CarCrew
+                  Atendimento direto no WhatsApp
                 </Typography>
               </Box>
             </Box>
@@ -444,7 +479,7 @@ function ProductCardInline({ produto }: { produto: Produto }) {
         {produto.nome.substring(0, 50)}...
       </Typography>
       <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>
-        {produto.preco <= 0 ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
+        {produto.preco <= 0 ? "Sob Consulta" : `${formatBRL(produto.preco)}`}
       </Typography>
     </Paper>
   );

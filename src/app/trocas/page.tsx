@@ -15,7 +15,7 @@ export default function TrocasPage() {
       <Header />
 
       <Container maxWidth="md" sx={{ flex: 1, py: 6 }}>
-        <Typography variant="h3" sx={{ fontWeight: 700, mb: 4, textAlign: "center" }}>
+        <Typography component="h1" variant="h3" sx={{ fontWeight: 700, mb: 4, textAlign: "center" }}>
           Trocas e Devoluções
         </Typography>
 

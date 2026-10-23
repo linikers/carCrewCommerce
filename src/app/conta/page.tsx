@@ -74,7 +74,7 @@ export default function AccountPage() {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
       <Container maxWidth="lg" sx={{ flex: 1, py: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 4, color: "#1A1A1A" }}>
+        <Typography component="h1" variant="h4" sx={{ fontWeight: 700, mb: 4, color: "#1A1A1A" }}>
           Minha Conta
         </Typography>
 

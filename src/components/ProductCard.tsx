@@ -12,6 +12,8 @@ import {
 import { WhatsApp } from "@mui/icons-material";
 import { Produto } from "@/types";
 import { isCloudinaryUrl, thumbUrl, extractPublicId } from "@/lib/cloudinary";
+import { formatBRL } from "@/lib/format";
+import { trackItem, trackWhatsApp } from "@/lib/analytics";
 
 interface ProductCardProps {
   produto: Produto;
@@ -142,7 +144,7 @@ export default function ProductCard({
             mb: 0.5,
           }}
         >
-          {sobConsulta ? "Sob Consulta" : `R$ ${produto.preco.toFixed(2)}`}
+          {sobConsulta ? "Sob Consulta" : formatBRL(produto.preco)}
         </Typography>
 
         {/* Parcelamento */}
@@ -151,49 +153,93 @@ export default function ProductCard({
           variant="caption"
           sx={{ color: "#666", mb: 2, fontSize: "0.8rem" }}
         >
-          ou {parcelas}x de R$ {valorParcela.toFixed(2)} sem juros
+          Pagamento via PIX
         </Typography>
         )}
 
         {/* Botões — parar propagação pra não navegar ao clicar */}
         <Box onClick={(e) => e.stopPropagation()}>
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={() => onAddToCart(produto)}
-            sx={{
-              backgroundColor: "#E65100",
-              "&:hover": { backgroundColor: "#BF360C" },
-              textTransform: "none",
-              fontWeight: 600,
-              py: 1,
-              mb: 1,
-            }}
-          >
-            Adicionar ao Carrinho
-          </Button>
+          {sobConsulta ? (
+            <>
+              <Button
+                fullWidth
+                variant="contained"
+                startIcon={<WhatsApp />}
+                href={`https://wa.me/5544998133182?text=${encodeURIComponent(
+                  `Olá! Quero um orçamento para: ${produto.nome}`
+                )}`}
+                target="_blank"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trackWhatsApp(sobConsulta ? "card_orcamento" : "card_duvidas", produto.nome);
+                }}
+                sx={{
+                  backgroundColor: "#BF360C",
+                  "&:hover": { backgroundColor: "#8C2A09" },
+                  textTransform: "none",
+                  fontWeight: 600,
+                  py: 1,
+                  mb: 0.5,
+                }}
+              >
+                Solicitar orçamento no WhatsApp
+              </Button>
+              <Typography
+                variant="caption"
+                sx={{ color: "#666", display: "block", textAlign: "center", fontSize: "0.72rem" }}
+              >
+                Resposta em até 1h em horário comercial
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => {
+                  trackItem("add_to_cart", produto);
+                  onAddToCart(produto);
+                }}
+                sx={{
+                  backgroundColor: "#BF360C",
+                  "&:hover": { backgroundColor: "#8C2A09" },
+                  textTransform: "none",
+                  fontWeight: 600,
+                  py: 1,
+                  mb: 1,
+                }}
+              >
+                Adicionar ao Carrinho
+              </Button>
 
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<WhatsApp />}
-            href={`https://wa.me/5544998133182?text=Olá! Tenho interesse em: ${produto.nome}${sobConsulta ? "" : ` (R$ ${produto.preco.toFixed(2)})`}`}
-            target="_blank"
-            onClick={(e) => e.stopPropagation()}
-            sx={{
-              borderColor: "#25D366",
-              color: "#25D366",
-              textTransform: "none",
-              fontSize: "0.8rem",
-              fontWeight: 500,
-              "&:hover": {
-                borderColor: "#1ebe5c",
-                backgroundColor: "rgba(37, 211, 102, 0.04)",
-              },
-            }}
-          >
-            Dúvidas? Fale no WhatsApp
-          </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<WhatsApp />}
+                href={`https://wa.me/5544998133182?text=${encodeURIComponent(
+                  `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
+                )}`}
+                target="_blank"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trackWhatsApp(sobConsulta ? "card_orcamento" : "card_duvidas", produto.nome);
+                }}
+                sx={{
+                  borderColor: "#0E7A3F",
+                  color: "#0E7A3F",
+                  textTransform: "none",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  "&:hover": {
+                    borderColor: "#0E7A3F",
+                    backgroundColor: "rgba(14, 122, 63, 0.06)",
+                  },
+                }}
+              >
+                Dúvidas? Fale no WhatsApp
+              </Button>
+            </>
+          )}
         </Box>
       </CardContent>
     </Card>

@@ -21,6 +21,7 @@ import {
   ShoppingCartOutlined as CartIcon,
 } from "@mui/icons-material";
 import { ItemCarrinho } from "@/types";
+import { formatBRL } from "@/lib/format";
 
 interface CartDrawerProps {
   open: boolean;
@@ -148,7 +149,7 @@ export default function CartDrawer({
                       variant="body2"
                       sx={{ color: "#E65100", fontWeight: 600 }}
                     >
-                      R$ {(item.produto.preco * item.quantidade).toFixed(2)}
+                      {formatBRL((item.produto.preco * item.quantidade))}
                     </Typography>
                   }
                 />
@@ -211,12 +212,12 @@ export default function CartDrawer({
                 variant="h6"
                 sx={{ color: "#E65100", fontWeight: 700 }}
               >
-                R$ {total.toFixed(2)}
+                {formatBRL(total)}
               </Typography>
             </Box>
             {total > 0 && (
               <Typography variant="caption" sx={{ color: "#999", mb: 2 }}>
-                ou 12x de R$ {(total / 12).toFixed(2)} sem juros
+                Pagamento via PIX
               </Typography>
             )}
             <Button

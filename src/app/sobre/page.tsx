@@ -17,7 +17,7 @@ export default function SobrePage() {
 
       <Container maxWidth="md" sx={{ flex: 1, py: 6 }}>
         {/* Título */}
-        <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, textAlign: "center" }}>
+        <Typography component="h1" variant="h3" sx={{ fontWeight: 700, mb: 2, textAlign: "center" }}>
           Sobre a Car Crew Garage
         </Typography>
         <Typography variant="h6" sx={{ color: "#666", textAlign: "center", mb: 6, fontWeight: 400 }}>
