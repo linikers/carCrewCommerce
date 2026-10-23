@@ -44,7 +44,7 @@ export default function AdminCategorias() {
   // Modal
   const [modalOpen, setModalOpen] = useState(false);
   const [editando, setEditando] = useState<Categoria | null>(null);
-  const [form, setForm] = useState({ slug: "", nome: "", icone: "", descricao: "" });
+  const [form, setForm] = useState({ slug: "", nome: "", icone: "", descricao: "", ordem: "0" });
   const [error, setError] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
@@ -58,14 +58,14 @@ export default function AdminCategorias() {
 
   const abrirNovo = () => {
     setEditando(null);
-    setForm({ slug: "", nome: "", icone: "", descricao: "" });
+    setForm({ slug: "", nome: "", icone: "", descricao: "", ordem: "0" });
     setError("");
     setModalOpen(true);
   };
 
   const abrirEditar = (cat: Categoria) => {
     setEditando(cat);
-    setForm({ slug: cat.slug, nome: cat.nome, icone: cat.icone, descricao: cat.descricao });
+    setForm({ slug: cat.slug, nome: cat.nome, icone: cat.icone, descricao: cat.descricao, ordem: String(cat.ordem ?? 0) });
     setError("");
     setModalOpen(true);
   };
@@ -88,7 +88,7 @@ export default function AdminCategorias() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, ordem: Number(form.ordem) || 0 }),
       });
 
       if (!res.ok) {
@@ -179,9 +179,12 @@ export default function AdminCategorias() {
                 helperText="Identificador único (ex: amortecedores)" />
               <TextField label="Nome" required value={form.nome}
                 onChange={(e) => setForm({ ...form, nome: e.target.value })} />
-              <TextField label="Ícone (emoji)" value={form.icone}
-                onChange={(e) => setForm({ ...form, icone: e.target.value })}
-                helperText="Ícone curto exibido na loja (ex.: ar, roda)" />
+              <TextField label="Ícone" value={form.icone}
+                helperText="Curto, ex.: ar, roda. Sem emoji."
+                onChange={(e) => setForm({ ...form, icone: e.target.value })} />
+              <TextField label="Ordem" type="number" value={form.ordem}
+                helperText="Menor número aparece primeiro no menu da loja"
+                onChange={(e) => setForm({ ...form, ordem: e.target.value })} />
               <TextField label="Descrição" multiline rows={2} value={form.descricao}
                 onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
               {error && <Alert severity="error">{error}</Alert>}

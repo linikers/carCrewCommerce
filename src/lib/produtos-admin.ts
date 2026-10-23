@@ -20,6 +20,7 @@ export interface ProdutoData {
   largura?: number | null;
   profundidade?: number | null;
   veiculos?: string[];
+  imagens?: string[];
 }
 
 export async function lerProdutos(): Promise<ProdutoData[]> {
@@ -44,6 +45,7 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
     largura: p.largura,
     profundidade: p.profundidade,
     veiculos: p.veiculos,
+    imagens: p.imagens,
   }));
 }
 
@@ -63,6 +65,7 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
         largura: p.largura ?? null,
         profundidade: p.profundidade ?? null,
         veiculos: p.veiculos ?? [],
+        imagens: p.imagens ?? [],
         parcelamento: p.parcelamento,
         estoque: p.estoque,
         ativo: p.ativo,
@@ -79,6 +82,7 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
         largura: p.largura ?? null,
         profundidade: p.profundidade ?? null,
         veiculos: p.veiculos ?? [],
+        imagens: p.imagens ?? [],
         parcelamento: p.parcelamento,
         estoque: p.estoque,
         ativo: p.ativo,

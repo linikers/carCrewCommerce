@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
           quantidade: i.quantidade,
         })),
         total: total + (freight || 0),
-        status: paymentMethod === "pix" ? "aguardando_pagamento" : "confirmado",
+        status: paymentMethod === "pix" ? "aguardando_pagamento" : "pago",
         createdAt: new Date(),
         updatedAt: new Date(),
       },

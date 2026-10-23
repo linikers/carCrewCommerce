@@ -93,6 +93,7 @@ model Produto {
   descricao    String?
   preco        Float
   imgUrl       String?
+  imagens      String[]  @default([])
   categorySlug String    @map("category_slug")
   parcelamento Int       @default(1)
   estoque      Int       @default(0)

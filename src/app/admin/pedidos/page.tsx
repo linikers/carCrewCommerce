@@ -30,6 +30,7 @@ import {
 } from "@mui/icons-material";
 import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { STATUS_PEDIDO, STATUS_COLOR, labelStatus } from "@/lib/pedido-status";
 
 interface PedidoItem {
   nome: string;
@@ -47,15 +48,6 @@ interface Pedido {
   updatedAt: string;
   user?: { id: string; name: string | null; email: string | null };
 }
-
-const statusColors: Record<string, "warning" | "info" | "primary" | "success" | "default" | "error"> = {
-  pendente: "warning",
-  pago: "info",
-  preparando: "primary",
-  enviado: "primary",
-  entregue: "success",
-  cancelado: "error",
-};
 
 export default function AdminPedidos() {
   const { data: session, status } = useSession();
@@ -147,7 +139,7 @@ export default function AdminPedidos() {
 
   const somaFiltrada = filtrados.reduce((soma, p) => soma + p.total, 0);
 
-  const statusValidos = ["pendente", "pago", "preparando", "enviado", "entregue", "cancelado"];
+  const statusValidos = [...STATUS_PEDIDO];
 
   if (status === "loading") {
     return (
@@ -270,8 +262,8 @@ export default function AdminPedidos() {
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1)}
-                          color={statusColors[pedido.status] || "default"}
+                          label={labelStatus(pedido.status)}
+                          color={STATUS_COLOR[pedido.status as keyof typeof STATUS_COLOR] ?? "default"}
                           size="small"
                           variant="filled"
                           sx={{ fontWeight: 600, fontSize: "0.75rem" }}
@@ -286,7 +278,7 @@ export default function AdminPedidos() {
                           >
                             <Visibility fontSize="small" />
                           </IconButton>
-                          {pedido.status === "pendente" && (
+                          {(pedido.status === "pendente" || pedido.status === "aguardando_pagamento") && (
                             <Button
                               size="small"
                               variant="outlined"
@@ -300,6 +292,19 @@ export default function AdminPedidos() {
                             </Button>
                           )}
                           {pedido.status === "pago" && (
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              color="primary"
+                              disabled={alterando === pedido.id}
+                              onClick={() => alterarStatus(pedido.id, "em_separacao")}
+                              sx={{ fontSize: "0.7rem", py: 0.25, minWidth: 60 }}
+                              startIcon={<LocalShipping sx={{ fontSize: 14 }} />}
+                            >
+                              Separar
+                            </Button>
+                          )}
+                          {pedido.status === "em_separacao" && (
                             <Button
                               size="small"
                               variant="outlined"
@@ -325,7 +330,7 @@ export default function AdminPedidos() {
                               Entregue
                             </Button>
                           )}
-                          {(pedido.status === "pendente" || pedido.status === "pago") && (
+                          {(pedido.status === "pendente" || pedido.status === "aguardando_pagamento" || pedido.status === "pago" || pedido.status === "em_separacao") && (
                             <IconButton
                               size="small"
                               disabled={alterando === pedido.id}
