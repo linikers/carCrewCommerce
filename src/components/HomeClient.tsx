@@ -306,7 +306,13 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
               "&::-webkit-scrollbar": { display: "none" },
             }}
           >
-            {categorias.slice(0, 8).map((c) => {
+            {[...categorias]
+              .sort(
+                (a, b) =>
+                  produtos.filter((p) => p.category === b.slug).length -
+                  produtos.filter((p) => p.category === a.slug).length
+              )
+              .map((c) => {
               const itens = produtos.filter((p) => p.category === c.slug);
               const foto = itens.find((p) => p.imgUrl && !p.imgUrl.includes("placeholder"))?.imgUrl;
               return (
