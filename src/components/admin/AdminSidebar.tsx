@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
+  Badge,
   Box,
   Drawer,
   List,
@@ -55,6 +57,31 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+
+  // 5.6: a navegação não dava nenhum sinal de trabalho pendente. Estes dois
+  // números são os que param a loja: pedido para faturar e produto sem preço
+  // (que não fecha pedido).
+  const [pendencias, setPendencias] = useState({ pedidos: 0, semPreco: 0 });
+
+  useEffect(() => {
+    let ativo = true;
+    fetch("/api/admin/stats")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!ativo || !d) return;
+        setPendencias({
+          pedidos: Number(d.pedidosAbertos ?? 0),
+          semPreco: Number(d.alertas?.semPreco ?? 0),
+        });
+      })
+      .catch(() => {});
+    return () => {
+      ativo = false;
+    };
+  }, [pathname]);
+
+  const contadorDe = (path: string) =>
+    path === "/admin/pedidos" ? pendencias.pedidos : path === "/admin/produtos" ? pendencias.semPreco : 0;
 
   const handleNav = (path: string) => {
     router.push(path);
@@ -117,10 +144,10 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               mb: 1,
               color: "#ccc",
               "&.Mui-selected": {
-                backgroundColor: "rgba(230,81,0,0.15)",
+                backgroundColor: "rgba(191,54,12,0.18)",
                 color: "#BF360C",
                 "&:hover": {
-                  backgroundColor: "rgba(230,81,0,0.2)",
+                  backgroundColor: "rgba(191,54,12,0.24)",
                 },
               },
               "&:hover": {
@@ -135,6 +162,13 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               primary={item.label}
               sx={{ "& .MuiListItemText-primary": { fontSize: "0.9rem" } }}
             />
+            {contadorDe(item.path) > 0 && (
+              <Badge
+                badgeContent={contadorDe(item.path)}
+                color="error"
+                sx={{ mr: item.tag ? 1 : 0 }}
+              />
+            )}
             {item.tag && (
               <Typography
                 variant="caption"

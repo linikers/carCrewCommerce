@@ -163,7 +163,7 @@ export default function PedidoDetalhe() {
   return (
     <>
       <Header cartItemCount={0} />
-      <AdminLayout>
+      <AdminLayout title="Pedido">
         <Container maxWidth="md" sx={{ py: 4 }}>
           <Button
             startIcon={<ArrowBack />}
