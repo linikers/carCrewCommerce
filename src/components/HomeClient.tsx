@@ -179,7 +179,11 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
             backgroundColor: banners[bannerIndex]?.corFundo || "#1A1A1A",
             color: banners[bannerIndex]?.corTexto || "#fff",
             overflow: "hidden",
-            minHeight: { xs: 180, md: 300 },
+            // A arte desktop é 1200x400: com altura fixa de 350 o `cover`
+            // cortava o CTA pintado no SVG. Com aspect-ratio a arte cabe
+            // inteira em qualquer largura.
+            minHeight: { xs: 0, md: 0 },
+            height: { xs: 250, md: 360 },
             display: "flex",
             alignItems: "center",
             transition: "background-color 0.5s ease",
@@ -194,10 +198,13 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
               position: "absolute",
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              objectFit: { xs: "contain", md: "cover" },
+              objectPosition: { xs: "center center", md: "center bottom" },
               inset: 0,
             }}
           />
+
+
           {banners[bannerIndex]?.link && (
             <Box
               component="a"
@@ -274,78 +281,97 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
         </Box>
       )}
 
-      {/* 1.4 — grade de categorias com foto e contagem, no lugar dos chips */}
-      <Container maxWidth="lg" sx={{ mt: { xs: 2.5, md: 4 } }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", mb: 1.5, gap: 2, flexWrap: "wrap" }}>
-          <Typography component="h2" variant="h5" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
-            Comprar por categoria
-          </Typography>
-          <Typography variant="body2" sx={{ color: "#666" }}>
-            {produtos.length} peças em {categorias.length} categorias
-          </Typography>
-        </Box>
-        {/* Uma linha só: 8 no desktop, 4 no celular em scroll horizontal.
-            Grade 2x2 no mobile empurrava a vitrine para 1.576 px. */}
-        <Box
-          sx={{
-            display: "flex",
-            gap: { xs: 1.5, md: 1.5 },
-            overflowX: { xs: "auto", md: "visible" },
-            pb: { xs: 1, md: 0 },
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": { display: "none" },
-          }}
-        >
-          {categorias.slice(0, 8).map((c) => {
-            const itens = produtos.filter((p) => p.category === c.slug);
-            const foto = itens.find((p) => p.imgUrl && !p.imgUrl.includes("placeholder"))?.imgUrl;
-            return (
-              <Box
-                key={c.slug}
-                component="a"
-                href={`/?cat=${c.slug}`}
-                onClick={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  toggleCategoria(c.slug as CategoriaSlug);
-                  document.getElementById("vitrine")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                sx={{
-                  display: "block",
-                  flex: { xs: "0 0 26%", md: "1 1 0" },
-                  textDecoration: "none",
-                  color: "inherit",
-                  border: "1px solid #e6e6e6",
-                  borderRadius: 2.5,
-                  overflow: "hidden",
-                  transition: "border-color .15s ease, box-shadow .15s ease",
-                  "&:hover": { borderColor: "primary.main", boxShadow: "0 6px 18px rgba(0,0,0,0.08)" },
-                }}
-              >
-                <Box sx={{ position: "relative", aspectRatio: "1 / 1", backgroundColor: "#f2f2f2" }}>
-                  {foto && (
-                    <Box
-                      component="img"
-                      src={foto}
-                      alt={c.nome}
-                      loading="lazy"
-                      sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                    />
-                  )}
-                </Box>
-                <Box sx={{ px: 1, py: 0.75 }}>
+      {/* 1.4 — categorias com foto, em uma linha compacta.
+          Grade 2x2 no mobile empurrava o primeiro produto para 1.576 px. */}
+      <Container maxWidth="lg" sx={{ mt: { xs: 2, md: 2.5 } }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0, md: 3 }, flexDirection: { xs: "column", md: "row" } }}>
+          <Box sx={{ alignSelf: { xs: "flex-start", md: "auto" }, flexShrink: 0, mb: { xs: 1, md: 0 } }}>
+            <Typography component="h2" sx={{ fontWeight: 800, color: "#1A1A1A", fontSize: { xs: "1.05rem", md: "1.15rem" }, whiteSpace: "nowrap" }}>
+              Comprar por categoria
+            </Typography>
+            <Typography variant="caption" sx={{ color: "#888", display: { xs: "none", md: "block" } }}>
+              {produtos.length} peças em {categorias.length} categorias
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              gap: { xs: 1.5, md: 2 },
+              overflowX: { xs: "auto", md: "visible" },
+              width: "100%",
+              pb: { xs: 0.5, md: 0 },
+              scrollbarWidth: "none",
+              scrollSnapType: { xs: "x proximity", md: "none" },
+              "&::-webkit-scrollbar": { display: "none" },
+            }}
+          >
+            {categorias.slice(0, 8).map((c) => {
+              const itens = produtos.filter((p) => p.category === c.slug);
+              const foto = itens.find((p) => p.imgUrl && !p.imgUrl.includes("placeholder"))?.imgUrl;
+              return (
+                <Box
+                  key={c.slug}
+                  component="a"
+                  href={`/?cat=${c.slug}`}
+                  onClick={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    toggleCategoria(c.slug as CategoriaSlug);
+                    document.getElementById("vitrine")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 0.5,
+                    flex: { xs: "0 0 auto", md: "1 1 0" },
+                    scrollSnapAlign: "start",
+                    textDecoration: "none",
+                    color: "inherit",
+                    "&:hover .cat-foto": { borderColor: "primary.main", transform: "scale(1.03)" },
+                  }}
+                >
+                  <Box
+                    className="cat-foto"
+                    sx={{
+                      width: { xs: 60, md: 72 },
+                      height: { xs: 60, md: 72 },
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      border: "1px solid #e6e6e6",
+                      backgroundColor: "#f5f5f5",
+                      transition: "border-color .15s ease, transform .15s ease",
+                    }}
+                  >
+                    {foto && (
+                      <Box
+                        component="img"
+                        src={foto}
+                        alt={c.nome}
+                        loading="lazy"
+                        sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      />
+                    )}
+                  </Box>
                   <Typography
-                    variant="caption"
-                    sx={{ display: "block", fontWeight: 700, color: "#1A1A1A", lineHeight: 1.2, fontSize: { xs: "0.7rem", md: "0.78rem" } }}
+                    sx={{
+                      fontSize: { xs: "0.68rem", md: "0.75rem" },
+                      fontWeight: 600,
+                      color: "#1A1A1A",
+                      textAlign: "center",
+                      lineHeight: 1.15,
+                      maxWidth: 84,
+                    }}
                   >
                     {c.nome}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: "#888", fontSize: "0.65rem" }}>
+                  <Typography sx={{ fontSize: "0.62rem", color: "#888" }}>
                     {itens.length} {itens.length === 1 ? "peça" : "peças"}
                   </Typography>
                 </Box>
-              </Box>
-            );
-          })}
+              );
+            })}
+          </Box>
         </Box>
       </Container>
 
