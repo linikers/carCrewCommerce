@@ -1,14 +1,21 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { lerBanners, salvarBanners, proximoId, BannerData } from "@/lib/banners-admin";
 
 // GET /api/admin/banners — listar todos
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const banners = await lerBanners();
   return NextResponse.json(banners);
 }
 
 // POST /api/admin/banners — criar novo
 export async function POST(req: NextRequest) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await req.json();
     const { titulo, subtitulo, imgDesktop, imgMobile, link, corFundo, corTexto, ativo, ordem } = body;

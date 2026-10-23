@@ -1,7 +1,11 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const [
     produtos,
     usuarios,

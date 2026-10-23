@@ -1,31 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import path from "path";
+import { hash } from "bcryptjs";
+import prisma from "@/lib/prisma";
 
-const DATA_PATH = path.join(process.cwd(), "src/data/usuarios.json");
-
-interface Usuario {
-  nome: string;
-  email: string;
-  senha: string;
-  admin: boolean;
-  criadoEm: string;
-}
-
-function lerUsuarios(): Usuario[] {
-  try {
-    if (!existsSync(DATA_PATH)) return [];
-    const raw = readFileSync(DATA_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function salvarUsuarios(usuarios: Usuario[]) {
-  writeFileSync(DATA_PATH, JSON.stringify(usuarios, null, 2));
-}
-
+/**
+ * Cadastro de cliente.
+ *
+ * Antes gravava em `src/data/usuarios.json` enquanto o login lia
+ * `prisma.user` — quem se cadastrava não conseguia entrar. E a senha era
+ * salva em texto puro.
+ *
+ * Duas correções: grava no Prisma e com hash. Nunca cria admin: `admin` só
+ * é atribuído por um admin existente ou por seed. (A regra antiga "primeiro
+ * usuário vira admin" era escalada de privilégio: quem se cadastrasse
+ * primeiro em um banco vazio virava dono do painel.)
+ */
 export async function POST(req: NextRequest) {
   try {
     const { nome, email, senha } = await req.json();
@@ -37,47 +25,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!email.includes("@")) {
+    if (!String(email).includes("@")) {
+      return NextResponse.json({ error: "Email inválido" }, { status: 400 });
+    }
+
+    if (String(senha).length < 8) {
       return NextResponse.json(
-        { error: "Email inválido" },
+        { error: "Senha deve ter no mínimo 8 caracteres" },
         { status: 400 }
       );
     }
 
-    if (senha.length < 6) {
-      return NextResponse.json(
-        { error: "Senha deve ter no mínimo 6 caracteres" },
-        { status: 400 }
-      );
-    }
+    const emailNormalizado = String(email).toLowerCase().trim();
 
-    const usuarios = lerUsuarios();
-
-    // Verifica se email já existe
-    if (usuarios.find((u) => u.email === email)) {
-      return NextResponse.json(
-        { error: "Email já cadastrado" },
-        { status: 409 }
-      );
-    }
-
-    // Primeiro usuário vira admin
-    const isAdmin = usuarios.length === 0;
-
-    const novoUsuario: Usuario = {
-      nome,
-      email,
-      senha,
-      admin: isAdmin,
-      criadoEm: new Date().toISOString(),
-    };
-
-    salvarUsuarios([...usuarios, novoUsuario]);
-
-    return NextResponse.json({
-      message: "Conta criada com sucesso",
-      admin: isAdmin,
+    const existente = await prisma.user.findUnique({
+      where: { email: emailNormalizado },
     });
+
+    if (existente) {
+      return NextResponse.json({ error: "Email já cadastrado" }, { status: 409 });
+    }
+
+    await prisma.user.create({
+      data: {
+        name: nome,
+        email: emailNormalizado,
+        senha: await hash(String(senha), 12),
+        admin: false,
+      },
+    });
+
+    return NextResponse.json({ message: "Conta criada com sucesso" }, { status: 201 });
   } catch (error) {
     console.error("Erro ao registrar:", error);
     return NextResponse.json(

@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/api-auth";
 // API de configuração de pagamentos — Prisma (Vercel-safe)
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
@@ -11,6 +12,9 @@ const defaultConfig = {
 };
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const row = await prisma.configuracao.findUnique({ where: { chave: CONFIG_KEY } });
     const config = row ? (row.valor as any) : defaultConfig;
@@ -21,6 +25,9 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await request.json();
     await prisma.configuracao.upsert({

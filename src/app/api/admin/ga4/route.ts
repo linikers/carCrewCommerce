@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 
 async function getAccessToken(): Promise<string> {
@@ -82,6 +83,9 @@ async function runReport(propertyId: string, body: any, token: string) {
 }
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const propertyId = process.env.GA4_PROPERTY_ID;
     if (!propertyId || propertyId === "PLACEHOLDER") {

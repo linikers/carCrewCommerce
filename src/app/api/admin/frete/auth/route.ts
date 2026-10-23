@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
@@ -6,6 +7,9 @@ const CONFIG_PATH = path.join(process.cwd(), "src/data/frete.json");
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const raw = await fs.readFile(CONFIG_PATH, "utf-8");
     const config = JSON.parse(raw);

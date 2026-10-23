@@ -9,14 +9,21 @@ const nextConfig: NextConfig = {
   // CORS headers for API routes (Mercado Livre integration)
   async headers() {
     return [
-      {
-        source: "/api/:path*",
-        headers: [
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, DELETE, OPTIONS" },
-          { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
-        ],
-      },
+      // CORS: era "*" em /api/:path*, incluindo /api/admin — qualquer site
+      // podia chamar o admin a partir do navegador de um funcionário logado.
+      // Webhook do Mercado Livre é server-to-server e não usa CORS.
+      // Libera apenas as origens declaradas em CORS_ALLOWED_ORIGINS.
+      ...(process.env.CORS_ALLOWED_ORIGINS
+        ? [{
+            source: "/api/:path*",
+            headers: [
+              { key: "Access-Control-Allow-Origin", value: process.env.CORS_ALLOWED_ORIGINS },
+              { key: "Vary", value: "Origin" },
+              { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, DELETE, OPTIONS" },
+              { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
+            ],
+          }]
+        : []),
       // Cache headers for favicon assets (1 year)
       {
         source: "/favicon/:path*",
