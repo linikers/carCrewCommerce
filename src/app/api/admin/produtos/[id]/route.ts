@@ -116,9 +116,14 @@ export async function DELETE(
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    await prisma.produto.delete({ where: { id: Number(id) } });
+    // Soft delete: o produto sai da loja mas continua no histórico.
+    // Antes era hard delete — sumia o registro e não havia como reativar.
+    await prisma.produto.update({
+      where: { id: Number(id) },
+      data: { ativo: false },
+    });
 
-    return NextResponse.json({ message: "Produto excluído" });
+    return NextResponse.json({ message: "Produto desativado" });
   } catch (error) {
     console.error("Erro ao excluir produto:", error);
     return NextResponse.json({ error: "Erro ao excluir" }, { status: 500 });

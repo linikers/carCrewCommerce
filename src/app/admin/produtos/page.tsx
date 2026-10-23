@@ -33,6 +33,7 @@ import {
   Edit,
   Delete,
   Visibility,
+  VisibilityOff,
   Inventory2,
 } from "@mui/icons-material";
 import Header from "@/components/Header";
@@ -78,6 +79,20 @@ export default function AdminProdutos() {
   };
 
   useEffect(() => { carregar(); }, []);
+
+  const alternarAtivo = async (id: number, ativoAtual: boolean) => {
+    try {
+      const res = await fetch(`/api/admin/produtos/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ativo: !ativoAtual }),
+      });
+      if (!res.ok) throw new Error("Não foi possível alterar o status");
+      carregar();
+    } catch (e) {
+      setErro((e as Error).message);
+    }
+  };
 
   const excluir = async () => {
     if (!deleteId) return;
@@ -254,6 +269,13 @@ export default function AdminProdutos() {
                       <IconButton size="small" onClick={() => router.push(`/produto/${p.id}`)}>
                         <Visibility fontSize="small" />
                       </IconButton>
+                      <IconButton
+                        size="small"
+                        title={p.ativo ? "Desativar (sai da loja)" : "Reativar na loja"}
+                        onClick={() => alternarAtivo(p.id, p.ativo)}
+                      >
+                        {p.ativo ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                      </IconButton>
                       <IconButton size="small" onClick={() => router.push(`/admin/produtos/${p.id}/edit`)}>
                         <Edit fontSize="small" />
                       </IconButton>
@@ -282,13 +304,17 @@ export default function AdminProdutos() {
 
       {/* Modal excluir */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>
-        <DialogTitle>Excluir produto?</DialogTitle>
+        <DialogTitle>Desativar produto?</DialogTitle>
         <DialogContent>
-          <Typography>Tem certeza? Esta ação não pode ser desfeita.</Typography>
+          <Typography>
+            O produto sai da loja na hora, mas continua cadastrado e pode ser
+            reativado pelo ícone de olho na listagem. O histórico de pedidos não
+            muda.
+          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteId(null)}>Cancelar</Button>
-          <Button onClick={excluir} color="error" variant="contained">Excluir</Button>
+          <Button onClick={() => setDeleteId(null)} sx={{ textTransform: "none" }}>Cancelar</Button>
+          <Button onClick={excluir} color="error" variant="contained" sx={{ textTransform: "none" }}>Desativar</Button>
         </DialogActions>
       </Dialog>
     </AdminLayout>

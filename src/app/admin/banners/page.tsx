@@ -25,7 +25,7 @@ export default function AdminBanners() {
   const [form, setForm] = useState({
     titulo: "", subtitulo: "", link: "",
     imgDesktop: "", imgMobile: "",
-    corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true,
+    corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true, ordem: "0",
   });
   const [error, setError] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -40,7 +40,7 @@ export default function AdminBanners() {
   const resetForm = () => ({
     titulo: "", subtitulo: "", link: "",
     imgDesktop: "", imgMobile: "",
-    corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true,
+    corFundo: "#1A1A1A", corTexto: "#ffffff", ativo: true, ordem: "0",
   });
 
   const abrirNovo = () => {
@@ -54,7 +54,7 @@ export default function AdminBanners() {
     setForm({
       titulo: b.titulo, subtitulo: b.subtitulo || "", link: b.link || "",
       imgDesktop: b.imgDesktop || "", imgMobile: b.imgMobile || "",
-      corFundo: b.corFundo, corTexto: b.corTexto, ativo: b.ativo,
+      corFundo: b.corFundo, corTexto: b.corTexto, ordem: String(b.ordem ?? 0), ativo: b.ativo,
     });
     setError(""); setModalOpen(true);
   };
@@ -62,12 +62,31 @@ export default function AdminBanners() {
   const salvar = async (e: React.FormEvent) => {
     e.preventDefault(); setError("");
     if (!form.titulo) { setError("Título é obrigatório"); return; }
+
+    if (!form.imgDesktop) {
+      setError("A imagem desktop é obrigatória — sem ela a home renderiza um bloco vazio");
+      return;
+    }
+
+    // O link vai direto para o href da home. Antes aceitava qualquer coisa,
+    // inclusive "javascript:..." e "produto/1" sem barra.
+    if (form.link && !form.link.startsWith("/") && !form.link.startsWith("https://")) {
+      setError("Link deve começar com / (caminho do site) ou https:// (site externo)");
+      return;
+    }
+
+    for (const [campo, valor] of [["fundo", form.corFundo], ["texto", form.corTexto]] as const) {
+      if (!/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(valor)) {
+        setError(`Cor de ${campo} inválida. Use hexadecimal, ex.: #1A1A1A`);
+        return;
+      }
+    }
     try {
       const url = editando ? `/api/admin/banners/${editando.id}` : "/api/admin/banners";
       const res = await fetch(url, {
         method: editando ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, ordem: Number(form.ordem) || 0 }),
       });
       if (!res.ok) { const d = await res.json(); setError(d.error); return; }
       setModalOpen(false); carregar();
@@ -141,7 +160,8 @@ export default function AdminBanners() {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
               <TextField label="Título" required value={form.titulo} onChange={(e) => setForm({...form, titulo: e.target.value})} />
               <TextField label="Subtítulo" value={form.subtitulo} onChange={(e) => setForm({...form, subtitulo: e.target.value})} />
-              <TextField label="Link" value={form.link} onChange={(e) => setForm({...form, link: e.target.value})} helperText="URL para onde o banner leva" />
+              <TextField label="Link" value={form.link} onChange={(e) => setForm({...form, link: e.target.value})}
+                helperText="Comece com / para caminho do site (/suspensao-a-ar) ou https:// para site externo" />
 
               {/* Upload Imagem Desktop */}
               <Box>
@@ -198,6 +218,9 @@ export default function AdminBanners() {
               </Box>
 
               <Box sx={{ display: "flex", gap: 2 }}>
+                <TextField label="Ordem" type="number" value={form.ordem}
+                  helperText="Menor aparece primeiro"
+                  onChange={(e) => setForm({...form, ordem: e.target.value})} sx={{ flex: 1 }} />
                 <TextField label="Cor de fundo" value={form.corFundo} onChange={(e) => setForm({...form, corFundo: e.target.value})} sx={{ flex: 1 }} />
                 <TextField label="Cor do texto" value={form.corTexto} onChange={(e) => setForm({...form, corTexto: e.target.value})} sx={{ flex: 1 }} />
               </Box>
