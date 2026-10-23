@@ -283,17 +283,16 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
 
       {/* 1.4 — categorias com foto, em uma linha compacta.
           Grade 2x2 no mobile empurrava o primeiro produto para 1.576 px. */}
-      <Container maxWidth="lg" sx={{ mt: { xs: 2, md: 2.5 } }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0, md: 3 }, flexDirection: { xs: "column", md: "row" } }}>
-          <Box sx={{ alignSelf: { xs: "flex-start", md: "auto" }, flexShrink: 0, mb: { xs: 1, md: 0 } }}>
-            <Typography component="h2" sx={{ fontWeight: 800, color: "#1A1A1A", fontSize: { xs: "1.05rem", md: "1.15rem" }, whiteSpace: "nowrap" }}>
-              Comprar por categoria
-            </Typography>
-            <Typography variant="caption" sx={{ color: "#888", display: { xs: "none", md: "block" } }}>
-              {produtos.length} peças em {categorias.length} categorias
-            </Typography>
-          </Box>
-
+      <Container maxWidth="lg" sx={{ mt: { xs: 2.5, md: 3.5 }, mb: { xs: 0.5, md: 1 } }}>
+        {/* Título só para leitor de tela e Google: visualmente a linha de
+            círculos basta, e o texto em cima dela poluía a dobra. */}
+        <Typography
+          component="h2"
+          sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: 0 }}
+        >
+          Comprar por categoria
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box
             sx={{
               display: "flex",
