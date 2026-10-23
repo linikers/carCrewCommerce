@@ -24,7 +24,6 @@ import {
   Alert,
 } from "@mui/material";
 import { Add, Edit, Delete, ArrowUpward, ArrowDownward } from "@mui/icons-material";
-import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Categoria {

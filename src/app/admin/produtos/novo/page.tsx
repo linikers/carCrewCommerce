@@ -17,7 +17,6 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import { ArrowBack, Save } from "@mui/icons-material";
-import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 import CloudinaryUpload from "@/components/CloudinaryUpload";
 import GalleryUpload from "@/components/GalleryUpload";

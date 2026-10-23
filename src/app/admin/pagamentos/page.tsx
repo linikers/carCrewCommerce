@@ -30,7 +30,6 @@ import {
   VisibilityOff,
   ArrowBack,
 } from "@mui/icons-material";
-import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface PixKey {
@@ -172,7 +171,6 @@ export default function AdminPagamentos() {
   if (status === "unauthenticated" || (status === "authenticated" && !session?.user?.admin)) {
     return (
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <Header />
         <Container sx={{ flex: 1, py: 8, textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Acesso restrito</Typography>
           <Button variant="contained" onClick={() => router.push("/admin/login")}

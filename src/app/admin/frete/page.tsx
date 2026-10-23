@@ -22,7 +22,6 @@ import {
   Link,
   CheckCircle,
 } from "@mui/icons-material";
-import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 function AdminFreteContent() {
@@ -166,7 +165,6 @@ function AdminFreteContent() {
 
   return (
     <>
-      <Header cartItemCount={0} />
       <AdminLayout title="Frete">
         <Container maxWidth="md" sx={{ py: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>

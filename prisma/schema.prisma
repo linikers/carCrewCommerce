@@ -143,6 +143,14 @@ model Pedido {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  // 6.1: o checkout já coletava endereço, frete e telefone — e o pedido
+  // nascia sem nada disso. Sem endereço não existe expedição; sem frete não
+  // existe conferência de etiqueta.
+  enderecoEntrega Json?   @map("endereco_entrega")
+  frete           Float?  @map("frete")
+  clienteNome     String? @map("cliente_nome")
+  clienteTelefone String? @map("cliente_telefone")
+
   user User @relation(fields: [userId], references: [id])
 
   @@map("pedidos")

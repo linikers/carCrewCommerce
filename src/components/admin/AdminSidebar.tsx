@@ -31,7 +31,15 @@ import {
   Payment,
 } from "@mui/icons-material";
 
-const menuItems = [
+interface MenuItem {
+  label: string;
+  icon: React.ReactNode;
+  path: string;
+  disabled?: boolean;
+  tag?: string;
+}
+
+const menuItems: MenuItem[] = [
   { label: "Dashboard", icon: <Dashboard />, path: "/admin" },
   { label: "Produtos", icon: <Inventory2 />, path: "/admin/produtos" },
   { label: "Categorias", icon: <Category />, path: "/admin/categorias" },
@@ -39,10 +47,10 @@ const menuItems = [
   { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
   { label: "Frete", icon: <LocalShipping />, path: "/admin/frete" },
   { label: "Pagamentos", icon: <Payment />, path: "/admin/pagamentos" },
-  { label: "Clientes", icon: <People />, path: "/admin/clientes", disabled: true, tag: "Em breve" },
+  { label: "Clientes", icon: <People />, path: "/admin/clientes" },
 ];
 
-const pageLinks = [
+const pageLinks: MenuItem[] = [
   { label: "Página FAQ", icon: <Category />, path: "/faq" },
   { label: "Página Off-Road", icon: <Category />, path: "/off-road" },
 ];

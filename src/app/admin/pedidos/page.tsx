@@ -28,7 +28,6 @@ import {
   LocalShipping,
   Cancel,
 } from "@mui/icons-material";
-import Header from "@/components/Header";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { STATUS_PEDIDO, STATUS_COLOR, labelStatus } from "@/lib/pedido-status";
 
@@ -46,6 +45,9 @@ interface Pedido {
   status: string;
   createdAt: string;
   updatedAt: string;
+  clienteNome?: string | null;
+  clienteTelefone?: string | null;
+  enderecoEntrega?: { cidade?: string | null } | null;
   user?: { id: string; name: string | null; email: string | null };
 }
 
@@ -139,6 +141,33 @@ export default function AdminPedidos() {
 
   const somaFiltrada = filtrados.reduce((soma, p) => soma + p.total, 0);
 
+  // 6.11: nada era exportável. O CSV leva exatamente o que está na tela
+  // (filtro + busca), não a base inteira.
+  const exportarCSV = () => {
+    const linhas = [
+      ["Pedido", "Cliente", "Email", "Telefone", "Cidade", "Status", "Data", "Total"],
+      ...filtrados.map((p) => [
+        idCurto(p.id),
+        p.clienteNome || p.user?.name || "",
+        p.user?.email || "",
+        p.clienteTelefone || "",
+        p.enderecoEntrega?.cidade || "",
+        labelStatus(p.status),
+        new Date(p.createdAt).toLocaleDateString("pt-BR"),
+        p.total.toFixed(2).replace(".", ","),
+      ]),
+    ];
+    const csv = linhas
+      .map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";"))
+      .join("\n");
+    const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `pedidos-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const statusValidos = [...STATUS_PEDIDO];
 
   if (status === "loading") {
@@ -153,7 +182,6 @@ export default function AdminPedidos() {
 
   return (
     <>
-      <Header cartItemCount={0} />
       <AdminLayout title="Pedidos">
         <Container maxWidth="lg" sx={{ py: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
@@ -165,6 +193,14 @@ export default function AdminPedidos() {
                 {pedidos.length} pedido(s) · {formatPrice(somaFiltrada)} no filtro atual
               </Typography>
             </Box>
+            <Button
+              variant="outlined"
+              onClick={exportarCSV}
+              disabled={filtrados.length === 0}
+              sx={{ textTransform: "none" }}
+            >
+              Exportar CSV
+            </Button>
           </Box>
 
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2, alignItems: "center" }}>
@@ -180,7 +216,7 @@ export default function AdminPedidos() {
               return (
                 <Chip
                   key={st}
-                  label={`${st === "todos" ? "Todos" : st} (${qtd})`}
+                  label={`${st === "todos" ? "Todos" : labelStatus(st)} (${qtd})`}
                   onClick={() => setFiltro(st)}
                   variant={filtro === st ? "filled" : "outlined"}
                   color={filtro === st ? "primary" : "default"}
