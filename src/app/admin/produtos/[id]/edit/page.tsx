@@ -52,6 +52,11 @@ export default function EditarProduto() {
     category: "acessorio-instalacao",
     parcelamento: "12",
     estoque: "0",
+    peso: "",
+    altura: "",
+    largura: "",
+    profundidade: "",
+    veiculos: "",
     ativo: true,
   });
   const [error, setError] = useState("");
@@ -75,6 +80,11 @@ export default function EditarProduto() {
           category: data.category,
           parcelamento: String(data.parcelamento),
           estoque: String(data.estoque),
+          peso: data.peso != null ? String(data.peso) : "",
+          altura: data.altura != null ? String(data.altura) : "",
+          largura: data.largura != null ? String(data.largura) : "",
+          profundidade: data.profundidade != null ? String(data.profundidade) : "",
+          veiculos: Array.isArray(data.veiculos) ? data.veiculos.join(", ") : "",
           ativo: data.ativo,
         });
         setLoading(false);
@@ -158,6 +168,33 @@ export default function EditarProduto() {
                   <TextField fullWidth label="Estoque" type="number" value={form.estoque}
                     onChange={(e) => setForm({ ...form, estoque: e.target.value })} />
                 </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Peso (g)" type="number" value={form.peso}
+                    helperText="Para o cálculo do frete"
+                    slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                    onChange={(e) => setForm({ ...form, peso: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Altura (cm)" type="number" value={form.altura}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, altura: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Largura (cm)" type="number" value={form.largura}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, largura: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Profundidade (cm)" type="number" value={form.profundidade}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, profundidade: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <TextField fullWidth label="Aplicação veicular" value={form.veiculos}
+                    helperText="Separe por vírgula: Gol, Voyage, Saveiro (2013 em diante). Aparece na página do produto."
+                    onChange={(e) => setForm({ ...form, veiculos: e.target.value })} />
+                </Grid>
+
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth select label="Categoria" value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}>

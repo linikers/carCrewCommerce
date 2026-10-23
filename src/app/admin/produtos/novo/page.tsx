@@ -47,6 +47,11 @@ export default function NovoProduto() {
     category: "acessorio-instalacao",
     parcelamento: "12",
     estoque: "0",
+    peso: "",
+    altura: "",
+    largura: "",
+    profundidade: "",
+    veiculos: "",
   });
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -172,6 +177,33 @@ export default function NovoProduto() {
                     slotProps={{ htmlInput: { min: 0, step: 1 } }}
                     onChange={(e) => setForm({ ...form, estoque: e.target.value })} />
                 </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Peso (g)" type="number" value={form.peso}
+                    helperText="Para o cálculo do frete"
+                    slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                    onChange={(e) => setForm({ ...form, peso: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Altura (cm)" type="number" value={form.altura}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, altura: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Largura (cm)" type="number" value={form.largura}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, largura: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Profundidade (cm)" type="number" value={form.profundidade}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, profundidade: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <TextField fullWidth label="Aplicação veicular" value={form.veiculos}
+                    helperText="Separe por vírgula: Gol, Voyage, Saveiro (2013 em diante). Aparece na página do produto."
+                    onChange={(e) => setForm({ ...form, veiculos: e.target.value })} />
+                </Grid>
+
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth select label="Categoria" value={form.category}
                     error={Boolean(fieldErrors.category)}
