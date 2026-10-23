@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
@@ -28,12 +30,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 5.5: se o cliente está logado, o pedido fica ligado à conta dele.
+    // Visitante entra como pedido sem usuário (`userId: null`) — antes o
+    // código gravava o literal "guest", que não existe em `users`, e a FK
+    // derrubava 100% dos pedidos com P2003.
+    const session = await getServerSession(authOptions);
+    const userId = (session?.user as { id?: string } | undefined)?.id ?? null;
+
     // 2. Criar pedido
     // 6.1: o formulário do checkout já vem com endereço e telefone; antes tudo
     // isso era descartado e o pedido nascia sem destino de entrega.
     const pedido = await prisma.pedido.create({
       data: {
-        userId: "guest",
+        userId,
         items: items.map((i: any) => ({
           produtoId: i.produto.id,
           nome: i.produto.nome,
@@ -45,6 +54,9 @@ export async function POST(req: NextRequest) {
         status: paymentMethod === "pix" ? "aguardando_pagamento" : "pago",
         clienteNome: form?.nome || null,
         clienteTelefone: form?.telefone || null,
+        // 5.5: e-mail e CPF/CNPJ são o mínimo para nota e contato.
+        clienteEmail: form?.email || null,
+        clienteDocumento: form?.documento ? String(form.documento).replace(/\D/g, "") : null,
         enderecoEntrega: form
           ? {
               cep: form.cep || null,
@@ -52,6 +64,7 @@ export async function POST(req: NextRequest) {
               numero: form.numero || null,
               bairro: form.bairro || null,
               cidade: form.cidade || null,
+              uf: form.uf || null,
             }
           : undefined,
         createdAt: new Date(),

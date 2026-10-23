@@ -163,7 +163,10 @@ model Banner {
 
 model Pedido {
   id        String   @id @default(cuid())
-  userId    String   @map("user_id")
+  // Pedido de visitante não tem usuário: o checkout manda "guest" e a FK
+  // derrubava o pedido inteiro (P2003). Os dados de contato ficam no próprio
+  // pedido; `userId` só é preenchido quando o cliente está logado.
+  userId    String?  @map("user_id")
   items     Json
   total     Float
   status    String   @default("pendente")
@@ -175,10 +178,13 @@ model Pedido {
   // existe conferência de etiqueta.
   enderecoEntrega Json?   @map("endereco_entrega")
   frete           Float?  @map("frete")
-  clienteNome     String? @map("cliente_nome")
-  clienteTelefone String? @map("cliente_telefone")
+  clienteNome      String? @map("cliente_nome")
+  clienteTelefone  String? @map("cliente_telefone")
+  clienteEmail     String? @map("cliente_email")
+  // 5.5: sem CPF/CNPJ o pedido não vira nota fiscal depois (6.12).
+  clienteDocumento String? @map("cliente_documento")
 
-  user User @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 
   @@map("pedidos")
 }

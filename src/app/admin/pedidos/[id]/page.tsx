@@ -29,6 +29,7 @@ import {
 import AdminLayout from "@/components/admin/AdminLayout";
 import { labelStatus, STATUS_COLOR } from "@/lib/pedido-status";
 import { formatBRL } from "@/lib/format";
+import { formatarDocumento } from "@/lib/documento";
 
 interface PedidoItem {
   nome: string;
@@ -48,6 +49,8 @@ interface Pedido {
   frete?: number | null;
   clienteNome?: string | null;
   clienteTelefone?: string | null;
+  clienteEmail?: string | null;
+  clienteDocumento?: string | null;
   enderecoEntrega?: {
     cep?: string | null;
     logradouro?: string | null;
@@ -245,6 +248,24 @@ export default function PedidoDetalhe() {
                     </Typography>
                     <Typography variant="body1">
                       {pedido.clienteTelefone || "—"}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ flex: "1 1 200px" }}>
+                    <Typography variant="caption" sx={{ color: "#888" }}>
+                      E-mail do pedido
+                    </Typography>
+                    <Typography variant="body1">
+                      {pedido.clienteEmail || "—"}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ flex: "1 1 200px" }}>
+                    <Typography variant="caption" sx={{ color: "#888" }}>
+                      CPF / CNPJ
+                    </Typography>
+                    <Typography variant="body1">
+                      {pedido.clienteDocumento
+                        ? formatarDocumento(pedido.clienteDocumento)
+                        : "—"}
                     </Typography>
                   </Box>
                 </Box>
