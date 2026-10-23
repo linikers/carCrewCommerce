@@ -158,7 +158,7 @@ export default function PedidoDetalhe() {
           <Button
             startIcon={<ArrowBack />}
             onClick={() => router.push("/admin/pedidos")}
-            sx={{ mb: 2, color: "#E65100" }}
+            sx={{ mb: 2, color: "#BF360C" }}
           >
             Voltar para Pedidos
           </Button>
@@ -254,7 +254,7 @@ export default function PedidoDetalhe() {
                 </TableContainer>
                 <Divider sx={{ my: 2 }} />
                 <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#E65100" }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: "#BF360C" }}>
                     Total: {formatPrice(pedido.total)}
                   </Typography>
                 </Box>

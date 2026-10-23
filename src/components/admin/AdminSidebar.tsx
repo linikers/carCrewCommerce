@@ -84,9 +84,9 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         <Box>
           <Typography
             variant="h6"
-            sx={{ fontWeight: 700, color: "#E65100", lineHeight: 1 }}
+            sx={{ fontWeight: 700, color: "#BF360C", lineHeight: 1 }}
           >
-            CarCrew
+            Car Crew Garage
           </Typography>
           <Typography variant="caption" sx={{ color: "#888" }}>
             Painel Admin
@@ -118,7 +118,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               color: "#ccc",
               "&.Mui-selected": {
                 backgroundColor: "rgba(230,81,0,0.15)",
-                color: "#E65100",
+                color: "#BF360C",
                 "&:hover": {
                   backgroundColor: "rgba(230,81,0,0.2)",
                 },

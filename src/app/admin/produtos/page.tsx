@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatBRL } from "@/lib/format";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -74,7 +75,7 @@ export default function AdminProdutos() {
         <Container sx={{ flex: 1, py: 8, textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Acesso restrito</Typography>
           <Button variant="contained" onClick={() => router.push("/admin/login")}
-            sx={{ mt: 2, backgroundColor: "#E65100", textTransform: "none" }}>
+            sx={{ mt: 2, backgroundColor: "#BF360C", textTransform: "none" }}>
             Login Admin
           </Button>
         </Container>
@@ -101,7 +102,7 @@ export default function AdminProdutos() {
             variant="contained"
             startIcon={<Add />}
             onClick={() => router.push("/admin/produtos/novo")}
-            sx={{ backgroundColor: "#E65100", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}
+            sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}
           >
             Novo Produto
           </Button>
@@ -117,7 +118,7 @@ export default function AdminProdutos() {
 
         {loading ? (
           <Box sx={{ textAlign: "center", py: 8 }}>
-            <CircularProgress sx={{ color: "#E65100" }} />
+            <CircularProgress sx={{ color: "#BF360C" }} />
           </Box>
         ) : (
           <TableContainer component={Paper} sx={{ borderRadius: 3 }}>
@@ -140,8 +141,8 @@ export default function AdminProdutos() {
                     <TableCell sx={{ maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {p.nome}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: "#E65100" }}>
-                      R$ {p.preco.toFixed(2)}
+                    <TableCell sx={{ fontWeight: 600, color: "#BF360C" }}>
+                      {formatBRL(p.preco)}
                     </TableCell>
                     <TableCell>
                       <Chip label={p.category} size="small" variant="outlined" />
