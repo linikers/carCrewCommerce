@@ -17,6 +17,7 @@ import {
   Snackbar,
   Alert,
   Slide,
+  TextField,
 } from "@mui/material";
 import {
   WhatsApp,
@@ -80,8 +81,60 @@ export default function ProdutoDetalheClient({
 
   const allImages = [produto.imgUrl, ...(produto.galeria || [])];
 
+  const waLink = `https://wa.me/5544998133182?text=${encodeURIComponent(
+    sobConsulta
+      ? `Olá! Quero um orçamento para: ${produto.nome}`
+      : `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
+  )}`;
+
+  // 2.5: a página dizia "frete no checkout" e o checkout é que pedia o CEP.
+  // Aqui o visitante descobre o frete antes de sair da página do produto.
+  const [cep, setCep] = useState("");
+  const [opcoesFrete, setOpcoesFrete] = useState<
+    { id?: string; transportadora: string; modalidade?: string; prazo: string; valor: number }[]
+  >([]);
+  const [freteErro, setFreteErro] = useState("");
+  const [freteBusy, setFreteBusy] = useState(false);
+
+  const calcularFrete = async () => {
+    const limpo = cep.replace(/\D/g, "");
+    if (limpo.length !== 8) {
+      setFreteErro("Digite um CEP com 8 dígitos");
+      return;
+    }
+    setFreteBusy(true);
+    setFreteErro("");
+    setOpcoesFrete([]);
+    try {
+      const res = await fetch("/api/frete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cepDestino: limpo,
+          itens: [
+            {
+              peso: produto.peso || 500,
+              altura: produto.altura || 10,
+              largura: produto.largura || 10,
+              profundidade: produto.profundidade || 10,
+              quantidade,
+            },
+          ],
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.erro || "Não foi possível calcular agora");
+      setOpcoesFrete((data.opcoes || []).slice(0, 3));
+      if (!data.opcoes?.length) setFreteErro("Sem opção de entrega para este CEP");
+    } catch (e) {
+      setFreteErro(e instanceof Error ? e.message : "Não foi possível calcular agora");
+    } finally {
+      setFreteBusy(false);
+    }
+  };
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", pb: { xs: 9, md: 0 } }}>
       <Header onCartOpen={() => setCartOpen(true)} cartItemCount={totalItens} />
 
       <Container maxWidth="lg" sx={{ mt: 3, mb: 6, flex: 1 }}>
@@ -105,7 +158,7 @@ export default function ProdutoDetalheClient({
               {categoria.nome}
             </MuiLink>
           )}
-          <Typography variant="body2" sx={{ color: "#E65100", fontSize: "0.85rem" }}>
+          <Typography variant="body2" sx={{ color: "primary.main", fontSize: "0.85rem" }}>
             {produto.nome.substring(0, 40)}...
           </Typography>
         </Breadcrumbs>
@@ -119,7 +172,7 @@ export default function ProdutoDetalheClient({
             textTransform: "none",
             color: "#666",
             mb: 2,
-            "&:hover": { color: "#E65100" },
+            "&:hover": { color: "primary.main" },
           }}
         >
           Ver todas as peças
@@ -238,7 +291,7 @@ export default function ProdutoDetalheClient({
               component="p"
               variant="h3"
               sx={{
-                color: "#E65100",
+                color: "primary.main",
                 fontWeight: 700,
                 fontSize: { xs: "1.8rem", md: "2.2rem" },
                 mb: 1,
@@ -332,11 +385,7 @@ export default function ProdutoDetalheClient({
               variant="outlined"
               size="large"
               startIcon={<WhatsApp />}
-              href={`https://wa.me/5544998133182?text=${encodeURIComponent(
-                sobConsulta
-                  ? `Olá! Quero um orçamento para: ${produto.nome}`
-                  : `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
-              )}`}
+              href={waLink}
               target="_blank"
               onClick={() => trackWhatsApp(sobConsulta ? "pdp_orcamento" : "pdp_duvidas", produto.nome)}
               sx={{
@@ -362,20 +411,62 @@ export default function ProdutoDetalheClient({
                 borderRadius: 2,
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-                <LocalShipping sx={{ color: "#E65100", fontSize: 20 }} />
-                <Typography variant="body2" sx={{ color: "#555" }}>
-                  Envio para todo o Brasil — frete no checkout
-                </Typography>
+              <Box sx={{ mb: 1.5 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                  <LocalShipping sx={{ color: "primary.main", fontSize: 20 }} />
+                  <Typography variant="body2" sx={{ color: "#555", fontWeight: 600 }}>
+                    Calcular frete e prazo
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <TextField
+                    size="small"
+                    placeholder="00000-000"
+                    value={cep}
+                    onChange={(e) => setCep(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") calcularFrete();
+                    }}
+                    slotProps={{ htmlInput: { inputMode: "numeric", "aria-label": "CEP para calcular o frete" } }}
+                    sx={{ flex: 1, backgroundColor: "#fff" }}
+                  />
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={calcularFrete}
+                    disabled={freteBusy}
+                    sx={{ textTransform: "none", borderColor: "primary.main", color: "primary.main", whiteSpace: "nowrap" }}
+                  >
+                    {freteBusy ? "Calculando…" : "Calcular"}
+                  </Button>
+                </Box>
+                {freteErro && (
+                  <Typography variant="caption" sx={{ color: "#b3261e", display: "block", mt: 0.75 }}>
+                    {freteErro}
+                  </Typography>
+                )}
+                {opcoesFrete.map((o, i) => (
+                  <Box
+                    key={i}
+                    sx={{ display: "flex", justifyContent: "space-between", gap: 1, mt: 0.75, fontSize: "0.8rem", color: "#444" }}
+                  >
+                    <Typography variant="caption" sx={{ color: "#444" }}>
+                      {o.transportadora} {o.modalidade ? `· ${o.modalidade}` : ""} — {o.prazo}
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: "#1A1A1A" }}>
+                      {o.valor === 0 ? "Grátis" : formatBRL(o.valor)}
+                    </Typography>
+                  </Box>
+                ))}
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-                <CreditCard sx={{ color: "#E65100", fontSize: 20 }} />
+                <CreditCard sx={{ color: "primary.main", fontSize: 20 }} />
                 <Typography variant="body2" sx={{ color: "#555" }}>
                   Pagamento via PIX
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Security sx={{ color: "#E65100", fontSize: 20 }} />
+                <Security sx={{ color: "primary.main", fontSize: 20 }} />
                 <Typography variant="body2" sx={{ color: "#555" }}>
                   Atendimento direto no WhatsApp
                 </Typography>
@@ -436,6 +527,56 @@ export default function ProdutoDetalheClient({
         onRemove={removeFromCart}
         onClear={clearCart}
       />
+
+      {/* 2.3 — no celular o botão de comprar ficava 1,3 tela abaixo do preço.
+          Barra fixa com preço e ação, só no mobile. */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1200,
+          alignItems: "center",
+          gap: 1,
+          px: 1.75,
+          pt: 1,
+          pb: "max(10px, env(safe-area-inset-bottom))",
+          backgroundColor: "#fff",
+          borderTop: "1px solid #ececec",
+          boxShadow: "0 -4px 18px rgba(0,0,0,0.08)",
+        }}
+      >
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="caption" sx={{ color: "#777", display: "block", lineHeight: 1.2 }}>
+            {sobConsulta ? "Venda sob consulta" : "À vista no PIX"}
+          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: "1.15rem", color: "#1A1A1A", lineHeight: 1.3 }} noWrap>
+            {sobConsulta ? "Orçamento" : formatBRL(produto.preco)}
+          </Typography>
+        </Box>
+        {sobConsulta ? (
+          <Button
+            variant="contained"
+            href={waLink}
+            target="_blank"
+            startIcon={<WhatsApp />}
+            sx={{ backgroundColor: "#0E7A3F", "&:hover": { backgroundColor: "#0a5c2f" }, textTransform: "none", fontWeight: 700, px: 2, flexShrink: 0 }}
+          >
+            Pedir orçamento
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={handleAddToCart}
+            startIcon={<ShoppingCartOutlined />}
+            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8C2A09" }, textTransform: "none", fontWeight: 700, px: 2, flexShrink: 0 }}
+          >
+            Comprar
+          </Button>
+        )}
+      </Box>
     </Box>
   );
 }
@@ -478,7 +619,7 @@ function ProductCardInline({ produto }: { produto: Produto }) {
       <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
         {produto.nome.substring(0, 50)}...
       </Typography>
-      <Typography variant="h6" sx={{ color: "#E65100", fontWeight: 700 }}>
+      <Typography variant="h6" sx={{ color: "primary.main", fontWeight: 700 }}>
         {produto.preco <= 0 ? "Sob Consulta" : `${formatBRL(produto.preco)}`}
       </Typography>
     </Paper>
