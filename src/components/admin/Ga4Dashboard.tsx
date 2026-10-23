@@ -42,8 +42,8 @@ export default function Ga4Dashboard() {
   if (loading) {
     return (
       <Paper sx={{ p: 3, borderRadius: 3, mb: 4, textAlign: "center" }}>
-        <CircularProgress size={24} sx={{ color: "#E65100", mb: 1 }} />
-        <Typography variant="body2" color="#999">Carregando dados do Analytics...</Typography>
+        <CircularProgress size={24} sx={{ color: "#BF360C", mb: 1 }} />
+        <Typography variant="body2" color="#666">Carregando dados do Analytics...</Typography>
       </Paper>
     );
   }
@@ -51,8 +51,8 @@ export default function Ga4Dashboard() {
   if (error) {
     return (
       <Paper sx={{ p: 3, borderRadius: 3, mb: 4 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>📊 Analytics </Typography>
-        <Typography variant="body2" color="#999">{error}</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Analytics </Typography>
+        <Typography variant="body2" color="#666">{error}</Typography>
         <Typography variant="caption" color="#bbb" sx={{ mt: 1, display: "block" }}>
           Configure GA4_SERVICE_ACCOUNT_EMAIL, GA4_SERVICE_ACCOUNT_KEY e GA4_PROPERTY_ID no .env.local
         </Typography>
@@ -85,14 +85,14 @@ export default function Ga4Dashboard() {
   return (
     <Paper sx={{ p: 3, borderRadius: 3, mb: 4 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>📊 Analytics (30 dias)</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>Analytics (30 dias)</Typography>
         <Chip label="Google Analytics" size="small" sx={{ bgcolor: "#f0f0f0", fontSize: 11 }} />
       </Box>
 
       {/* Overview cards */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {[
-          { label: "Visitantes", value: overview.activeUsers, icon: <People />, color: "#E65100" },
+          { label: "Visitantes", value: overview.activeUsers, icon: <People />, color: "#BF360C" },
           { label: "Page Views", value: overview.pageViews, icon: <Visibility />, color: "#1565c0" },
           { label: "Sessões", value: overview.sessions, icon: <Schedule />, color: "#2e7d32" },
           { label: "Tempo Médio", value: formatDuration(overview.avgSessionDuration), icon: <TrendingUp />, color: "#6a1b9a" },
@@ -116,10 +116,10 @@ export default function Ga4Dashboard() {
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={dailyChart}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="label" stroke="#999" fontSize={12} />
-              <YAxis stroke="#999" fontSize={12} allowDecimals={false} />
+              <XAxis dataKey="label" stroke="#666" fontSize={12} />
+              <YAxis stroke="#666" fontSize={12} allowDecimals={false} />
               <Tooltip />
-              <Line type="monotone" dataKey="users" name="Visitantes" stroke="#E65100" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="users" name="Visitantes" stroke="#BF360C" strokeWidth={2} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </Box>
@@ -129,7 +129,7 @@ export default function Ga4Dashboard() {
         {/* Top pages */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: "#555" }}>
-            📄 Páginas mais acessadas
+            Páginas mais acessadas
           </Typography>
           {(topPages || []).slice(0, 6).map((p, i) => (
             <Box key={i} sx={{ display: "flex", justifyContent: "space-between", py: 0.8, borderBottom: "1px solid #f5f5f5" }}>
@@ -144,7 +144,7 @@ export default function Ga4Dashboard() {
         {/* Traffic sources + devices */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: "#555" }}>
-            🌐 Origem do tráfego
+            Origem do tráfego
           </Typography>
           {(sources || []).slice(0, 5).map((s, i) => (
             <Box key={i} sx={{ display: "flex", justifyContent: "space-between", py: 0.8, borderBottom: "1px solid #f5f5f5" }}>
@@ -154,7 +154,7 @@ export default function Ga4Dashboard() {
           ))}
 
           <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, mt: 2, color: "#555" }}>
-            📱 Dispositivos
+            Dispositivos
           </Typography>
           {(devices || []).map((d, i) => (
             <Box key={i} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 0.8, borderBottom: "1px solid #f5f5f5" }}>

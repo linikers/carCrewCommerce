@@ -118,18 +118,18 @@ export default function EditarProduto() {
         <Breadcrumbs sx={{ mb: 2, fontSize: "0.85rem" }}>
           <MuiLink component="button" onClick={() => router.push("/admin")} underline="hover" sx={{ color: "#666" }}>Admin</MuiLink>
           <MuiLink component="button" onClick={() => router.push("/admin/produtos")} underline="hover" sx={{ color: "#666" }}>Produtos</MuiLink>
-          <Typography variant="body2" sx={{ color: "#E65100" }}>Editar</Typography>
+          <Typography variant="body2" sx={{ color: "#BF360C" }}>Editar</Typography>
         </Breadcrumbs>
 
         <Button startIcon={<ArrowBack />} onClick={() => router.back()}
-          sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#E65100" } }}>
+          sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#BF360C" } }}>
           Voltar
         </Button>
 
         <Typography variant="h4" sx={{ fontWeight: 700, mb: 4 }}>Editar Produto</Typography>
 
         {loading ? (
-          <Box sx={{ textAlign: "center", py: 8 }}><CircularProgress sx={{ color: "#E65100" }} /></Box>
+          <Box sx={{ textAlign: "center", py: 8 }}><CircularProgress sx={{ color: "#BF360C" }} /></Box>
         ) : success ? (
           <Alert severity="success">Produto atualizado com sucesso! Redirecionando...</Alert>
         ) : error && !form.nome ? (
@@ -201,7 +201,7 @@ export default function EditarProduto() {
 
               <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <Button type="submit" variant="contained" startIcon={<Save />}
-                  sx={{ backgroundColor: "#E65100", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
+                  sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
                   Salvar Alterações
                 </Button>
                 <Button variant="outlined" onClick={() => router.push("/admin/produtos")}

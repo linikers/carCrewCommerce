@@ -165,7 +165,7 @@ export default function AdminPedidos() {
               <Typography variant="h6" sx={{ color: "#666" }}>
                 Nenhum pedido ainda
               </Typography>
-              <Typography variant="body2" sx={{ color: "#999" }}>
+              <Typography variant="body2" sx={{ color: "#666" }}>
                 Os pedidos realizados no site aparecerão aqui
               </Typography>
             </Paper>
@@ -230,7 +230,7 @@ export default function AdminPedidos() {
                           <IconButton
                             size="small"
                             onClick={() => router.push(`/admin/pedidos/${pedido.id}`)}
-                            sx={{ color: "#E65100" }}
+                            sx={{ color: "#BF360C" }}
                           >
                             <Visibility fontSize="small" />
                           </IconButton>

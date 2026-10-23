@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { formatBRL } from "@/lib/format";
 import { useRouter } from "next/navigation";
 import {
   Box, Container, Typography, Grid, Paper, Button, CircularProgress,
@@ -33,7 +34,7 @@ export default function AdminDashboard() {
     return (
       <AdminLayout>
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
-          <CircularProgress sx={{ color: "#E65100" }} />
+          <CircularProgress sx={{ color: "#BF360C" }} />
         </Box>
       </AdminLayout>
     );
@@ -45,7 +46,7 @@ export default function AdminDashboard() {
         <Box sx={{ textAlign: "center", py: 8 }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Acesso restrito</Typography>
           <Button variant="contained" onClick={() => router.push("/admin/login")}
-            sx={{ mt: 2, backgroundColor: "#E65100", textTransform: "none" }}>
+            sx={{ mt: 2, backgroundColor: "#BF360C", textTransform: "none" }}>
             Ir para Login
           </Button>
         </Box>
@@ -54,10 +55,10 @@ export default function AdminDashboard() {
   }
 
   const cards = [
-    { label: "Produtos", value: String(stats?.produtos || 0), icon: <Inventory2 />, color: "#E65100", link: "/admin/produtos" },
-    { label: "Estoque total", value: String(stats?.estoque || 0), icon: <TrendingUp />, color: "#1565c0", link: "/admin/produtos" },
-    { label: "Usuários", value: String(stats?.usuarios || 0), icon: <People />, color: "#2e7d32", link: "/admin/produtos" },
-    { label: "Banners ativos", value: String(stats?.banners || 0), icon: <ViewCarousel />, color: "#6a1b9a", link: "/admin/banners" },
+    { label: "Produtos", value: String(stats?.produtos || 0), icon: <Inventory2 />, color: "#BF360C", link: "/admin/produtos" },
+    { label: "Estoque total", value: String(stats?.estoque || 0), icon: <TrendingUp />, color: "#8C2A09", link: "/admin/produtos" },
+    { label: "Usuários", value: String(stats?.usuarios || 0), icon: <People />, color: "#0E7A3F", link: "/admin/produtos" },
+    { label: "Banners ativos", value: String(stats?.banners || 0), icon: <ViewCarousel />, color: "#666", link: "/admin/banners" },
   ];
 
   return (
@@ -97,11 +98,11 @@ export default function AdminDashboard() {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={stats?.vendasPorMes || []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="mes" stroke="#999" fontSize={13} />
-              <YAxis stroke="#999" fontSize={13} />
+              <XAxis dataKey="mes" stroke="#666" fontSize={13} />
+              <YAxis stroke="#666" fontSize={13} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="valor" name="Vendas (R$)" fill="#E65100" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="valor" name="Vendas (R$)" fill="#BF360C" radius={[4, 4, 0, 0]} />
               <Bar dataKey="pedidos" name="Pedidos" fill="#1A1A1A" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -112,7 +113,7 @@ export default function AdminDashboard() {
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>Últimos Produtos</Typography>
             <Button size="small" onClick={() => router.push("/admin/produtos")}
-              sx={{ textTransform: "none", color: "#E65100" }}>Ver todos</Button>
+              sx={{ textTransform: "none", color: "#BF360C" }}>Ver todos</Button>
           </Box>
           <TableContainer>
             <Table size="small">
@@ -127,13 +128,13 @@ export default function AdminDashboard() {
                 {Array.isArray(stats?.ultimosProdutos) && stats.ultimosProdutos.map((p: any) => (
                   <TableRow key={p.id} hover>
                     <TableCell>{p.nome?.substring(0, 40)}</TableCell>
-                    <TableCell>R$ {p.preco?.toFixed(2)}</TableCell>
+                    <TableCell>{formatBRL(p.preco ?? 0)}</TableCell>
                     <TableCell><Chip label={p.estoque} size="small" variant="outlined" /></TableCell>
                   </TableRow>
                 ))}
                 {(!stats?.ultimosProdutos || stats.ultimosProdutos.length === 0) && (
                   <TableRow>
-                    <TableCell colSpan={3} sx={{ textAlign: "center", color: "#999", py: 3 }}>
+                    <TableCell colSpan={3} sx={{ textAlign: "center", color: "#666", py: 3 }}>
                       Nenhum produto cadastrado
                     </TableCell>
                   </TableRow>
@@ -146,7 +147,7 @@ export default function AdminDashboard() {
         {/* Pedidos recentes */}
         <Paper sx={{ p: 3, borderRadius: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Pedidos Recentes</Typography>
-          <Typography variant="body2" sx={{ color: "#999", py: 3, textAlign: "center" }}>
+          <Typography variant="body2" sx={{ color: "#666", py: 3, textAlign: "center" }}>
             Nenhum pedido registrado ainda. Quando houver pedidos, aparecerão aqui.
           </Typography>
         </Paper>
@@ -167,10 +168,10 @@ export default function AdminDashboard() {
                   p: 2.5, borderRadius: 3, textAlign: "center", cursor: "pointer",
                   border: item.dashed ? "2px dashed #ddd" : "2px solid #ddd",
                   transition: "0.2s",
-                  "&:hover": { borderColor: "#E65100", bgcolor: "#fff5f0" },
+                  "&:hover": { borderColor: "#BF360C", bgcolor: "#fff5f0" },
                 }}
               >
-                <Box sx={{ color: "#E65100", fontSize: 32, mb: 1 }}>{item.icon}</Box>
+                <Box sx={{ color: "#BF360C", fontSize: 32, mb: 1 }}>{item.icon}</Box>
                 <Typography variant="body2" sx={{ fontWeight: 600 }}>{item.label}</Typography>
               </Paper>
             </Grid>

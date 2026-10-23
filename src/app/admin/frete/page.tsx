@@ -53,7 +53,7 @@ function AdminFreteContent() {
     if (err === "authorization_denied") setError("Autorização negada pelo Melhor Envio");
     else if (err === "token_exchange_failed") setError("Erro ao trocar código pelo token");
     else if (err === "server_error") setError("Erro interno ao autenticar");
-    else if (suc === "authorized") setSuccess("✅ Melhor Envio autorizado com sucesso!");
+    else if (suc === "authorized") setSuccess("Melhor Envio autorizado com sucesso!");
 
     if (err || suc) {
       // Limpa params da URL
@@ -192,7 +192,7 @@ function AdminFreteContent() {
               {/* Seção: Autenticação */}
               <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-                  <Link sx={{ color: "#E65100" }} />
+                  <Link sx={{ color: "#BF360C" }} />
                   <Typography variant="h6" sx={{ fontWeight: 600, color: "#1A1A1A" }}>
                     Autenticação Melhor Envio
                   </Typography>
@@ -200,8 +200,8 @@ function AdminFreteContent() {
 
                 <Typography variant="body2" sx={{ color: "#666", mb: 2 }}>
                   {hasToken
-                    ? "✅ Conectado ao Melhor Envio"
-                    : "Autorize o CarCrew a acessar sua conta do Melhor Envio"}
+                    ? "Conectado ao Melhor Envio"
+                    : "Autorize o Car Crew Garage a acessar sua conta do Melhor Envio"}
                 </Typography>
 
                 {hasToken && tokenExpiresAt && (
@@ -217,9 +217,9 @@ function AdminFreteContent() {
                   sx={{
                     textTransform: "none",
                     fontWeight: 600,
-                    backgroundColor: hasToken ? "transparent" : "#E65100",
-                    color: hasToken ? "#E65100" : "#fff",
-                    borderColor: "#E65100",
+                    backgroundColor: hasToken ? "transparent" : "#BF360C",
+                    color: hasToken ? "#BF360C" : "#fff",
+                    borderColor: "#BF360C",
                     "&:hover": hasToken ? { backgroundColor: "rgba(230,81,0,0.08)" } : { backgroundColor: "#BF360C" },
                   }}
                 >
@@ -230,7 +230,7 @@ function AdminFreteContent() {
               {/* Seção: Origem */}
               <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-                  <LocalShipping sx={{ color: "#E65100" }} />
+                  <LocalShipping sx={{ color: "#BF360C" }} />
                   <Typography variant="h6" sx={{ fontWeight: 600, color: "#1A1A1A" }}>
                     Origem da Loja
                   </Typography>
@@ -320,7 +320,7 @@ function AdminFreteContent() {
                         checked={sandbox}
                         onChange={(e) => setSandbox(e.target.checked)}
                         sx={{
-                          "& .MuiSwitch-thumb": { backgroundColor: sandbox ? "#E65100" : "#ccc" },
+                          "& .MuiSwitch-thumb": { backgroundColor: sandbox ? "#BF360C" : "#ccc" },
                           "& .MuiSwitch-track": { backgroundColor: sandbox ? "rgba(230,81,0,0.3)" : "#eee" },
                         }}
                       />
@@ -350,7 +350,7 @@ function AdminFreteContent() {
                   sx={{
                     textTransform: "none",
                     fontWeight: 600,
-                    backgroundColor: "#E65100",
+                    backgroundColor: "#BF360C",
                     "&:hover": { backgroundColor: "#BF360C" },
                   }}
                 >

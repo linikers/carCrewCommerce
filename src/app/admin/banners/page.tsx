@@ -89,9 +89,9 @@ export default function AdminBanners() {
             <Typography variant="body2" sx={{ color: "#666" }}>{banners.length} banner(s)</Typography>
           </Box>
           <Button variant="contained" startIcon={<Add />} onClick={abrirNovo}
-            sx={{ backgroundColor: "#E65100", textTransform: "none" }}>Novo Banner</Button>
+            sx={{ backgroundColor: "#BF360C", textTransform: "none" }}>Novo Banner</Button>
         </Box>
-        {loading ? <Box sx={{ textAlign: "center", py: 8 }}><CircularProgress sx={{ color: "#E65100" }} /></Box> : (
+        {loading ? <Box sx={{ textAlign: "center", py: 8 }}><CircularProgress sx={{ color: "#BF360C" }} /></Box> : (
           <TableContainer component={Paper} sx={{ borderRadius: 3 }}>
             <Table>
               <TableHead><TableRow sx={{ bgcolor: "#f5f5f5" }}>
@@ -207,7 +207,7 @@ export default function AdminBanners() {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setModalOpen(false)}>Cancelar</Button>
-            <Button type="submit" variant="contained" sx={{ bgcolor: "#E65100", textTransform: "none" }}>{editando ? "Salvar" : "Criar"}</Button>
+            <Button type="submit" variant="contained" sx={{ bgcolor: "#BF360C", textTransform: "none" }}>{editando ? "Salvar" : "Criar"}</Button>
           </DialogActions>
         </form>
       </Dialog>

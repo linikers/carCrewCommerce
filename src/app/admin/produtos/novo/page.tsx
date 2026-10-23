@@ -95,11 +95,11 @@ export default function NovoProduto() {
           <MuiLink component="button" onClick={() => router.push("/admin/produtos")} underline="hover" sx={{ color: "#666" }}>
             Produtos
           </MuiLink>
-          <Typography variant="body2" sx={{ color: "#E65100" }}>Novo</Typography>
+          <Typography variant="body2" sx={{ color: "#BF360C" }}>Novo</Typography>
         </Breadcrumbs>
 
         <Button startIcon={<ArrowBack />} onClick={() => router.back()}
-          sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#E65100" } }}>
+          sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#BF360C" } }}>
           Voltar
         </Button>
 
@@ -169,7 +169,7 @@ export default function NovoProduto() {
 
               <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <Button type="submit" variant="contained" startIcon={<Save />}
-                  sx={{ backgroundColor: "#E65100", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
+                  sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
                   Salvar Produto
                 </Button>
                 <Button variant="outlined" onClick={() => router.push("/admin/produtos")}

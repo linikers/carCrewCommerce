@@ -176,7 +176,7 @@ export default function AdminPagamentos() {
         <Container sx={{ flex: 1, py: 8, textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Acesso restrito</Typography>
           <Button variant="contained" onClick={() => router.push("/admin/login")}
-            sx={{ mt: 2, backgroundColor: "#E65100", textTransform: "none" }}>
+            sx={{ mt: 2, backgroundColor: "#BF360C", textTransform: "none" }}>
             Login Admin
           </Button>
         </Container>
@@ -188,7 +188,7 @@ export default function AdminPagamentos() {
     <AdminLayout>
       <Container maxWidth="md" sx={{ py: 4, mt: { xs: 6, md: 0 } }}>
         <Button startIcon={<ArrowBack />} onClick={() => router.push("/admin")}
-          sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#E65100" } }}>
+          sx={{ textTransform: "none", color: "#666", mb: 2, "&:hover": { color: "#BF360C" } }}>
           Voltar
         </Button>
 
@@ -205,7 +205,7 @@ export default function AdminPagamentos() {
             onClick={handleSave}
             disabled={saving}
             sx={{
-              backgroundColor: "#E65100",
+              backgroundColor: "#BF360C",
               "&:hover": { bgcolor: "#BF360C" },
               textTransform: "none",
             }}
@@ -219,7 +219,7 @@ export default function AdminPagamentos() {
 
         {loading ? (
           <Box sx={{ textAlign: "center", py: 8 }}>
-            <CircularProgress sx={{ color: "#E65100" }} />
+            <CircularProgress sx={{ color: "#BF360C" }} />
           </Box>
         ) : (
           <Grid container spacing={3}>
@@ -256,7 +256,7 @@ export default function AdminPagamentos() {
 
                     {config.pix.chaves.length === 0 ? (
                       <Box sx={{ textAlign: "center", py: 4, bgcolor: "#f9f9f9", borderRadius: 2 }}>
-                        <Typography variant="body2" sx={{ color: "#999", mb: 2 }}>
+                        <Typography variant="body2" sx={{ color: "#666", mb: 2 }}>
                           Nenhuma chave PIX cadastrada
                         </Typography>
                         <Button

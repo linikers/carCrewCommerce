@@ -66,10 +66,10 @@ export default function AdminLogin() {
       <Container maxWidth="xs">
         <Paper sx={{ p: 4, borderRadius: 3, textAlign: "center" }}>
           <LockOutlined
-            sx={{ fontSize: 48, color: "#E65100", mb: 2 }}
+            sx={{ fontSize: 48, color: "#BF360C", mb: 2 }}
           />
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-            Admin CarCrew
+            Admin Car Crew Garage
           </Typography>
           <Typography variant="body2" sx={{ color: "#666", mb: 3 }}>
             Acesso restrito — informe suas credenciais
@@ -106,7 +106,7 @@ export default function AdminLogin() {
               size="large"
               disabled={loading}
               sx={{
-                backgroundColor: "#E65100",
+                backgroundColor: "#BF360C",
                 "&:hover": { backgroundColor: "#BF360C" },
                 "&.Mui-disabled": { backgroundColor: "#ccc" },
                 textTransform: "none",
@@ -123,8 +123,8 @@ export default function AdminLogin() {
             sx={{
               mt: 2,
               textTransform: "none",
-              color: "#999",
-              "&:hover": { color: "#E65100" },
+              color: "#666",
+              "&:hover": { color: "#BF360C" },
             }}
           >
             ← Voltar para loja

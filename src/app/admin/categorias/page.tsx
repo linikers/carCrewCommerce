@@ -122,13 +122,13 @@ export default function AdminCategorias() {
             </Typography>
           </Box>
           <Button variant="contained" startIcon={<Add />} onClick={abrirNovo}
-            sx={{ backgroundColor: "#E65100", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
+            sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
             Nova Categoria
           </Button>
         </Box>
 
         {loading ? (
-          <Box sx={{ textAlign: "center", py: 8 }}><CircularProgress sx={{ color: "#E65100" }} /></Box>
+          <Box sx={{ textAlign: "center", py: 8 }}><CircularProgress sx={{ color: "#BF360C" }} /></Box>
         ) : (
           <TableContainer component={Paper} sx={{ borderRadius: 3 }}>
             <Table>
@@ -181,7 +181,7 @@ export default function AdminCategorias() {
                 onChange={(e) => setForm({ ...form, nome: e.target.value })} />
               <TextField label="Ícone (emoji)" value={form.icone}
                 onChange={(e) => setForm({ ...form, icone: e.target.value })}
-                helperText="Emoji para exibir na loja (ex: 🔧)" />
+                helperText="Ícone curto exibido na loja (ex.: ar, roda)" />
               <TextField label="Descrição" multiline rows={2} value={form.descricao}
                 onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
               {error && <Alert severity="error">{error}</Alert>}
@@ -190,7 +190,7 @@ export default function AdminCategorias() {
           <DialogActions>
             <Button onClick={() => setModalOpen(false)}>Cancelar</Button>
             <Button type="submit" variant="contained"
-              sx={{ backgroundColor: "#E65100", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
+              sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
               {editando ? "Salvar" : "Criar"}
             </Button>
           </DialogActions>
