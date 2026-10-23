@@ -24,6 +24,7 @@ import {
   TextField,
   Chip,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import {
   Add,
@@ -51,21 +52,38 @@ export default function AdminProdutos() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [erro, setErro] = useState("");
 
   const carregar = async () => {
-    const res = await fetch("/api/admin/produtos");
-    const data = await res.json();
-    setProdutos(data);
-    setLoading(false);
+    try {
+      setErro("");
+      const res = await fetch("/api/admin/produtos");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Falha ao carregar produtos");
+      // a API pode devolver erro em JSON; sem esta checagem o .filter abaixo
+      // estourava com "data.filter is not a function"
+      setProdutos(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setErro((e as Error).message);
+      setProdutos([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { carregar(); }, []);
 
   const excluir = async () => {
     if (!deleteId) return;
-    await fetch(`/api/admin/produtos/${deleteId}`, { method: "DELETE" });
-    setDeleteId(null);
-    carregar();
+    try {
+      const res = await fetch(`/api/admin/produtos/${deleteId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Não foi possível excluir");
+      setDeleteId(null);
+      carregar();
+    } catch (e) {
+      setErro((e as Error).message);
+      setDeleteId(null);
+    }
   };
 
   if (status === "unauthenticated" || (status === "authenticated" && !session?.user?.admin)) {
@@ -116,12 +134,39 @@ export default function AdminProdutos() {
           sx={{ mb: 3 }}
         />
 
+        {erro && (
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErro("")}>
+            {erro}
+          </Alert>
+        )}
+
         {loading ? (
           <Box sx={{ textAlign: "center", py: 8 }}>
             <CircularProgress sx={{ color: "#BF360C" }} />
           </Box>
+        ) : filtrados.length === 0 ? (
+          <Paper sx={{ p: 6, textAlign: "center", borderRadius: 3 }}>
+            <Typography variant="h6" sx={{ color: "#666" }}>
+              {produtos.length === 0 ? "Nenhum produto cadastrado" : "Nenhum produto encontrado"}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#666", mb: 2 }}>
+              {produtos.length === 0
+                ? "Cadastre o primeiro produto para ele aparecer na loja"
+                : `Nada com "${search}"`}
+            </Typography>
+            {produtos.length === 0 ? (
+              <Button variant="contained" startIcon={<Add />} onClick={() => router.push("/admin/produtos/novo")}
+                sx={{ backgroundColor: "#E65100", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
+                Novo produto
+              </Button>
+            ) : (
+              <Button variant="outlined" onClick={() => setSearch("")} sx={{ textTransform: "none" }}>
+                Limpar busca
+              </Button>
+            )}
+          </Paper>
         ) : (
-          <TableContainer component={Paper} sx={{ borderRadius: 3 }}>
+          <TableContainer component={Paper} sx={{ borderRadius: 3, overflowX: "auto" }}>
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#f5f5f5" }}>

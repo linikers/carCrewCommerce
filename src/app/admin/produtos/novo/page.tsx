@@ -12,6 +12,7 @@ import {
   Grid,
   MenuItem,
   Alert,
+  CircularProgress,
   Breadcrumbs,
   Link as MuiLink,
 } from "@mui/material";
@@ -46,20 +47,52 @@ export default function NovoProduto() {
     category: "acessorio-instalacao",
     parcelamento: "12",
     estoque: "0",
+    peso: "",
+    altura: "",
+    largura: "",
+    profundidade: "",
+    veiculos: "",
   });
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [salvando, setSalvando] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!form.nome || !form.preco) {
-      setError("Nome e preço são obrigatórios");
+    // Validação campo a campo: antes só "Nome e preço são obrigatórios"
+    // aparecia no rodapé, longe do campo errado. Negativo e zero passavam.
+    const erros: Record<string, string> = {};
+
+    if (!form.nome.trim()) erros.nome = "Informe o nome do produto";
+
+    const preco = Number(form.preco);
+    if (!form.preco || !Number.isFinite(preco) || preco <= 0) {
+      erros.preco = "Preço deve ser maior que zero";
+    }
+
+    const estoque = Number(form.estoque);
+    if (form.estoque !== "" && (!Number.isInteger(estoque) || estoque < 0)) {
+      erros.estoque = "Estoque deve ser um número inteiro, zero ou mais";
+    }
+
+    const parcelas = Number(form.parcelamento);
+    if (!Number.isInteger(parcelas) || parcelas < 1 || parcelas > 12) {
+      erros.parcelamento = "De 1 a 12 parcelas";
+    }
+
+    if (!form.category) erros.category = "Escolha a categoria";
+
+    setFieldErrors(erros);
+    if (Object.keys(erros).length > 0) {
+      setError("Revise os campos destacados");
       return;
     }
 
     try {
+      setSalvando(true);
       const res = await fetch("/api/admin/produtos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -82,6 +115,8 @@ export default function NovoProduto() {
       setTimeout(() => router.push("/admin/produtos"), 1500);
     } catch {
       setError("Erro de conexão");
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -113,6 +148,8 @@ export default function NovoProduto() {
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12 }}>
                   <TextField fullWidth label="Nome do Produto" required value={form.nome}
+                    error={Boolean(fieldErrors.nome)}
+                    helperText={fieldErrors.nome}
                     onChange={(e) => setForm({ ...form, nome: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
@@ -121,18 +158,56 @@ export default function NovoProduto() {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <TextField fullWidth label="Preço (R$)" required type="number" value={form.preco}
+                    error={Boolean(fieldErrors.preco)}
+                    helperText={fieldErrors.preco || "Use ponto para centavos: 1299.90"}
+                    slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
                     onChange={(e) => setForm({ ...form, preco: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <TextField fullWidth label="Parcelamento (máx)" type="number" value={form.parcelamento}
+                    error={Boolean(fieldErrors.parcelamento)}
+                    helperText={fieldErrors.parcelamento}
+                    slotProps={{ htmlInput: { min: 1, max: 12, step: 1 } }}
                     onChange={(e) => setForm({ ...form, parcelamento: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <TextField fullWidth label="Estoque" type="number" value={form.estoque}
+                    error={Boolean(fieldErrors.estoque)}
+                    helperText={fieldErrors.estoque}
+                    slotProps={{ htmlInput: { min: 0, step: 1 } }}
                     onChange={(e) => setForm({ ...form, estoque: e.target.value })} />
                 </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Peso (g)" type="number" value={form.peso}
+                    helperText="Para o cálculo do frete"
+                    slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                    onChange={(e) => setForm({ ...form, peso: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Altura (cm)" type="number" value={form.altura}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, altura: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Largura (cm)" type="number" value={form.largura}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, largura: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Profundidade (cm)" type="number" value={form.profundidade}
+                    slotProps={{ htmlInput: { min: 0, step: 0.1 } }}
+                    onChange={(e) => setForm({ ...form, profundidade: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <TextField fullWidth label="Aplicação veicular" value={form.veiculos}
+                    helperText="Separe por vírgula: Gol, Voyage, Saveiro (2013 em diante). Aparece na página do produto."
+                    onChange={(e) => setForm({ ...form, veiculos: e.target.value })} />
+                </Grid>
+
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth select label="Categoria" value={form.category}
+                    error={Boolean(fieldErrors.category)}
+                    helperText={fieldErrors.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}>
                     {categorias.map((cat) => (
                       <MenuItem key={cat.value} value={cat.value}>{cat.label}</MenuItem>
@@ -168,9 +243,10 @@ export default function NovoProduto() {
               {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
 
               <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
-                <Button type="submit" variant="contained" startIcon={<Save />}
-                  sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}>
-                  Salvar Produto
+                <Button type="submit" variant="contained" disabled={salvando}
+                  startIcon={salvando ? <CircularProgress size={18} color="inherit" /> : <Save />}
+                  sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#8C2A09" }, textTransform: "none" }}>
+                  {salvando ? "Salvando..." : "Salvar Produto"}
                 </Button>
                 <Button variant="outlined" onClick={() => router.push("/admin/produtos")}
                   sx={{ textTransform: "none" }}>Cancelar</Button>

@@ -64,6 +64,15 @@ export async function PUT(
         categorySlug: body.category ?? existente.categorySlug,
         parcelamento: body.parcelamento !== undefined ? Number(body.parcelamento) : existente.parcelamento,
         estoque: body.estoque !== undefined ? Number(body.estoque) : existente.estoque,
+        peso: body.peso !== undefined ? (body.peso === "" || body.peso === null ? null : Number(body.peso)) : existente.peso,
+        altura: body.altura !== undefined ? (body.altura === "" || body.altura === null ? null : Number(body.altura)) : existente.altura,
+        largura: body.largura !== undefined ? (body.largura === "" || body.largura === null ? null : Number(body.largura)) : existente.largura,
+        profundidade: body.profundidade !== undefined ? (body.profundidade === "" || body.profundidade === null ? null : Number(body.profundidade)) : existente.profundidade,
+        veiculos: body.veiculos !== undefined
+          ? (Array.isArray(body.veiculos)
+              ? body.veiculos
+              : String(body.veiculos).split(",").map((v: string) => v.trim()).filter(Boolean))
+          : existente.veiculos,
         ativo: body.ativo !== undefined ? body.ativo : existente.ativo,
       },
     });

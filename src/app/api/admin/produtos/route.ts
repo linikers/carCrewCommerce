@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { nome, descricao, preco, imgUrl, category, parcelamento, estoque } = body;
+    const { nome, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos } = body;
 
     if (!nome || !preco) {
       return NextResponse.json(
@@ -39,6 +39,13 @@ export async function POST(req: NextRequest) {
       estoque: Number(estoque) || 0,
       ativo: true,
       criadoEm: new Date().toISOString(),
+      peso: peso !== undefined && peso !== "" ? Number(peso) : null,
+      altura: altura !== undefined && altura !== "" ? Number(altura) : null,
+      largura: largura !== undefined && largura !== "" ? Number(largura) : null,
+      profundidade: profundidade !== undefined && profundidade !== "" ? Number(profundidade) : null,
+      veiculos: Array.isArray(veiculos)
+        ? veiculos
+        : String(veiculos || "").split(",").map((v) => v.trim()).filter(Boolean),
     };
 
     await salvarProdutos([novoProduto]);

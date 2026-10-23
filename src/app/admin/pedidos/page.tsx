@@ -19,6 +19,7 @@ import {
   IconButton,
   CircularProgress,
   Alert,
+  TextField,
 } from "@mui/material";
 import {
   Visibility,
@@ -62,6 +63,9 @@ export default function AdminPedidos() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filtro, setFiltro] = useState<string>("todos");
+  const [busca, setBusca] = useState("");
+  const [alterando, setAlterando] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -93,8 +97,10 @@ export default function AdminPedidos() {
   }
 
   async function alterarStatus(id: string, novoStatus: string) {
+    if (alterando) return; // evita duplo clique mandando dois PATCH
     try {
       setError("");
+      setAlterando(id);
       const res = await fetch("/api/admin/pedidos", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -107,6 +113,8 @@ export default function AdminPedidos() {
       await carregarPedidos();
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setAlterando(null);
     }
   }
 
@@ -122,6 +130,24 @@ export default function AdminPedidos() {
 
   const formatPrice = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  // O id é um cuid; mostrar 8 caracteres do começo não diz nada a ninguém.
+  // Os 6 últimos são o que a pessoa usa para localizar o pedido.
+  const idCurto = (id: string) => id.slice(-6).toUpperCase();
+
+  const filtrados = pedidos.filter((p) => {
+    if (filtro !== "todos" && p.status !== filtro) return false;
+    if (busca.trim()) {
+      const t = busca.trim().toLowerCase();
+      const alvo = `${p.user?.name ?? ""} ${p.user?.email ?? ""} ${p.id}`.toLowerCase();
+      if (!alvo.includes(t)) return false;
+    }
+    return true;
+  });
+
+  const somaFiltrada = filtrados.reduce((soma, p) => soma + p.total, 0);
+
+  const statusValidos = ["pendente", "pago", "preparando", "enviado", "entregue", "cancelado"];
 
   if (status === "loading") {
     return (
@@ -144,9 +170,33 @@ export default function AdminPedidos() {
                 Pedidos
               </Typography>
               <Typography variant="body2" sx={{ color: "#666", mt: 0.5 }}>
-                Gerencie os pedidos da loja
+                {pedidos.length} pedido(s) · {formatPrice(somaFiltrada)} no filtro atual
               </Typography>
             </Box>
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2, alignItems: "center" }}>
+            <TextField
+              size="small"
+              placeholder="Buscar por cliente, e-mail ou código"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              sx={{ minWidth: 280, backgroundColor: "#fff" }}
+            />
+            {["todos", ...statusValidos].map((st) => {
+              const qtd = st === "todos" ? pedidos.length : pedidos.filter((p) => p.status === st).length;
+              return (
+                <Chip
+                  key={st}
+                  label={`${st === "todos" ? "Todos" : st} (${qtd})`}
+                  onClick={() => setFiltro(st)}
+                  variant={filtro === st ? "filled" : "outlined"}
+                  color={filtro === st ? "primary" : "default"}
+                  size="small"
+                  sx={{ textTransform: "capitalize" }}
+                />
+              );
+            })}
           </Box>
 
           {error && (
@@ -159,19 +209,21 @@ export default function AdminPedidos() {
             <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
               <CircularProgress />
             </Box>
-          ) : pedidos.length === 0 ? (
+          ) : filtrados.length === 0 ? (
             <Paper sx={{ p: 6, textAlign: "center" }}>
               <ShoppingBag sx={{ fontSize: 64, color: "#ccc", mb: 2 }} />
               <Typography variant="h6" sx={{ color: "#666" }}>
-                Nenhum pedido ainda
+                {pedidos.length === 0 ? "Nenhum pedido ainda" : "Nenhum pedido neste filtro"}
               </Typography>
               <Typography variant="body2" sx={{ color: "#666" }}>
-                Os pedidos realizados no site aparecerão aqui
+                {pedidos.length === 0
+                  ? "Os pedidos realizados no site aparecerão aqui"
+                  : "Tente outro status ou limpe a busca"}
               </Typography>
             </Paper>
           ) : (
-            <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
-              <Table>
+            <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", overflowX: "auto" }}>
+              <Table sx={{ minWidth: 820 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: "#fafafa" }}>
                     <TableCell sx={{ fontWeight: 600 }}>Pedido</TableCell>
@@ -184,15 +236,15 @@ export default function AdminPedidos() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {pedidos.map((pedido) => (
+                  {filtrados.map((pedido) => (
                     <TableRow
                       key={pedido.id}
                       hover
                       sx={{ "&:hover": { backgroundColor: "#fafafa" } }}
                     >
                       <TableCell>
-                        <Typography variant="body2" sx={{ fontFamily: "monospace", fontSize: "0.8rem" }}>
-                          #{pedido.id.slice(0, 8)}
+                        <Typography variant="body2" sx={{ fontFamily: "monospace", fontSize: "0.8rem", fontWeight: 600 }} title={pedido.id}>
+                          #{idCurto(pedido.id)}
                         </Typography>
                       </TableCell>
                       <TableCell>
@@ -239,6 +291,7 @@ export default function AdminPedidos() {
                               size="small"
                               variant="outlined"
                               color="info"
+                              disabled={alterando === pedido.id}
                               onClick={() => alterarStatus(pedido.id, "pago")}
                               sx={{ fontSize: "0.7rem", py: 0.25, minWidth: 60 }}
                               startIcon={<CheckCircle sx={{ fontSize: 14 }} />}
@@ -251,6 +304,7 @@ export default function AdminPedidos() {
                               size="small"
                               variant="outlined"
                               color="primary"
+                              disabled={alterando === pedido.id}
                               onClick={() => alterarStatus(pedido.id, "enviado")}
                               sx={{ fontSize: "0.7rem", py: 0.25, minWidth: 60 }}
                               startIcon={<LocalShipping sx={{ fontSize: 14 }} />}
@@ -263,6 +317,7 @@ export default function AdminPedidos() {
                               size="small"
                               variant="outlined"
                               color="success"
+                              disabled={alterando === pedido.id}
                               onClick={() => alterarStatus(pedido.id, "entregue")}
                               sx={{ fontSize: "0.7rem", py: 0.25, minWidth: 60 }}
                               startIcon={<LocalShipping sx={{ fontSize: 14 }} />}
@@ -273,6 +328,7 @@ export default function AdminPedidos() {
                           {(pedido.status === "pendente" || pedido.status === "pago") && (
                             <IconButton
                               size="small"
+                              disabled={alterando === pedido.id}
                               onClick={() => alterarStatus(pedido.id, "cancelado")}
                               sx={{ color: "#e57373" }}
                             >

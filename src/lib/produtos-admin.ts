@@ -14,6 +14,12 @@ export interface ProdutoData {
   estoque: number;
   ativo: boolean;
   criadoEm: string;
+  // frete (usados no cálculo) e aplicação veicular
+  peso?: number | null;
+  altura?: number | null;
+  largura?: number | null;
+  profundidade?: number | null;
+  veiculos?: string[];
 }
 
 export async function lerProdutos(): Promise<ProdutoData[]> {
@@ -33,6 +39,11 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
     estoque: p.estoque,
     ativo: p.ativo,
     criadoEm: p.criadoEm.toISOString(),
+    peso: p.peso,
+    altura: p.altura,
+    largura: p.largura,
+    profundidade: p.profundidade,
+    veiculos: p.veiculos,
   }));
 }
 
@@ -47,6 +58,11 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
         preco: p.preco,
         imgUrl: p.imgUrl || null,
         categorySlug: p.category,
+        peso: p.peso ?? null,
+        altura: p.altura ?? null,
+        largura: p.largura ?? null,
+        profundidade: p.profundidade ?? null,
+        veiculos: p.veiculos ?? [],
         parcelamento: p.parcelamento,
         estoque: p.estoque,
         ativo: p.ativo,
@@ -58,10 +74,14 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
         preco: p.preco,
         imgUrl: p.imgUrl || null,
         categorySlug: p.category,
+        peso: p.peso ?? null,
+        altura: p.altura ?? null,
+        largura: p.largura ?? null,
+        profundidade: p.profundidade ?? null,
+        veiculos: p.veiculos ?? [],
         parcelamento: p.parcelamento,
         estoque: p.estoque,
         ativo: p.ativo,
-        veiculos: [],
       },
     });
   }
