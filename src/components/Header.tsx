@@ -157,7 +157,7 @@ export default function Header({
                 sx={{
                   color: "#1A1A1A",
                   transition: "color 0.2s ease",
-                  "&:hover": { color: "#E65100" },
+                  "&:hover": { color: "primary.main" },
                 }}
               >
                 <Badge
@@ -165,7 +165,7 @@ export default function Header({
                   color="primary"
                   sx={{
                     "& .MuiBadge-badge": {
-                      backgroundColor: "#E65100",
+                      backgroundColor: "primary.main",
                       color: "#fff",
                       fontSize: 10,
                       minWidth: 18,
@@ -203,7 +203,7 @@ export default function Header({
                 backgroundColor: "#ffffff",
                 borderRadius: 1.5,
                 border: "1px solid",
-                borderColor: searchValue ? "#E65100" : "#e0e0e0",
+                borderColor: searchValue ? "primary.main" : "#e0e0e0",
                 px: 1.5,
                 py: 0.5,
                 maxWidth: 600,
@@ -213,7 +213,7 @@ export default function Header({
                   ? "0 0 0 3px rgba(230, 81, 0, 0.1)"
                   : "none",
                 "&:focus-within": {
-                  borderColor: "#E65100",
+                  borderColor: "primary.main",
                   boxShadow: "0 0 0 3px rgba(230, 81, 0, 0.1)",
                 },
               }}
@@ -221,7 +221,7 @@ export default function Header({
               <IconButton
                 size="small"
                 type="submit"
-                sx={{ color: searchValue ? "#E65100" : "#999", mr: 0.5, p: 0.5 }}
+                sx={{ color: searchValue ? "primary.main" : "#999", mr: 0.5, p: 0.5 }}
                 aria-label="Buscar"
               >
                 <SearchIcon sx={{ fontSize: 20 }} />
@@ -289,7 +289,7 @@ export default function Header({
                     }}
                     sx={{
                       color:
-                        activeCategory === cat.slug ? "#E65100" : "#ffffff",
+                        activeCategory === cat.slug ? "primary.main" : "#ffffff",
                       textTransform: "none",
                       fontSize: "0.85rem",
                       whiteSpace: "nowrap",
@@ -308,7 +308,7 @@ export default function Header({
                         "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
                       "&:hover": {
                         backgroundColor: "rgba(255,255,255,0.08)",
-                        color: "#E65100",
+                        color: "primary.main",
                       },
                     }}
                   >
@@ -331,7 +331,7 @@ export default function Header({
                     />
                   }
                   sx={{
-                    color: categoriesMenuAnchor ? "#E65100" : "#ffffff",
+                    color: categoriesMenuAnchor ? "primary.main" : "#ffffff",
                     textTransform: "none",
                     fontSize: "0.85rem",
                     whiteSpace: "nowrap",
@@ -349,11 +349,11 @@ export default function Header({
                       "color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease",
                     "&:hover": {
                       backgroundColor: "rgba(255,255,255,0.08)",
-                      color: "#E65100",
+                      color: "primary.main",
                     },
                   }}
                 >
-                  + Categorias
+                  Soluções
                 </Button>
 
                 <Menu
@@ -374,34 +374,20 @@ export default function Header({
                     },
                   }}
                 >
-                  {categorias.map((cat) => (
+                  {[
+                    { href: "/suspensao-a-ar", label: "Suspensão a ar" },
+                    { href: "/rebaixamento", label: "Rebaixamento" },
+                    { href: "/suspensao-esportiva", label: "Suspensão esportiva" },
+                    { href: "/off-road", label: "Off-road 4x4" },
+                  ].map((l) => (
                     <MenuItem
-                      key={cat.slug}
-                      onClick={() => {
-                        if (!onCategorySelect) {
-                          router.push("/?cat=" + (activeCategory === cat.slug ? "" : cat.slug));
-                          return;
-                        }
-                        onCategorySelect?.(activeCategory === cat.slug ? null : cat.slug);
-                        setCategoriesMenuAnchor(null);
-                      }}
-                      selected={activeCategory === cat.slug}
-                      sx={{
-                        py: 1.25,
-                        px: 2.5,
-                        fontSize: "0.9rem",
-                        color:
-                          activeCategory === cat.slug ? "#E65100" : "text.primary",
-                        fontWeight: activeCategory === cat.slug ? 600 : 400,
-                        "&.Mui-selected": {
-                          backgroundColor: "rgba(230, 81, 0, 0.08)",
-                        },
-                        "&.Mui-selected:hover": {
-                          backgroundColor: "rgba(230, 81, 0, 0.12)",
-                        },
-                      }}
+                      key={l.href}
+                      component={Link}
+                      href={l.href}
+                      onClick={() => setCategoriesMenuAnchor(null)}
+                      sx={{ py: 1.25, px: 2.5, fontSize: "0.9rem" }}
                     >
-                      {cat.nome}
+                      {l.label}
                     </MenuItem>
                   ))}
                 </Menu>
@@ -462,13 +448,36 @@ export default function Header({
                       primary={cat.nome}
                       sx={{
                         color:
-                          activeCategory === cat.slug ? "#E65100" : "inherit",
+                          activeCategory === cat.slug ? "primary.main" : "inherit",
                       }}
                     />
                   </ListItemButton>
                 ))}
               </List>
             </Collapse>
+
+            {/* 3.3 — as páginas que mais convertem também no mobile */}
+            <Divider sx={{ my: 1 }} />
+            {[
+              { href: "/suspensao-a-ar", label: "Suspensão a ar" },
+              { href: "/rebaixamento", label: "Rebaixamento" },
+              { href: "/suspensao-esportiva", label: "Suspensão esportiva" },
+              { href: "/off-road", label: "Off-road 4x4" },
+            ].map((l) => (
+              <ListItemButton
+                key={l.href}
+                onClick={() => {
+                  router.push(l.href);
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <ListItemIcon>
+                  <ExpandMore sx={{ transform: "rotate(-90deg)", fontSize: 20 }} />
+                </ListItemIcon>
+                <ListItemText primary={l.label} />
+              </ListItemButton>
+            ))}
+            <Divider sx={{ my: 1 }} />
 
             <Divider />
 
@@ -555,7 +564,7 @@ function UserMenu() {
             sx={{
               width: 32,
               height: 32,
-              bgcolor: "#E65100",
+              bgcolor: "primary.main",
               fontSize: 14,
               fontWeight: 600,
             }}
@@ -584,7 +593,7 @@ function UserMenu() {
                 router.push("/admin");
               }}
               sx={{
-                color: "#E65100",
+                color: "primary.main",
                 fontWeight: 600,
                 borderBottom: "1px solid",
                 borderColor: "divider",
@@ -625,7 +634,7 @@ function UserMenu() {
         color: "#1A1A1A",
         display: { xs: "none", sm: "inline-flex" },
         transition: "color 0.2s ease",
-        "&:hover": { color: "#E65100" },
+        "&:hover": { color: "primary.main" },
       }}
     >
       <Person />
