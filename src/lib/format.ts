@@ -35,3 +35,50 @@ export function formatParcela(total: number, vezes: number): string {
   if (!vezes || vezes < 2 || total <= 0) return formatBRL(total);
   return `${vezes}x de ${formatBRL(total / vezes)}`;
 }
+
+const dataCurta = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+});
+
+const dataCompleta = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
+
+/**
+ * Datas em pt-BR — `dd/mm` e `dd/mm/aaaa`.
+ *
+ * O admin tinha três formatadores diferentes e nenhum centralizado: uma tela
+ * mostrava `10/16` (mês/dia, formato do GA4), outra `20261016`, outra
+ * `16/10/2026`. Aqui a ordem é sempre dia/mês/ano.
+ */
+export function formatDataCurta(valor: Date | string | number): string {
+  const d = new Date(valor);
+  if (Number.isNaN(d.getTime())) return "—";
+  return dataCurta.format(d);
+}
+
+export function formatData(valor: Date | string | number): string {
+  const d = new Date(valor);
+  if (Number.isNaN(d.getTime())) return "—";
+  return dataCompleta.format(d);
+}
+
+/**
+ * Data do GA4 (`YYYYMMDD`) em `dd/mm`.
+ *
+ * O código anterior fatiava na ordem americana (`slice(4,6) + "/" +
+ * slice(6,8)`) e o eixo do gráfico mostrava `10/16` para 16 de outubro.
+ */
+export function formatDataGA4(valor: string | undefined): string {
+  if (!valor || valor.length !== 8) return "—";
+  return `${valor.slice(6, 8)}/${valor.slice(4, 6)}`;
+}
+
+/** Data do GA4 (`YYYYMMDD`) em `dd/mm/aaaa` — para tooltip. */
+export function formatDataGA4Completa(valor: string | undefined): string {
+  if (!valor || valor.length !== 8) return "—";
+  return `${valor.slice(6, 8)}/${valor.slice(4, 6)}/${valor.slice(0, 4)}`;
+}
