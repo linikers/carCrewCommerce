@@ -310,14 +310,20 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
             deixar seu carro com a altura e o desempenho que você sempre quis. Entrega para todo o Brasil.
           </Typography>
         </Box>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center", mb: 2 }}>
+        <Box
+          sx={{
+            display: "grid",
+            gap: 2,
+            mb: 2,
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, minmax(0, 1fr))",
+              md: "repeat(4, minmax(0, 1fr))",
+            },
+          }}
+        >
           {seoLinks.map((l) => (
-            <Box
-              key={l.href}
-              sx={{
-                flex: { xs: "1 1 100%", sm: "1 1 calc(50% - 16px)", md: "1 1 calc(25% - 24px)" },
-              }}
-            >
+            <Box key={l.href} sx={{ height: "100%" }}>
               <Link href={l.href} style={{ textDecoration: "none", display: "block", height: "100%" }}>
                 <Box
                   sx={{
@@ -428,20 +434,27 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
             )}
           </Box>
         ) : (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+          /* Grid de verdade, não flex: com `flex: 1 1 33%` o último item de
+             uma linha incompleta crescia e ocupava as três colunas — o card
+             ficava gigante em "Componentes", que tem quantidade ímpar. */
+          <Box
+            sx={{
+              display: "grid",
+              gap: 3,
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, minmax(0, 1fr))",
+                md: "repeat(3, minmax(0, 1fr))",
+              },
+              alignItems: "stretch",
+            }}
+          >
             {filteredProdutos.map((produto) => (
-              <Box
+              <ProductCard
                 key={produto.id}
-                sx={{
-                  flex: {
-                    xs: "1 1 100%",
-                    sm: "1 1 calc(50% - 12px)",
-                    md: "1 1 calc(33.33% - 16px)",
-                  },
-                }}
-              >
-                <ProductCard produto={produto as any} onAddToCart={handleAddToCart} />
-              </Box>
+                produto={produto as any}
+                onAddToCart={handleAddToCart}
+              />
             ))}
           </Box>
         )}
