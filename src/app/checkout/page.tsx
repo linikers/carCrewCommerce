@@ -20,6 +20,7 @@ import {
   Link as MuiLink,
   Alert,
   CircularProgress,
+  MenuItem,
 } from "@mui/material";
 import {
   ArrowBack,
@@ -32,17 +33,27 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PixPayment from "@/components/PixPayment";
 import { useCart } from "@/lib/CartContext";
+import {
+  UFS,
+  documentoValido,
+  formatarCep,
+  formatarDocumento,
+  formatarTelefone,
+} from "@/lib/documento";
 import { track } from "@/lib/analytics";
 import { formatBRL } from "@/lib/format";
 
 interface FormData {
   nome: string;
+  email: string;
+  documento: string;
   telefone: string;
   cep: string;
   endereco: string;
   numero: string;
   bairro: string;
   cidade: string;
+  uf: string;
 }
 
 interface FreightOption {
@@ -72,12 +83,15 @@ interface PixData {
 
 const initialForm: FormData = {
   nome: "",
+  email: "",
+  documento: "",
   telefone: "",
   cep: "",
   endereco: "",
   numero: "",
   bairro: "",
   cidade: "",
+  uf: "",
 };
 
 export default function CheckoutPage() {
@@ -251,7 +265,20 @@ export default function CheckoutPage() {
     }
   };
 
-  const formValido = form.nome && form.telefone && form.endereco && form.numero && form.bairro && form.cidade;
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email);
+  const docValido = documentoValido(form.documento);
+  // 5.5: sem e-mail, CPF/CNPJ e UF o pedido não serve para nota nem para
+  // contato — o formulário só libera o botão com os três preenchidos.
+  const formValido =
+    form.nome &&
+    emailValido &&
+    docValido &&
+    form.telefone &&
+    form.endereco &&
+    form.numero &&
+    form.bairro &&
+    form.cidade &&
+    form.uf;
 
   const whatsappMsg = orderId
     ? encodeURIComponent(`Olá! Acabei de fazer o pedido #${orderId.slice(0, 8)} na Car Crew Garage. Valor: ${formatBRL(total + (selectedFreight?.valor || 0))}`)
@@ -367,12 +394,29 @@ export default function CheckoutPage() {
                       onChange={(e) => updateField("nome", e.target.value)} />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField fullWidth label="E-mail" required type="email" placeholder="voce@email.com"
+                      value={form.email}
+                      onChange={(e) => updateField("email", e.target.value)}
+                      error={!!form.email && !emailValido}
+                      helperText={form.email && !emailValido ? "Informe um e-mail válido" : "Para enviar a nota e o rastreio"} />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField fullWidth label="Telefone / WhatsApp" required placeholder="(44) 99999-9999"
-                      value={form.telefone} onChange={(e) => updateField("telefone", e.target.value)} />
+                      value={form.telefone}
+                      onChange={(e) => updateField("telefone", formatarTelefone(e.target.value))}
+                      slotProps={{ htmlInput: { inputMode: "tel" } }} />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField fullWidth label="CPF ou CNPJ" required placeholder="000.000.000-00"
+                      value={form.documento}
+                      onChange={(e) => updateField("documento", formatarDocumento(e.target.value))}
+                      error={!!form.documento && !docValido}
+                      helperText={form.documento && !docValido ? "CPF/CNPJ inválido" : "Necessário para a nota fiscal"}
+                      slotProps={{ htmlInput: { inputMode: "numeric" } }} />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField fullWidth label="CEP" placeholder="00000-000" required value={form.cep}
-                      onChange={(e) => updateField("cep", e.target.value)}
+                      onChange={(e) => updateField("cep", formatarCep(e.target.value))}
                       onBlur={handleCepBlur}
                       helperText={cepLoading ? "Buscando endereço..." : ""} />
                   </Grid>
@@ -427,9 +471,17 @@ export default function CheckoutPage() {
                     <TextField fullWidth label="Bairro" required value={form.bairro}
                       onChange={(e) => updateField("bairro", e.target.value)} />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 8, sm: 4 }}>
                     <TextField fullWidth label="Cidade" required value={form.cidade}
                       onChange={(e) => updateField("cidade", e.target.value)} />
+                  </Grid>
+                  <Grid size={{ xs: 4, sm: 2 }}>
+                    <TextField fullWidth select label="UF" required value={form.uf}
+                      onChange={(e) => updateField("uf", e.target.value)}>
+                      {UFS.map((uf) => (
+                        <MenuItem key={uf} value={uf}>{uf}</MenuItem>
+                      ))}
+                    </TextField>
                   </Grid>
                 </Grid>
               </Paper>

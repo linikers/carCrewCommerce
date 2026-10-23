@@ -24,8 +24,11 @@ export async function GET() {
         total: true,
         status: true,
         createdAt: true,
+        id: true,
         clienteNome: true,
         clienteTelefone: true,
+        clienteEmail: true,
+        clienteDocumento: true,
         user: { select: { id: true, name: true, email: true } },
       },
     });
@@ -44,12 +47,15 @@ export async function GET() {
     >();
 
     for (const p of pedidos) {
-      const atual = mapa.get(p.userId);
+      // Pedido de visitante não tem userId: agrupa pelo e-mail (ou nome) para
+      // o cliente aparecer na lista do mesmo jeito.
+      const chave = p.userId ?? `visitante:${(p.clienteEmail || p.clienteNome || p.id).toLowerCase()}`;
+      const atual = mapa.get(chave);
       const nome = p.clienteNome || p.user?.name || p.user?.email || "Cliente sem nome";
 
       if (!atual) {
-        mapa.set(p.userId, {
-          id: p.userId,
+        mapa.set(chave, {
+          id: chave,
           nome,
           email: p.user?.email ?? null,
           telefone: p.clienteTelefone ?? null,
