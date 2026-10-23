@@ -520,7 +520,9 @@ export default function Header({
         aria-label="Fale no WhatsApp"
         sx={{
           position: "fixed",
-          bottom: { xs: 16, md: 24 },
+          // sobe 96 px no mobile: a PDP tem barra de compra fixa de ~76 px e
+          // os dois se sobrepunham no canto inferior direito
+          bottom: { xs: 96, md: 24 },
           right: { xs: 16, md: 24 },
           zIndex: 1300,
           backgroundColor: "#25D366",

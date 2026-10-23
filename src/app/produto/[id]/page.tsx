@@ -77,6 +77,9 @@ export default async function ProdutoPage(props: {
     category: dbProduto.categorySlug as any,
     parcelamento: dbProduto.parcelamento || 12,
     veiculos: dbProduto.veiculos || [],
+    // 2.7: a galeria já existia no client e nunca recebia as imagens extras —
+    // o `imagens` do banco só era salvo pelo admin e ficava invisível na loja.
+    galeria: dbProduto.imagens || [],
     peso: dbProduto.peso || undefined,
     altura: dbProduto.altura || undefined,
     largura: dbProduto.largura || undefined,
