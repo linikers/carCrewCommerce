@@ -187,7 +187,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
       <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
 
       {/* Menu */}
-      {/* minHeight: 0 (do #134) + filtro de módulo (#137) */}
+      {/* minHeight: 0 vem do #134 (Pagamentos cortado); o filtro de módulo é do #137 */}
       <Box sx={{ flex: 1, minHeight: 0, px: 1, pt: 1, overflowY: "auto" }}>
         {gruposMenu
           .map((grupo) => ({ ...grupo, itens: grupo.itens.filter(visivel) }))
