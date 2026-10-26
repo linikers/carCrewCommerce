@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { nome, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria } = body;
+    const { nome, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria, destaque, ordem } = body;
 
     if (!nome || !preco) {
       return NextResponse.json(
@@ -37,6 +37,8 @@ export async function POST(req: NextRequest) {
       category: category || "amortecedores",
       parcelamento: Number(parcelamento) || 12,
       estoque: Number(estoque) || 0,
+      destaque: Boolean(destaque),
+      ordem: Number(ordem) || 0,
       ativo: true,
       criadoEm: new Date().toISOString(),
       peso: peso !== undefined && peso !== "" ? Number(peso) : null,

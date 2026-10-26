@@ -31,6 +31,8 @@ export async function GET(
     parcelamento: produto.parcelamento,
     estoque: produto.estoque,
     ativo: produto.ativo,
+    destaque: produto.destaque,
+    ordem: produto.ordem,
     criadoEm: produto.criadoEm.toISOString(),
   });
 }
@@ -78,6 +80,8 @@ export async function PUT(
               : String(body.veiculos).split(",").map((v: string) => v.trim()).filter(Boolean))
           : existente.veiculos,
         ativo: body.ativo !== undefined ? body.ativo : existente.ativo,
+        destaque: body.destaque !== undefined ? Boolean(body.destaque) : existente.destaque,
+        ordem: body.ordem !== undefined ? Number(body.ordem) || 0 : existente.ordem,
       },
     });
 

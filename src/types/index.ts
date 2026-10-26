@@ -7,6 +7,8 @@ export interface Produto {
   preco: number;
   imgUrl: string;
   galeria?: string[];
+  destaque?: boolean;
+  ordem?: number;
   category: CategoriaSlug;
   parcelamento?: number;
   veiculos?: string[];

@@ -10,6 +10,8 @@ import {
   TextField,
   Button,
   Grid,
+  FormControlLabel,
+  Switch,
   MenuItem,
   Alert,
   CircularProgress,
@@ -51,6 +53,8 @@ export default function NovoProduto() {
     largura: "",
     profundidade: "",
     veiculos: "",
+    destaque: false,
+    ordem: "0",
   });
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -101,6 +105,8 @@ export default function NovoProduto() {
           parcelamento: parseInt(form.parcelamento),
           estoque: parseInt(form.estoque),
           galeria: form.galeria,
+          ordem: parseInt(form.ordem || "0"),
+          destaque: Boolean(form.destaque),
         }),
       });
 
@@ -175,6 +181,21 @@ export default function NovoProduto() {
                     helperText={fieldErrors.estoque}
                     slotProps={{ htmlInput: { min: 0, step: 1 } }}
                     onChange={(e) => setForm({ ...form, estoque: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Ordem na home" type="number" value={form.ordem}
+                    helperText="Menor aparece antes"
+                    slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                    onChange={(e) => setForm({ ...form, ordem: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex", alignItems: "center" }}>
+                  <FormControlLabel
+                    control={
+                      <Switch checked={form.destaque}
+                        onChange={(e) => setForm({ ...form, destaque: e.target.checked })} />
+                    }
+                    label="Destaque na home"
+                  />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 3 }}>
                   <TextField fullWidth label="Peso (g)" type="number" value={form.peso}
