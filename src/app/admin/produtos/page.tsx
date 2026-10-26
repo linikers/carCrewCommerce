@@ -39,6 +39,7 @@ import {
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Produto {
+  sku?: string | null;
   id: number;
   nome: string;
   preco: number;
@@ -61,7 +62,7 @@ export default function AdminProdutos() {
   const [ordemDir, setOrdemDir] = useState<"asc" | "desc">("desc");
   // 6.3/6.4: sem visão de "sem preço" e "estoque baixo" a lista não servia
   // para trabalhar. O filtro vem também pela URL (atalho do dashboard).
-  const [filtroRapido, setFiltroRapido] = useState<"todos" | "sem-preco" | "estoque-baixo">("todos");
+  const [filtroRapido, setFiltroRapido] = useState<"todos" | "sem-preco" | "esgotado" | "estoque-baixo">("todos");
 
   const carregar = async () => {
     try {
@@ -83,8 +84,12 @@ export default function AdminProdutos() {
   useEffect(() => { carregar(); }, []);
 
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("filtro");
-    if (q === "sem-preco" || q === "estoque-baixo") setFiltroRapido(q);
+    const params = new URLSearchParams(window.location.search);
+    const filtro = params.get("filtro");
+    if (filtro === "sem-preco" || filtro === "estoque-baixo" || filtro === "esgotado")
+      setFiltroRapido(filtro);
+    const termo = params.get("q");
+    if (termo) setSearch(termo);
   }, []);
 
   const alternarAtivo = async (id: number, ativoAtual: boolean) => {
@@ -129,9 +134,15 @@ export default function AdminProdutos() {
   }
 
   const filtrados = produtos.filter((p) => {
-    if (!p.nome.toLowerCase().includes(search.toLowerCase())) return false;
+    const termo = search.trim().toLowerCase();
+    if (
+      !p.nome.toLowerCase().includes(termo) &&
+      !(p.sku || "").toLowerCase().includes(termo)
+    )
+      return false;
     if (filtroRapido === "sem-preco") return p.preco <= 0;
-    if (filtroRapido === "estoque-baixo") return p.estoque <= 2;
+    if (filtroRapido === "esgotado") return p.estoque <= 0;
+    if (filtroRapido === "estoque-baixo") return p.estoque > 0 && p.estoque <= 2;
     return true;
   });
 
@@ -195,7 +206,10 @@ export default function AdminProdutos() {
           {[
             { id: "todos" as const, label: `Todos (${produtos.length})` },
             { id: "sem-preco" as const, label: `Sem preço (${produtos.filter((p) => p.preco <= 0).length})` },
-            { id: "estoque-baixo" as const, label: `Estoque baixo (${produtos.filter((p) => p.estoque <= 2).length})` },
+            // estoque 0 é "esgotado", não "baixo" — antes os 48 entravam no
+            // filtro e ele não filtrava nada
+            { id: "esgotado" as const, label: `Esgotado (${produtos.filter((p) => p.estoque <= 0).length})` },
+            { id: "estoque-baixo" as const, label: `Estoque baixo (${produtos.filter((p) => p.estoque > 0 && p.estoque <= 2).length})` },
           ].map((f) => (
             <Chip
               key={f.id}
@@ -245,7 +259,7 @@ export default function AdminProdutos() {
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                   <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "id" ? ordemDir : false}>
-                    <TableSortLabel active={ordemPor === "id"} direction={ordemPor === "id" ? ordemDir : "asc"} onClick={() => mudarOrdem("id")}>ID</TableSortLabel>
+                    <TableSortLabel active={ordemPor === "id"} direction={ordemPor === "id" ? ordemDir : "asc"} onClick={() => mudarOrdem("id")}>SKU</TableSortLabel>
                   </TableCell>
                   <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "nome" ? ordemDir : false}>
                     <TableSortLabel active={ordemPor === "nome"} direction={ordemPor === "nome" ? ordemDir : "asc"} onClick={() => mudarOrdem("nome")}>Nome</TableSortLabel>
@@ -264,12 +278,18 @@ export default function AdminProdutos() {
               <TableBody>
                 {paginados.map((p) => (
                   <TableRow key={p.id} hover>
-                    <TableCell>#{p.id}</TableCell>
+                    <TableCell>
+                      {/* o SKU é o que a operação usa; o id fica discreto */}
+                      <Box sx={{ fontFamily: "monospace", fontSize: "0.8rem", fontWeight: 600 }}>
+                        {p.sku || "—"}
+                      </Box>
+                      <Box sx={{ color: "#999", fontSize: "0.7rem" }}>#{p.id}</Box>
+                    </TableCell>
                     <TableCell sx={{ maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {p.nome}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: "#BF360C" }}>
-                      {formatBRL(p.preco)}
+                    <TableCell sx={{ fontWeight: 600, color: p.preco > 0 ? "#BF360C" : "#999" }}>
+                      {p.preco > 0 ? formatBRL(p.preco) : "Sob consulta"}
                     </TableCell>
                     <TableCell>
                       <Chip label={p.category} size="small" variant="outlined" />

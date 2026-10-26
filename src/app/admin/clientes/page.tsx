@@ -46,6 +46,11 @@ export default function AdminClientes() {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
   const [busca, setBusca] = useState("");
+  // busca que vem da barra global (?q=)
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setBusca(q);
+  }, []);
 
   useEffect(() => {
     if (status === "unauthenticated") {
