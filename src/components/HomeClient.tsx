@@ -329,12 +329,7 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
                 <Box
                   key={c.slug}
                   component="a"
-                  href={`/?cat=${c.slug}`}
-                  onClick={(e: React.MouseEvent) => {
-                    e.preventDefault();
-                    toggleCategoria(c.slug as CategoriaSlug);
-                    document.getElementById("vitrine")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
+                  href={`/categoria/${c.slug}`}
                   sx={{
                     display: "flex",
                     flexDirection: "column",

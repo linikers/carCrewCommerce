@@ -19,6 +19,25 @@ export default withAuth(
 
     if (pathname === "/admin/login") return NextResponse.next();
 
+    // 6.7: a categoria era query string na home (`/?cat=bolsas-de-ar`), com
+    // canonical apontando para `/`. Agora tem rota própria e indexável; links
+    // antigos e resultados do Google caem aqui e são redirecionados de forma
+    // permanente.
+    if (pathname === "/") {
+      const cat = req.nextUrl.searchParams.get("cat");
+      if (cat) {
+        return NextResponse.redirect(
+          new URL(`/categoria/${encodeURIComponent(cat)}`, req.url),
+          301
+        );
+      }
+    }
+
+    // Fora do admin, o middleware não tem assunto: só a home precisa da regra
+    // de redirect acima (e o resto do site é público).
+    const isAdminArea = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
+    if (!isAdminArea) return NextResponse.next();
+
     const isAdmin = Boolean(req.nextauth.token?.admin);
     const isApi = pathname.startsWith("/api/admin");
 
@@ -46,5 +65,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/", "/admin/:path*", "/api/admin/:path*"],
 };

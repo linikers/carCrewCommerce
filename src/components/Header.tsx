@@ -282,7 +282,7 @@ export default function Header({
                     onClick={() => {
                       // Redireciona pra home filtrada se não estiver na página principal
                       if (!onCategorySelect) {
-                        router.push("/?cat=" + (activeCategory === cat.slug ? "" : cat.slug));
+                        router.push("/categoria/" + cat.slug);
                         return;
                       }
                       onCategorySelect(activeCategory === cat.slug ? null : cat.slug);
@@ -354,6 +354,26 @@ export default function Header({
                   }}
                 >
                   Soluções
+                </Button>
+
+                {/* Blog também no menu: é a porta de entrada de busca
+                    informacional (6.6) */}
+                <Button
+                  onClick={() => router.push("/blog")}
+                  sx={{
+                    color: "#ffffff",
+                    textTransform: "none",
+                    fontSize: "0.85rem",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                    px: { lg: 1.25, xl: 2 },
+                    py: 1.25,
+                    minHeight: 44,
+                    borderRadius: 0,
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)", color: "primary.main" },
+                  }}
+                >
+                  Blog
                 </Button>
 
                 <Menu
@@ -436,7 +456,7 @@ export default function Header({
                     sx={{ pl: 4 }}
                     onClick={() => {
                       if (!onCategorySelect) {
-                        router.push("/?cat=" + cat.slug);
+                        router.push("/categoria/" + cat.slug);
                         setMobileMenuOpen(false);
                         return;
                       }
@@ -457,6 +477,17 @@ export default function Header({
             </Collapse>
 
             {/* 3.3 — as páginas que mais convertem também no mobile */}
+            <ListItemButton
+              onClick={() => {
+                router.push("/blog");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <ExpandMore sx={{ transform: "rotate(-90deg)", fontSize: 20 }} />
+              </ListItemIcon>
+              <ListItemText primary="Blog" />
+            </ListItemButton>
             <Divider sx={{ my: 1 }} />
             {[
               { href: "/suspensao-a-ar", label: "Suspensão a ar" },
