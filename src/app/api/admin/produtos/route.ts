@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { nome, sku, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria, destaque, ordem } = body;
+    const { nome, sku, ncm, cest, cfop, origem, cstIcms, unidade, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria, destaque, ordem } = body;
 
     if (!nome || !preco) {
       return NextResponse.json(
@@ -38,6 +38,13 @@ export async function POST(req: NextRequest) {
       category: category || "amortecedores",
       parcelamento: Number(parcelamento) || 12,
       estoque: Number(estoque) || 0,
+      // fiscal (#78) — sem NCM/CFOP a peça não entra em nota
+      ncm: ncm ? String(ncm).replace(/\D/g, "") : null,
+      cest: cest ? String(cest).replace(/\D/g, "") : null,
+      cfop: cfop ? String(cfop).replace(/\D/g, "") : null,
+      origem: origem !== undefined ? Number(origem) : 0,
+      cstIcms: cstIcms || null,
+      unidade: unidade || "UN",
       destaque: Boolean(destaque),
       ordem: Number(ordem) || 0,
       ativo: true,

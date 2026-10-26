@@ -93,6 +93,16 @@ model Produto {
   /// Código interno da peça (6.7/6.7-admin). A operação não identifica peça
   /// por nome — "compressor 444" tem cinco variações.
   sku          String?   @unique
+
+  // Fiscal (#78) — sem NCM e CFOP não existe nota. Nulo até alguém preencher.
+  ncm          String?
+  cest         String?
+  cfop         String?
+  /// 0=nacional, 1=estrangeira (origem da mercadoria, tabela da SEFAZ)
+  origem       Int?      @default(0)
+  cstIcms      String?   @map("cst_icms")
+  /// UN, CX, KG, M, PC…
+  unidade      String?   @default("UN")
   descricao    String?
   preco        Float
   imgUrl       String?
@@ -133,6 +143,47 @@ model Lead {
 
   @@index([criadoEm])
   @@map("leads")
+}
+
+/// Dados fiscais da empresa — #78.
+///
+/// Existir aqui **não emite nota**: é cadastro. A emissão é decidida por canal
+/// (site / marketplace) e depende do certificado A1, que entra no #79.
+/// O .pfx nunca vai para o banco nem para o repo: aqui fica só nome e validade.
+model EmpresaFiscal {
+  id String @id @default("unica")
+
+  razaoSocial  String  @map("razao_social")
+  nomeFantasia String? @map("nome_fantasia")
+  cnpj         String  @unique
+  ie           String?
+  im           String?
+  /// 1 = Simples Nacional, 2 = Simples (excesso), 3 = Regime Normal
+  crt          Int     @default(1)
+  cnae         String?
+
+  cep         String?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  uf          String?
+  telefone    String?
+  email       String?
+
+  /// homologacao | producao
+  ambiente      String  @default("homologacao")
+  serie         Int     @default(1)
+  proximoNumero Int     @default(1) @map("proximo_numero")
+
+  /// metadados do certificado A1 (o arquivo vive no segredo do deploy)
+  certificadoNome     String?   @map("certificado_nome")
+  certificadoValidade DateTime? @map("certificado_validade")
+
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  @@map("empresa_fiscal")
 }
 
 model Configuracao {
