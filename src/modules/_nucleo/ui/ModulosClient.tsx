@@ -79,7 +79,7 @@ export default function ModulosClient() {
   }
 
   const grupos: Array<{ titulo: string; itens: ModuloComEstado[] }> = [
-    { titulo: "No ar hoje", itens: modulos.filter((m) => m.ativo) },
+    { titulo: "Ativos hoje", itens: modulos.filter((m) => m.ativo) },
     { titulo: "Disponíveis para ligar", itens: modulos.filter((m) => !m.ativo) },
   ];
 
@@ -145,7 +145,13 @@ export default function ModulosClient() {
                               size="small"
                               icon={<Lock sx={{ fontSize: "12px !important" }} />}
                               label="essencial"
-                              variant="outlined"
+                              sx={{
+                                backgroundColor: "#F3E7E2",
+                                color: "#8C2A09",
+                                fontWeight: 700,
+                                fontSize: "0.65rem",
+                                border: "1px solid #E4CFC7",
+                              }}
                             />
                           )}
                           {m.issue && (
@@ -162,9 +168,13 @@ export default function ModulosClient() {
                         </Typography>
                       </Box>
 
+                      {!m.ativo && !podeLigar && !travado && (
+                        <Lock sx={{ fontSize: 16, color: "#B26A00", alignSelf: "center" }} />
+                      )}
                       <Switch
                         checked={m.ativo}
                         disabled={travado || salvando === m.id || (!m.ativo && !podeLigar)}
+                        slotProps={{ input: { "aria-label": `Ativar ${m.nome}` } }}
                         onChange={(e) => alternar(m, e.target.checked)}
                         sx={{
                           "& .MuiSwitch-switchBase.Mui-checked": { color: "#BF360C" },
@@ -182,8 +192,8 @@ export default function ModulosClient() {
                     )}
 
                     {!travado && bloqueadoPorDependencia && (
-                      <Typography sx={{ fontSize: "0.7rem", color: "#B26A00" }}>
-                        Precisa ligar antes:{" "}
+                      <Typography sx={{ fontSize: "0.7rem", color: "#8A5200", fontWeight: 600 }}>
+                        Requer ativo:{" "}
                         {m.faltando
                           .map((d) => modulos.find((x) => x.id === d)?.nome ?? d)
                           .join(", ")}
@@ -191,7 +201,10 @@ export default function ModulosClient() {
                     )}
 
                     {m.telas.length > 0 && (
-                      <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", mt: "auto", pt: 1 }}>
+                      <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", alignItems: "center", mt: "auto", pt: 1 }}>
+                        <Typography sx={{ fontSize: "0.65rem", color: "#888", mr: 0.25 }}>
+                          Inclui:
+                        </Typography>
                         {m.telas.map((t) => (
                           <Chip
                             key={t.rota}
@@ -201,7 +214,7 @@ export default function ModulosClient() {
                             onClick={m.ativo ? () => router.push(t.rota) : undefined}
                             sx={{
                               fontSize: "0.65rem",
-                              color: m.ativo ? "#444" : "#bbb",
+                              color: m.ativo ? "#444" : "#8a8a8a",
                               cursor: m.ativo ? "pointer" : "default",
                             }}
                           />
