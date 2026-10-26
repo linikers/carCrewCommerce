@@ -101,6 +101,7 @@ export default function ProdutoDetalheClient({
     }[]
   >([]);
   const [freteErro, setFreteErro] = useState("");
+  const [freteAviso, setFreteAviso] = useState("");
   const [freteBusy, setFreteBusy] = useState(false);
 
   const calcularFrete = async () => {
@@ -132,6 +133,7 @@ export default function ProdutoDetalheClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.erro || "Não foi possível calcular agora");
       setOpcoesFrete((data.opcoes || []).slice(0, 3));
+      setFreteAviso(data.aviso || "");
       if (!data.opcoes?.length) setFreteErro("Sem opção de entrega para este CEP");
     } catch (e) {
       setFreteErro(e instanceof Error ? e.message : "Não foi possível calcular agora");
@@ -465,9 +467,10 @@ export default function ProdutoDetalheClient({
                     </Typography>
                   </Box>
                 ))}
-                {opcoesFrete.some((o) => o.estimado) && (
+                {(freteAviso || opcoesFrete.some((o) => o.estimado)) && (
                   <Typography variant="caption" sx={{ color: "#888", display: "block", mt: 1 }}>
-                    Valor estimado. O frete final é confirmado no fechamento do pedido.
+                    {freteAviso ||
+                      "Valor estimado. O frete final é confirmado no fechamento do pedido."}
                   </Typography>
                 )}
               </Box>
