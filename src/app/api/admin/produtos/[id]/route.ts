@@ -24,6 +24,7 @@ export async function GET(
   return NextResponse.json({
     id: produto.id,
     nome: produto.nome,
+    sku: produto.sku,
     descricao: produto.descricao || "",
     preco: produto.preco,
     imgUrl: produto.imgUrl || "/produtos/placeholder.svg",
@@ -61,6 +62,12 @@ export async function PUT(
       where: { id: Number(id) },
       data: {
         nome: body.nome ?? existente.nome,
+        sku:
+          body.sku !== undefined
+            ? body.sku
+              ? String(body.sku).trim().toUpperCase()
+              : null
+            : existente.sku,
         descricao: body.descricao ?? existente.descricao,
         preco: body.preco !== undefined ? Number(body.preco) : existente.preco,
         imgUrl: body.imgUrl ?? existente.imgUrl,
@@ -96,6 +103,7 @@ export async function PUT(
     return NextResponse.json({
       id: atualizado.id,
       nome: atualizado.nome,
+    sku: atualizado.sku,
       descricao: atualizado.descricao || "",
       preco: atualizado.preco,
       imgUrl: atualizado.imgUrl || "/produtos/placeholder.svg",
@@ -106,6 +114,9 @@ export async function PUT(
       criadoEm: atualizado.criadoEm.toISOString(),
     });
   } catch (error) {
+    if ((error as { code?: string })?.code === "P2002") {
+      return NextResponse.json({ error: "Já existe outro produto com este SKU" }, { status: 409 });
+    }
     console.error("Erro ao atualizar produto:", error);
     return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
   }

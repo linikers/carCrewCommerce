@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { nome, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria, destaque, ordem } = body;
+    const { nome, sku, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria, destaque, ordem } = body;
 
     if (!nome || !preco) {
       return NextResponse.json(
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     const novoProduto: ProdutoData = {
       id,
       nome,
+      sku: sku ? String(sku).trim().toUpperCase() : null,
       descricao: descricao || "",
       preco: Number(preco),
       imgUrl: imgUrl || "/produtos/placeholder.svg",
@@ -57,6 +58,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(novoProduto, { status: 201 });
   } catch (error) {
+    if ((error as { code?: string })?.code === "P2002") {
+      return NextResponse.json({ error: "Já existe um produto com este SKU" }, { status: 409 });
+    }
     console.error("Erro ao criar produto:", error);
     return NextResponse.json(
       { error: "Erro ao criar produto" },

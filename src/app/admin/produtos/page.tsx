@@ -39,6 +39,7 @@ import {
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Produto {
+  sku?: string | null;
   id: number;
   nome: string;
   preco: number;
@@ -83,8 +84,11 @@ export default function AdminProdutos() {
   useEffect(() => { carregar(); }, []);
 
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("filtro");
-    if (q === "sem-preco" || q === "estoque-baixo") setFiltroRapido(q);
+    const params = new URLSearchParams(window.location.search);
+    const filtro = params.get("filtro");
+    if (filtro === "sem-preco" || filtro === "estoque-baixo") setFiltroRapido(filtro);
+    const termo = params.get("q");
+    if (termo) setSearch(termo);
   }, []);
 
   const alternarAtivo = async (id: number, ativoAtual: boolean) => {
@@ -129,7 +133,12 @@ export default function AdminProdutos() {
   }
 
   const filtrados = produtos.filter((p) => {
-    if (!p.nome.toLowerCase().includes(search.toLowerCase())) return false;
+    const termo = search.trim().toLowerCase();
+    if (
+      !p.nome.toLowerCase().includes(termo) &&
+      !(p.sku || "").toLowerCase().includes(termo)
+    )
+      return false;
     if (filtroRapido === "sem-preco") return p.preco <= 0;
     if (filtroRapido === "estoque-baixo") return p.estoque <= 2;
     return true;
@@ -245,7 +254,7 @@ export default function AdminProdutos() {
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                   <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "id" ? ordemDir : false}>
-                    <TableSortLabel active={ordemPor === "id"} direction={ordemPor === "id" ? ordemDir : "asc"} onClick={() => mudarOrdem("id")}>ID</TableSortLabel>
+                    <TableSortLabel active={ordemPor === "id"} direction={ordemPor === "id" ? ordemDir : "asc"} onClick={() => mudarOrdem("id")}>SKU</TableSortLabel>
                   </TableCell>
                   <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "nome" ? ordemDir : false}>
                     <TableSortLabel active={ordemPor === "nome"} direction={ordemPor === "nome" ? ordemDir : "asc"} onClick={() => mudarOrdem("nome")}>Nome</TableSortLabel>
@@ -264,12 +273,18 @@ export default function AdminProdutos() {
               <TableBody>
                 {paginados.map((p) => (
                   <TableRow key={p.id} hover>
-                    <TableCell>#{p.id}</TableCell>
+                    <TableCell>
+                      {/* o SKU é o que a operação usa; o id fica discreto */}
+                      <Box sx={{ fontFamily: "monospace", fontSize: "0.8rem", fontWeight: 600 }}>
+                        {p.sku || "—"}
+                      </Box>
+                      <Box sx={{ color: "#999", fontSize: "0.7rem" }}>#{p.id}</Box>
+                    </TableCell>
                     <TableCell sx={{ maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {p.nome}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: "#BF360C" }}>
-                      {formatBRL(p.preco)}
+                    <TableCell sx={{ fontWeight: 600, color: p.preco > 0 ? "#BF360C" : "#999" }}>
+                      {p.preco > 0 ? formatBRL(p.preco) : "Sob consulta"}
                     </TableCell>
                     <TableCell>
                       <Chip label={p.category} size="small" variant="outlined" />

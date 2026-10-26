@@ -47,6 +47,7 @@ interface Pedido {
   updatedAt: string;
   clienteNome?: string | null;
   clienteTelefone?: string | null;
+  clienteEmail?: string | null;
   enderecoEntrega?: { cidade?: string | null } | null;
   user?: { id: string; name: string | null; email: string | null };
 }
@@ -59,6 +60,11 @@ export default function AdminPedidos() {
   const [error, setError] = useState("");
   const [filtro, setFiltro] = useState<string>("todos");
   const [busca, setBusca] = useState("");
+  // busca que vem da barra global (?q=)
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setBusca(q);
+  }, []);
   const [alterando, setAlterando] = useState<string | null>(null);
 
   useEffect(() => {
@@ -133,7 +139,7 @@ export default function AdminPedidos() {
     if (filtro !== "todos" && p.status !== filtro) return false;
     if (busca.trim()) {
       const t = busca.trim().toLowerCase();
-      const alvo = `${p.user?.name ?? ""} ${p.user?.email ?? ""} ${p.id}`.toLowerCase();
+      const alvo = `${p.user?.name ?? ""} ${p.user?.email ?? ""} ${p.clienteNome ?? ""} ${p.clienteEmail ?? ""} ${p.clienteTelefone ?? ""} ${p.id}`.toLowerCase();
       if (!alvo.includes(t)) return false;
     }
     return true;
