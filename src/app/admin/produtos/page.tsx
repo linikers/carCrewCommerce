@@ -62,7 +62,7 @@ export default function AdminProdutos() {
   const [ordemDir, setOrdemDir] = useState<"asc" | "desc">("desc");
   // 6.3/6.4: sem visão de "sem preço" e "estoque baixo" a lista não servia
   // para trabalhar. O filtro vem também pela URL (atalho do dashboard).
-  const [filtroRapido, setFiltroRapido] = useState<"todos" | "sem-preco" | "estoque-baixo">("todos");
+  const [filtroRapido, setFiltroRapido] = useState<"todos" | "sem-preco" | "esgotado" | "estoque-baixo">("todos");
 
   const carregar = async () => {
     try {
@@ -86,7 +86,8 @@ export default function AdminProdutos() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const filtro = params.get("filtro");
-    if (filtro === "sem-preco" || filtro === "estoque-baixo") setFiltroRapido(filtro);
+    if (filtro === "sem-preco" || filtro === "estoque-baixo" || filtro === "esgotado")
+      setFiltroRapido(filtro);
     const termo = params.get("q");
     if (termo) setSearch(termo);
   }, []);
@@ -140,7 +141,8 @@ export default function AdminProdutos() {
     )
       return false;
     if (filtroRapido === "sem-preco") return p.preco <= 0;
-    if (filtroRapido === "estoque-baixo") return p.estoque <= 2;
+    if (filtroRapido === "esgotado") return p.estoque <= 0;
+    if (filtroRapido === "estoque-baixo") return p.estoque > 0 && p.estoque <= 2;
     return true;
   });
 
@@ -204,7 +206,10 @@ export default function AdminProdutos() {
           {[
             { id: "todos" as const, label: `Todos (${produtos.length})` },
             { id: "sem-preco" as const, label: `Sem preço (${produtos.filter((p) => p.preco <= 0).length})` },
-            { id: "estoque-baixo" as const, label: `Estoque baixo (${produtos.filter((p) => p.estoque <= 2).length})` },
+            // estoque 0 é "esgotado", não "baixo" — antes os 48 entravam no
+            // filtro e ele não filtrava nada
+            { id: "esgotado" as const, label: `Esgotado (${produtos.filter((p) => p.estoque <= 0).length})` },
+            { id: "estoque-baixo" as const, label: `Estoque baixo (${produtos.filter((p) => p.estoque > 0 && p.estoque <= 2).length})` },
           ].map((f) => (
             <Chip
               key={f.id}
