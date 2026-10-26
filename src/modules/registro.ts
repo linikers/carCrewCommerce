@@ -105,10 +105,7 @@ export const MODULOS: Modulo[] = [
       "Movimento de estoque, saldo por depósito e custo médio — em vez de um número digitado à mão.",
     padraoAtivo: false,
     dependeDe: ["catalogo", "pedidos"],
-    telas: [
-      { rota: "/admin/estoque", rotulo: "Estoque", grupo: "Operação" },
-      { rota: "/admin/estoque/movimentos", rotulo: "Movimentos", grupo: "Operação" },
-    ],
+    telas: [{ rota: "/admin/estoque", rotulo: "Estoque", grupo: "Operação" }],
     tabelas: ["estoque_movimentos", "estoque_saldos"],
     issue: 73,
   },

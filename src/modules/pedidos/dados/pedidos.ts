@@ -1,9 +1,8 @@
 import prisma from "@/lib/prisma";
-import type { JsonArray } from "@/generated/prisma/internal/prismaNamespace";
+import type { JsonArray, TransactionClient } from "@/generated/prisma/internal/prismaNamespace";
 import {
   ErroPedido,
   normalizarDocumento,
-  type DadosPedido,
   type ItemEntrada,
   type ItemPedido,
 } from "../dominio/pedido";
@@ -16,12 +15,25 @@ import {
  * existia e o estoque não baixava (ou o contrário).
  */
 
+/**
+ * Porta de baixa de estoque.
+ *
+ * O módulo de pedidos não importa o de estoque (regra de fronteira). Quem
+ * liga os dois é a rota — o único lugar que pode conhecer ambos.
+ */
+export type BaixaEstoque = (
+  tx: TransactionClient,
+  pedidoId: string,
+  itens: { produtoId: number; quantidade: number; nome: string }[]
+) => Promise<void>;
+
 interface CriarPedidoArgs {
   itens: ItemEntrada[];
   userId: string | null;
   frete: number;
   paymentMethod: string;
   form: Record<string, unknown> | null;
+  baixarEstoque?: BaixaEstoque;
 }
 
 export async function criarPedido({
@@ -30,6 +42,7 @@ export async function criarPedido({
   frete,
   paymentMethod,
   form,
+  baixarEstoque,
 }: CriarPedidoArgs): Promise<{ id: string; status: string; total: number }> {
   if (itens.length === 0) {
     throw new ErroPedido("Pedido sem itens", "SEM_ITENS");
@@ -101,12 +114,18 @@ export async function criarPedido({
       select: { id: true, status: true, total: true },
     });
 
-    // 2. Baixa de estoque na mesma transação do pedido
-    for (const item of itensPedido) {
-      await tx.produto.update({
-        where: { id: item.produtoId },
-        data: { estoque: { decrement: item.quantidade } },
-      });
+    // 2. Baixa de estoque na mesma transação do pedido.
+    // Com o módulo de estoque ligado, a baixa vira movimento com histórico
+    // (e o estorno do cancelamento fica possível). Sem ele, decremento puro.
+    if (baixarEstoque) {
+      await baixarEstoque(tx, pedido.id, itensPedido);
+    } else {
+      for (const item of itensPedido) {
+        await tx.produto.update({
+          where: { id: item.produtoId },
+          data: { estoque: { decrement: item.quantidade } },
+        });
+      }
     }
 
     return pedido;
