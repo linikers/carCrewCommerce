@@ -121,13 +121,24 @@ export default async function ProdutoPage(props: {
   const productImage = produto.imgUrl || `${siteUrl}/og-image.jpg`;
   const sobConsulta = !produto.preco || produto.preco <= 0;
 
-  // JSON-LD — Product structured data
-  const productSchema = {
+  // JSON-LD — Product structured data (6.4)
+  //
+  // Antes: preço 0 quando o produto é "sob consulta" (o Google reprova
+  // `price: 0`) e `InStock` fixo, mesmo com estoque zerado — ou seja, o dado
+  // estruturado mentia para o buscador. Agora:
+  // - sem preço, o bloco `offers` não existe (Product sem oferta é válido)
+  // - disponibilidade segue o estoque real
+  // - imagem sempre absoluta, como o schema exige
+  const imagemAbsoluta = produto.imgUrl?.startsWith("http")
+    ? produto.imgUrl
+    : `${siteUrl}${produto.imgUrl || "/produtos/placeholder.svg"}`;
+
+  const productSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: produto.nome,
     description: produto.descricao,
-    image: produto.imgUrl ? [produto.imgUrl] : [productImage],
+    image: [imagemAbsoluta],
     category: categoria?.nome || produto.category,
     sku: String(produto.id),
     brand: {
@@ -135,22 +146,25 @@ export default async function ProdutoPage(props: {
       name: "Car Crew Garage",
     },
     url: productUrl,
-    offers: {
-      "@type": "Offer",
-      price: sobConsulta ? "0" : produto.preco.toFixed(2),
-      priceCurrency: "BRL",
-      availability: sobConsulta
-        ? "https://schema.org/InStoreOnly"
-        : "https://schema.org/InStock",
-      url: productUrl,
-      priceValidUntil: new Date(
-        new Date().setFullYear(new Date().getFullYear() + 1)
-      ).toISOString().split("T")[0],
-      seller: {
-        "@type": "Organization",
-        name: "Car Crew Garage",
-      },
-    },
+    ...(sobConsulta
+      ? {}
+      : {
+          offers: {
+            "@type": "Offer",
+            price: produto.preco.toFixed(2),
+            priceCurrency: "BRL",
+            availability:
+              (dbProduto.estoque ?? 0) > 0
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock",
+            itemCondition: "https://schema.org/NewCondition",
+            url: productUrl,
+            seller: {
+              "@type": "Organization",
+              name: "Car Crew Garage",
+            },
+          },
+        }),
   };
 
   // JSON-LD — BreadcrumbList
