@@ -16,11 +16,18 @@ import CapturaLead from "./CapturaLead";
  * - não promete desconto: não existe cupom automático, e prometer o que não
  *   entrega é o mesmo erro do "12x sem juros"
  */
-export default function PopupLead() {
+interface Props {
+  /** Desligado no admin, o convite não aparece. */
+  ativo?: boolean;
+  atrasoSegundos?: number;
+}
+
+export default function PopupLead({ ativo = true, atrasoSegundos = 30 }: Props) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (!ativo) return;
 
     const caminho = window.location.pathname;
     if (caminho.startsWith("/checkout") || caminho.startsWith("/pedido")) return;
@@ -40,10 +47,10 @@ export default function PopupLead() {
       } catch {
         /* ignora */
       }
-    }, 30000);
+    }, Math.max(5, atrasoSegundos) * 1000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [ativo, atrasoSegundos]);
 
   return (
     <Dialog

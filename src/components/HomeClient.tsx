@@ -64,6 +64,8 @@ interface HomeClientProps {
   produtos: ProdutoData[];
   categorias: CategoriaData[];
   banners: BannerData[];
+  /** Convite de captura de lead — ligado/desligado no admin. */
+  convite?: { ativo: boolean; atrasoSegundos: number };
 }
 
 const seoLinks = [
@@ -93,7 +95,7 @@ const seoLinks = [
   },
 ];
 
-export default function HomeClient({ produtos, categorias, banners }: HomeClientProps) {
+export default function HomeClient({ produtos, categorias, banners, convite }: HomeClientProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(null);
@@ -625,7 +627,7 @@ export default function HomeClient({ produtos, categorias, banners }: HomeClient
       </Container>
 
       <Footer />
-      <PopupLead />
+      <PopupLead ativo={convite?.ativo ?? true} atrasoSegundos={convite?.atrasoSegundos ?? 30} />
 
       {/* Snackbar de feedback */}
       <Snackbar

@@ -18,6 +18,8 @@ import {
   TableRow,
   TextField,
   Typography,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { MarkEmailRead } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -39,6 +41,10 @@ export default function AdminLeads() {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
   const [busca, setBusca] = useState("");
+  // Convite da home: liga/desliga sem deploy
+  const [convite, setConvite] = useState({ ativo: true, atrasoSegundos: 30 });
+  const [salvandoConvite, setSalvandoConvite] = useState(false);
+  const [conviteOk, setConviteOk] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -46,6 +52,13 @@ export default function AdminLeads() {
       return;
     }
     if (status !== "authenticated") return;
+
+    fetch("/api/admin/config/convite")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) setConvite({ ativo: Boolean(d.ativo), atrasoSegundos: Number(d.atrasoSegundos) || 30 });
+      })
+      .catch(() => {});
 
     fetch("/api/admin/leads")
       .then(async (r) => {
@@ -63,6 +76,27 @@ export default function AdminLeads() {
     const t = busca.trim().toLowerCase();
     return l.email.toLowerCase().includes(t) || (l.telefone || "").includes(t);
   });
+
+  const salvarConvite = async (novo: { ativo: boolean; atrasoSegundos: number }) => {
+    setSalvandoConvite(true);
+    setConviteOk("");
+    try {
+      const res = await fetch("/api/admin/config/convite", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novo),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Falha ao salvar");
+      setConvite({ ativo: d.ativo, atrasoSegundos: d.atrasoSegundos });
+      setConviteOk(novo.ativo ? "Convite ligado." : "Convite desligado.");
+      setTimeout(() => setConviteOk(""), 2500);
+    } catch (e) {
+      setConviteOk(e instanceof Error ? e.message : "Falha ao salvar");
+    } finally {
+      setSalvandoConvite(false);
+    }
+  };
 
   const exportar = () => {
     const linhas = [
@@ -111,6 +145,50 @@ export default function AdminLeads() {
         </Box>
 
         {erro && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErro("")}>{erro}</Alert>}
+
+        {/* Controle do convite (popup) — o dono liga e desliga quando quiser */}
+        <Paper sx={{ p: 2.5, borderRadius: 3, mb: 3, display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+          <Box sx={{ flex: 1, minWidth: 220 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              Convite na home
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#666" }}>
+              Popup que pede o e-mail depois de {convite.atrasoSegundos}s de navegação (1x por sessão).
+            </Typography>
+          </Box>
+
+          <TextField
+            size="small"
+            type="number"
+            label="Atraso (s)"
+            value={convite.atrasoSegundos}
+            disabled={salvandoConvite || !convite.ativo}
+            onChange={(e) =>
+              setConvite({ ...convite, atrasoSegundos: Number(e.target.value) || 30 })
+            }
+            onBlur={() => salvarConvite(convite)}
+            slotProps={{ htmlInput: { min: 5, max: 300, step: 5 } }}
+            sx={{ width: 120 }}
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={convite.ativo}
+                disabled={salvandoConvite}
+                onChange={(e) => salvarConvite({ ...convite, ativo: e.target.checked })}
+                sx={{ "& .MuiSwitch-switchBase.Mui-checked": { color: "#BF360C" }, "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": { backgroundColor: "#BF360C" } }}
+              />
+            }
+            label={<Typography variant="body2" sx={{ fontWeight: 600 }}>{convite.ativo ? "Ligado" : "Desligado"}</Typography>}
+          />
+
+          {conviteOk && (
+            <Typography variant="caption" sx={{ color: "#0E7A3F", fontWeight: 600 }}>
+              {conviteOk}
+            </Typography>
+          )}
+        </Paper>
 
         <TextField
           fullWidth
