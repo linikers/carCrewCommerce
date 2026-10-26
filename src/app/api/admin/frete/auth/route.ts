@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
-import { readFreteConfig } from "@/lib/frete-config";
+import { readFreteConfig } from "@/modules/frete/dados/config";
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 
 export async function GET() {

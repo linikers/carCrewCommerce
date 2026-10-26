@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { readFreteConfig, writeFreteConfig } from "@/lib/frete-config";
+import { readFreteConfig, writeFreteConfig } from "@/modules/frete/dados/config";
 import { auditar } from "@/lib/auditoria";
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 

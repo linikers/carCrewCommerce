@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { readFreteConfig, writeFreteConfig, type FreteConfig } from "@/lib/frete-config";
+import { readFreteConfig, writeFreteConfig, type FreteConfig } from "@/modules/frete/dados/config";
 import { auditar } from "@/lib/auditoria";
 
 

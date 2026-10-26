@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "prisma generate && npx prisma db seed && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "checar:fronteiras": "node scripts/checar-fronteiras.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
