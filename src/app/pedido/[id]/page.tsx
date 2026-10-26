@@ -27,12 +27,23 @@ export default async function PedidoPage(props: { params: Promise<{ id: string }
 
   const pedido = await prisma.pedido.findUnique({
     where: { id },
-    include: { user: { select: { name: true, email: true } } },
+    include: {
+      user: { select: { name: true, email: true } },
+      itens: { orderBy: { criadoEm: "asc" } },
+    },
   });
 
   if (!pedido) notFound();
 
-  const itens = (pedido.items as { nome: string; preco: number; quantidade: number }[]) || [];
+  // #72: item relacional; pedido antigo ainda lê o JSON
+  const itens =
+    pedido.itens.length > 0
+      ? pedido.itens.map((i) => ({
+          nome: i.nome,
+          preco: i.preco,
+          quantidade: i.quantidade,
+        }))
+      : ((pedido.items as { nome: string; preco: number; quantidade: number }[]) || []);
   const endereco = (pedido.enderecoEntrega || null) as
     | { logradouro?: string; numero?: string; bairro?: string; cidade?: string; uf?: string; cep?: string }
     | null;

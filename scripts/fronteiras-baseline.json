@@ -12,7 +12,6 @@
   "src/app/api/auth/register/route.ts",
   "src/app/api/categorias/route.ts",
   "src/app/api/leads/route.ts",
-  "src/app/api/pedidos/criar/route.ts",
   "src/app/api/pix/route.ts",
   "src/app/api/produtos/route.ts"
 ]

@@ -18,6 +18,7 @@ export async function GET(
         user: {
           select: { id: true, name: true, email: true },
         },
+        itens: { orderBy: { criadoEm: "asc" } },
       },
     });
 

@@ -1,96 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { ErroPedido, normalizarItens } from "@/modules/pedidos/dominio/pedido";
+import { criarPedido } from "@/modules/pedidos/dados/pedidos";
 
+/**
+ * Casca fina do checkout: lê o corpo, normaliza e chama o módulo de pedidos.
+ * A regra (estoque, foto do produto, transação) vive em `src/modules/pedidos`.
+ */
 export async function POST(req: NextRequest) {
+  let corpo: {
+    items?: unknown;
+    form?: Record<string, unknown> | null;
+    paymentMethod?: string;
+    freight?: number;
+  };
+
   try {
-    const { items, form, paymentMethod, total, freight } = await req.json();
+    corpo = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Corpo inválido" }, { status: 400 });
+  }
 
-    if (!items?.length || !paymentMethod) {
-      return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
-    }
+  const { items, form, paymentMethod, freight } = corpo;
 
-    // 1. Validar estoque de cada item
-    for (const item of items) {
-      const produto = await prisma.produto.findUnique({
-        where: { id: item.produto.id },
-      });
-      if (!produto || !produto.ativo) {
-        return NextResponse.json(
-          { error: `Produto "${item.produto.nome}" não está mais disponível` },
-          { status: 400 }
-        );
-      }
-      if (produto.estoque < item.quantidade) {
-        return NextResponse.json(
-          { error: `Estoque insuficiente para "${produto.nome}" (disponível: ${produto.estoque})` },
-          { status: 400 }
-        );
-      }
-    }
+  if (!paymentMethod) {
+    return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+  }
 
-    // 5.5: se o cliente está logado, o pedido fica ligado à conta dele.
-    // Visitante entra como pedido sem usuário (`userId: null`) — antes o
-    // código gravava o literal "guest", que não existe em `users`, e a FK
-    // derrubava 100% dos pedidos com P2003.
+  try {
+    const itens = normalizarItens(items);
+
     const session = await getServerSession(authOptions);
     const userId = (session?.user as { id?: string } | undefined)?.id ?? null;
 
-    // 2. Criar pedido
-    // 6.1: o formulário do checkout já vem com endereço e telefone; antes tudo
-    // isso era descartado e o pedido nascia sem destino de entrega.
-    const pedido = await prisma.pedido.create({
-      data: {
-        userId,
-        items: items.map((i: any) => ({
-          produtoId: i.produto.id,
-          nome: i.produto.nome,
-          preco: i.produto.preco,
-          quantidade: i.quantidade,
-        })),
-        total: total + (freight || 0),
-        frete: freight || 0,
-        status: paymentMethod === "pix" ? "aguardando_pagamento" : "pago",
-        clienteNome: form?.nome || null,
-        clienteTelefone: form?.telefone || null,
-        // 5.5: e-mail e CPF/CNPJ são o mínimo para nota e contato.
-        clienteEmail: form?.email || null,
-        clienteDocumento: form?.documento ? String(form.documento).replace(/\D/g, "") : null,
-        enderecoEntrega: form
-          ? {
-              cep: form.cep || null,
-              logradouro: form.endereco || null,
-              numero: form.numero || null,
-              bairro: form.bairro || null,
-              cidade: form.cidade || null,
-              uf: form.uf || null,
-            }
-          : undefined,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+    const pedido = await criarPedido({
+      itens,
+      userId,
+      frete: Number(freight) || 0,
+      paymentMethod,
+      form: form ?? null,
     });
-
-    // 3. Baixar estoque
-    for (const item of items) {
-      await prisma.produto.update({
-        where: { id: item.produto.id },
-        data: { estoque: { decrement: item.quantidade } },
-      });
-    }
 
     return NextResponse.json({
       success: true,
       pedidoId: pedido.id,
       status: pedido.status,
+      total: pedido.total,
       message:
         paymentMethod === "pix"
           ? "Pedido criado! Pague o PIX para confirmar."
           : "Pedido confirmado!",
     });
-  } catch (error: any) {
-    console.error("Erro ao criar pedido:", error);
+  } catch (error) {
+    if (error instanceof ErroPedido) {
+      // estoque/produto: 409 diz "seu carrinho mudou", não "seu pedido é inválido"
+      const status = error.codigo === "ESTOQUE" || error.codigo === "PRODUTO" ? 409 : 400;
+      return NextResponse.json({ error: error.message }, { status });
+    }
+    console.error("[pedidos/criar] falha:", error);
     return NextResponse.json({ error: "Erro ao processar pedido" }, { status: 500 });
   }
 }

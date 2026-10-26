@@ -40,7 +40,8 @@ interface PedidoItem {
 interface Pedido {
   id: string;
   userId: string;
-  items: PedidoItem[];
+  items?: PedidoItem[];
+  itens?: { id: string; nome: string; quantidade: number }[];
   total: number;
   status: string;
   createdAt: string;
@@ -291,7 +292,7 @@ export default function AdminPedidos() {
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2">
-                          {(pedido.items as PedidoItem[]).length} item(ns)
+                          {(pedido.itens?.length ?? (pedido.items as PedidoItem[] | undefined)?.length ?? 0)} item(ns)
                         </Typography>
                       </TableCell>
                       <TableCell sx={{ fontWeight: 700 }}>
