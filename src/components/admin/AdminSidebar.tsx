@@ -31,7 +31,9 @@ import {
   ViewCarousel,
   Payment,
   MarkEmailRead,
+  Extension,
 } from "@mui/icons-material";
+import { MODULOS } from "@/modules/registro";
 
 interface MenuItem {
   label: string;
@@ -66,9 +68,19 @@ const gruposMenu: { titulo: string | null; itens: MenuItem[] }[] = [
     itens: [
       { label: "Frete", icon: <LocalShipping />, path: "/admin/frete" },
       { label: "Pagamentos", icon: <Payment />, path: "/admin/pagamentos" },
+      { label: "Módulos", icon: <Extension />, path: "/admin/modulos" },
     ],
   },
 ];
+
+// rota do painel -> módulo dono. Usado para esconder o que está desligado.
+const moduloDaRota: Record<string, string> = MODULOS.reduce(
+  (mapa, modulo) => {
+    for (const tela of modulo.telas) mapa[tela.rota] = modulo.id;
+    return mapa;
+  },
+  {} as Record<string, string>
+);
 
 const pageLinks: MenuItem[] = [
   { label: "Página FAQ", icon: <Category />, path: "/faq" },
@@ -81,6 +93,24 @@ interface AdminSidebarProps {
 }
 
 export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
+  // Módulo desligado não aparece no menu (as rotas dele respondem 404).
+  // Sem estado ainda, mostra tudo: um menu incompleto por 200 ms assusta mais
+  // do que um item a mais.
+  const [modulosAtivos, setModulosAtivos] = useState<Record<string, boolean> | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/modulos")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d?.estado && setModulosAtivos(d.estado))
+      .catch(() => setModulosAtivos(null));
+  }, []);
+
+  const visivel = (item: MenuItem) => {
+    if (!modulosAtivos) return true;
+    const modulo = moduloDaRota[item.path];
+    if (!modulo) return true;
+    return modulosAtivos[modulo] !== false;
+  };
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
@@ -157,8 +187,12 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
       <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
 
       {/* Menu */}
+      {/* minHeight: 0 vem do #134 (Pagamentos cortado); o filtro de módulo é do #137 */}
       <Box sx={{ flex: 1, minHeight: 0, px: 1, pt: 1, overflowY: "auto" }}>
-        {gruposMenu.map((grupo) => (
+        {gruposMenu
+          .map((grupo) => ({ ...grupo, itens: grupo.itens.filter(visivel) }))
+          .filter((grupo) => grupo.itens.length > 0)
+          .map((grupo) => (
           <Box key={grupo.titulo ?? "principal"} sx={{ mb: grupo.titulo ? 1.5 : 0 }}>
             {grupo.titulo && (
               <Typography

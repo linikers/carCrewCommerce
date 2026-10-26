@@ -91,7 +91,14 @@ export default function ProdutoDetalheClient({
   // Aqui o visitante descobre o frete antes de sair da página do produto.
   const [cep, setCep] = useState("");
   const [opcoesFrete, setOpcoesFrete] = useState<
-    { id?: string; transportadora: string; modalidade?: string; prazo: string; valor: number }[]
+    {
+      id?: string;
+      transportadora: string;
+      modalidade?: string;
+      prazo: string;
+      valor: number;
+      estimado?: boolean;
+    }[]
   >([]);
   const [freteErro, setFreteErro] = useState("");
   const [freteBusy, setFreteBusy] = useState(false);
@@ -458,6 +465,11 @@ export default function ProdutoDetalheClient({
                     </Typography>
                   </Box>
                 ))}
+                {opcoesFrete.some((o) => o.estimado) && (
+                  <Typography variant="caption" sx={{ color: "#888", display: "block", mt: 1 }}>
+                    Valor estimado. O frete final é confirmado no fechamento do pedido.
+                  </Typography>
+                )}
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                 <CreditCard sx={{ color: "primary.main", fontSize: 20 }} />

@@ -1,0 +1,18 @@
+[
+  "src/app/api/admin/banners/[id]/route.ts",
+  "src/app/api/admin/busca/route.ts",
+  "src/app/api/admin/categorias/[id]/route.ts",
+  "src/app/api/admin/clientes/route.ts",
+  "src/app/api/admin/leads/route.ts",
+  "src/app/api/admin/pagamentos/route.ts",
+  "src/app/api/admin/pedidos/[id]/route.ts",
+  "src/app/api/admin/pedidos/route.ts",
+  "src/app/api/admin/produtos/[id]/route.ts",
+  "src/app/api/admin/stats/route.ts",
+  "src/app/api/auth/register/route.ts",
+  "src/app/api/categorias/route.ts",
+  "src/app/api/leads/route.ts",
+  "src/app/api/pedidos/criar/route.ts",
+  "src/app/api/pix/route.ts",
+  "src/app/api/produtos/route.ts"
+]
