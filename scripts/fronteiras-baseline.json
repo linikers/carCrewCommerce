@@ -1,5 +1,6 @@
 [
   "src/app/api/admin/banners/[id]/route.ts",
+  "src/app/api/admin/busca/route.ts",
   "src/app/api/admin/categorias/[id]/route.ts",
   "src/app/api/admin/clientes/route.ts",
   "src/app/api/admin/leads/route.ts",
