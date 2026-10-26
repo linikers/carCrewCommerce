@@ -12,6 +12,7 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
+  Tooltip,
   Divider,
   IconButton,
   useMediaQuery,
@@ -186,7 +187,8 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
       <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
 
       {/* Menu */}
-      <Box sx={{ flex: 1, px: 1, pt: 1, overflowY: "auto" }}>
+      {/* minHeight: 0 (do #134) + filtro de módulo (#137) */}
+      <Box sx={{ flex: 1, minHeight: 0, px: 1, pt: 1, overflowY: "auto" }}>
         {gruposMenu
           .map((grupo) => ({ ...grupo, itens: grupo.itens.filter(visivel) }))
           .filter((grupo) => grupo.itens.length > 0)
@@ -206,8 +208,11 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             key={item.path}
             onClick={() => !item.disabled && handleNav(item.path)}
             selected={
-              pathname === item.path ||
-              pathname.startsWith(item.path + "/")
+              // "/admin" com startsWith("/admin/") casava em TODAS as telas:
+              // Dashboard e a tela atual ficavam destacados juntos.
+              item.path === "/admin"
+                ? pathname === "/admin"
+                : pathname === item.path || pathname.startsWith(item.path + "/")
             }
             disabled={item.disabled}
             sx={{
@@ -234,11 +239,21 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               sx={{ "& .MuiListItemText-primary": { fontSize: "0.9rem" } }}
             />
             {contadorDe(item.path) > 0 && (
-              <Badge
-                badgeContent={contadorDe(item.path)}
-                color="error"
-                sx={{ mr: item.tag ? 1 : 0 }}
-              />
+              // o número sozinho não diz o que conta (Duda apontou isso)
+              <Tooltip
+                title={
+                  item.path === "/admin/pedidos"
+                    ? `${contadorDe(item.path)} pedido(s) aberto(s)`
+                    : `${contadorDe(item.path)} produto(s) sem preço`
+                }
+                placement="right"
+              >
+                <Badge
+                  badgeContent={contadorDe(item.path)}
+                  color="error"
+                  sx={{ mr: item.tag ? 1 : 0 }}
+                />
+              </Tooltip>
             )}
             {item.tag && (
               <Typography
@@ -261,7 +276,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
 
       <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
 
-      <List sx={{ px: 1 }}>
+      <List sx={{ px: 1, flexShrink: 0 }}>
         <Typography variant="caption" sx={{ color: "#666", px: 2, pb: 0.5, display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
           Páginas do Site
         </Typography>

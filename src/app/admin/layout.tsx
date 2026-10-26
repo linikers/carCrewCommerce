@@ -9,10 +9,10 @@ import type { Metadata } from "next";
  * mudança para o esqueleto do painel.
  */
 export const metadata: Metadata = {
-  title: {
-    default: "Painel · Car Crew Garage",
-    template: "%s · Car Crew Garage",
-  },
+  // Sem `template` aqui: o layout raiz já aplica " | Car Crew Garage".
+  // Com os dois, a aba virava "Painel · Car Crew Garage | Car Crew Garage".
+  // As telas do painel ainda definem o título pelo AdminLayout (client).
+  title: "Painel",
   robots: { index: false, follow: false },
 };
 
