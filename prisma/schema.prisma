@@ -90,6 +90,9 @@ model Categoria {
 model Produto {
   id           Int       @id @default(autoincrement())
   nome         String
+  /// Código interno da peça (6.7/6.7-admin). A operação não identifica peça
+  /// por nome — "compressor 444" tem cinco variações.
+  sku          String?   @unique
   descricao    String?
   preco        Float
   imgUrl       String?

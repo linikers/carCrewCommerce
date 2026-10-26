@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { Menu as MenuIcon, Search as SearchIcon } from "@mui/icons-material";
+import BuscaGlobal from "./BuscaGlobal";
 import AdminSidebar from "./AdminSidebar";
 
 interface AdminLayoutProps {
@@ -13,6 +14,7 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, title }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [buscaMobile, setBuscaMobile] = useState(false);
 
   // 5.7: todas as abas do admin tinham o mesmo título do documento.
   useEffect(() => {
@@ -40,6 +42,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }} noWrap>
             {title || "Painel Admin"}
           </Typography>
+          <IconButton
+            sx={{ ml: "auto", color: "#1A1A1A" }}
+            aria-label="Buscar no painel"
+            onClick={() => setBuscaMobile((v) => !v)}
+          >
+            <SearchIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -87,6 +96,17 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             <Typography component="span" sx={{ color: "#444", fontSize: "0.75rem", fontWeight: 600 }}>
               {title}
             </Typography>
+
+            {/* busca única do painel: peça, SKU, pedido ou cliente */}
+            <Box sx={{ ml: "auto", mr: 4, flexShrink: 0 }}>
+              <BuscaGlobal />
+            </Box>
+          </Box>
+        )}
+
+        {buscaMobile && (
+          <Box sx={{ display: { md: "none" }, px: 2, pt: 1.5 }}>
+            <BuscaGlobal autoFoco />
           </Box>
         )}
 

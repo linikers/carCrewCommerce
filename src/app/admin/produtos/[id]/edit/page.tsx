@@ -56,6 +56,7 @@ export default function EditarProduto() {
     largura: "",
     profundidade: "",
     veiculos: "",
+    sku: "",
     destaque: false,
     ordem: "0",
     ativo: true,
@@ -80,6 +81,7 @@ export default function EditarProduto() {
           galeriaPrincipal: 0,
           category: data.category,
           parcelamento: String(data.parcelamento),
+          sku: data.sku || "",
           estoque: String(data.estoque),
           destaque: Boolean(data.destaque),
           ordem: String(data.ordem ?? 0),
@@ -156,6 +158,11 @@ export default function EditarProduto() {
                 <Grid size={{ xs: 12 }}>
                   <TextField fullWidth label="Nome do Produto" required value={form.nome}
                     onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <TextField fullWidth label="SKU (código interno)" value={form.sku}
+                    placeholder="CC-0001" helperText="Aparece na busca do painel"
+                    onChange={(e) => setForm({ ...form, sku: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <TextField fullWidth label="Descrição" multiline rows={3} value={form.descricao}

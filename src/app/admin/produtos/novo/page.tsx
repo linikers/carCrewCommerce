@@ -40,6 +40,7 @@ export default function NovoProduto() {
   const router = useRouter();
   const [form, setForm] = useState({
     nome: "",
+    sku: "",
     descricao: "",
     preco: "",
     imgUrl: "",
@@ -167,6 +168,12 @@ export default function NovoProduto() {
                     helperText={fieldErrors.preco || "Use ponto para centavos: 1299.90"}
                     slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
                     onChange={(e) => setForm({ ...form, preco: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <TextField fullWidth label="SKU (código interno)" value={form.sku}
+                    placeholder="CC-0001"
+                    helperText="Aparece na busca do painel"
+                    onChange={(e) => setForm({ ...form, sku: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <TextField fullWidth label="Parcelamento (máx)" type="number" value={form.parcelamento}

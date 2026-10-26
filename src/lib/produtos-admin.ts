@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 export interface ProdutoData {
   id: number;
   nome: string;
+  sku?: string | null;
   descricao: string;
   preco: number;
   imgUrl: string;
@@ -34,6 +35,7 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
   return produtos.map((p) => ({
     id: p.id,
     nome: p.nome,
+    sku: p.sku,
     descricao: p.descricao || "",
     preco: p.preco,
     imgUrl: p.imgUrl || "/produtos/placeholder.svg",
@@ -58,6 +60,7 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
       where: { id: p.id },
       update: {
         nome: p.nome,
+      sku: p.sku ?? null,
         descricao: p.descricao || null,
         preco: p.preco,
         imgUrl: p.imgUrl || null,
