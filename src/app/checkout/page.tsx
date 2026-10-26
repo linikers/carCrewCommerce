@@ -281,7 +281,11 @@ export default function CheckoutPage() {
     form.uf;
 
   const whatsappMsg = orderId
-    ? encodeURIComponent(`Olá! Acabei de fazer o pedido #${orderId.slice(0, 8)} na Car Crew Garage. Valor: ${formatBRL(total + (selectedFreight?.valor || 0))}`)
+    ? encodeURIComponent(
+        `Olá! Acabei de fazer o pedido #${orderId.slice(-6).toUpperCase()} na Car Crew Garage. Valor: ${formatBRL(
+          total + (selectedFreight?.valor || 0)
+        )} — acompanhar: ${typeof window !== "undefined" ? window.location.origin : "https://carcrew.com.br"}/pedido/${orderId}`
+      )
     : "";
 
   // Estado vazio
@@ -318,7 +322,7 @@ export default function CheckoutPage() {
             {pixData ? "PIX Gerado!" : "Pedido Confirmado!"}
           </Typography>
           <Typography variant="body1" sx={{ color: "#666", mb: 1 }}>
-            {orderId && `Pedido #${orderId.slice(0, 8)}`}
+            {orderId && `Pedido #${orderId.slice(-6).toUpperCase()}`}
           </Typography>
           <Typography variant="body2" sx={{ color: "#999", mb: 4 }}>
             {pixData
@@ -347,8 +351,17 @@ export default function CheckoutPage() {
           </Paper>
 
           <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
-            <Button variant="contained" onClick={() => router.push("/")}
-              sx={{ backgroundColor: "#E65100", "&:hover": { backgroundColor: "#BF360C" }, textTransform: "none", px: 4 }}>
+            {orderId && (
+              <Button
+                variant="contained"
+                onClick={() => router.push(`/pedido/${orderId}`)}
+                sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8C2A09" }, textTransform: "none", px: 4 }}
+              >
+                Acompanhar pedido
+              </Button>
+            )}
+            <Button variant="outlined" onClick={() => router.push("/")}
+              sx={{ borderColor: "#BF360C", color: "#BF360C", textTransform: "none", px: 4 }}>
               Continuar Comprando
             </Button>
             {orderId && (
