@@ -22,6 +22,8 @@ export async function GET() {
         user: {
           select: { id: true, name: true, email: true },
         },
+        // #72: itens relacionais (pedido antigo ainda cai no JSON)
+        itens: { orderBy: { criadoEm: "asc" } },
       },
       orderBy: { createdAt: "desc" },
       take: 200,

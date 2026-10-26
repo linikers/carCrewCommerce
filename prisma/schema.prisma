@@ -112,6 +112,8 @@ model Produto {
 
   categoria Categoria @relation(fields: [categorySlug], references: [slug])
 
+  itensPedido PedidoItem[]
+
   @@map("produtos")
 }
 
@@ -185,7 +187,11 @@ model Pedido {
   // derrubava o pedido inteiro (P2003). Os dados de contato ficam no próprio
   // pedido; `userId` só é preenchido quando o cliente está logado.
   userId    String?  @map("user_id")
-  items     Json
+  /// @deprecated legado: pedidos antigos guardavam o carrinho em JSON. Os
+  /// novos gravam em `pedido_itens` (item relacional, com SKU e preço do
+  /// momento da compra). Mantido só para leitura de pedido antigo.
+  items     Json?
+  itens     PedidoItem[]
   total     Float
   status    String   @default("pendente")
   createdAt DateTime @default(now()) @map("created_at")
@@ -205,4 +211,35 @@ model Pedido {
   user User? @relation(fields: [userId], references: [id])
 
   @@map("pedidos")
+}
+
+/// Item do pedido — #72.
+///
+/// Antes: o carrinho inteiro era um JSON em `pedidos.items`. Consequências:
+/// não existe consulta "quantas unidades do SKU X vendi", o estoque não sabe
+/// de qual item baixou, o picking não tem linha para conferir e a nota fiscal
+/// não tem item para escriturar.
+///
+/// Guarda **foto** do produto (nome, SKU, preço) no momento da compra: mudar
+/// o preço do catálogo depois não reescreve o que o cliente pagou.
+model PedidoItem {
+  id        String  @id @default(cuid())
+  pedidoId  String  @map("pedido_id")
+  produtoId Int?    @map("produto_id")
+
+  nome       String
+  sku        String?
+  preco      Float
+  quantidade Int
+  /// preco * quantidade, calculado na gravação
+  total      Float
+
+  criadoEm DateTime @default(now()) @map("criado_em")
+
+  pedido  Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produto Produto? @relation(fields: [produtoId], references: [id], onDelete: SetNull)
+
+  @@index([pedidoId])
+  @@index([produtoId])
+  @@map("pedido_itens")
 }
