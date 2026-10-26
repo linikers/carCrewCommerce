@@ -41,3 +41,8 @@ LEFT JOIN produtos pr ON pr.id = NULLIF((item->>'produtoId')::int, 0)
 WHERE p.items IS NOT NULL
   AND jsonb_typeof(p.items) = 'array'
   AND NOT EXISTS (SELECT 1 FROM pedido_itens pi WHERE pi.pedido_id = p.id);
+
+-- `pedidos.items` era NOT NULL (o carrinho era o único lugar do item). Pedido
+-- novo grava em pedido_itens e deixa o JSON nulo. SOLTAR a constraint não
+-- apaga nada: pedido antigo continua com o JSON preenchido.
+ALTER TABLE pedidos ALTER COLUMN items DROP NOT NULL;

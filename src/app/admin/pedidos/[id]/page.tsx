@@ -35,13 +35,23 @@ interface PedidoItem {
   nome: string;
   preco: number;
   quantidade: number;
+  /** só existe no item novo (#72); pedido antigo não tem */
+  sku?: string | null;
   imgUrl?: string | null;
 }
 
 interface Pedido {
   id: string;
   userId: string;
-  items: PedidoItem[];
+  items?: PedidoItem[];
+  itens?: {
+    id: string;
+    nome: string;
+    sku: string | null;
+    preco: number;
+    quantidade: number;
+    total: number;
+  }[];
   total: number;
   status: string;
   createdAt: string;
@@ -317,15 +327,28 @@ export default function PedidoDetalhe() {
                     <TableHead>
                       <TableRow>
                         <TableCell sx={{ fontWeight: 600 }}>Produto</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>SKU</TableCell>
                         <TableCell sx={{ fontWeight: 600 }} align="center">Qtd</TableCell>
                         <TableCell sx={{ fontWeight: 600 }} align="right">Preço</TableCell>
                         <TableCell sx={{ fontWeight: 600 }} align="right">Subtotal</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {(pedido.items as PedidoItem[]).map((item, idx) => (
+                      {/* #72: item relacional; pedido antigo ainda vem do JSON */}
+                      {(pedido.itens?.length
+                        ? pedido.itens.map((i) => ({
+                            nome: i.nome,
+                            sku: i.sku,
+                            quantidade: i.quantidade,
+                            preco: i.preco,
+                          }))
+                        : (pedido.items as PedidoItem[]) || []
+                      ).map((item, idx) => (
                         <TableRow key={idx}>
                           <TableCell>{item.nome}</TableCell>
+                          <TableCell sx={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#888" }}>
+                            {item.sku || "—"}
+                          </TableCell>
                           <TableCell align="center">{item.quantidade}</TableCell>
                           <TableCell align="right">{formatBRL(item.preco)}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: 600 }}>
