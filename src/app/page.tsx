@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import HomeClient from "@/components/HomeClient";
+import { lerConfigConvite } from "@/lib/site-config";
 import { categorias as mockCategorias } from "@/lib/categorias";
 
 export const metadata: Metadata = {
@@ -67,5 +68,9 @@ export default async function HomePage() {
     console.error("Erro ao buscar dados da home:", error);
   }
 
-  return <HomeClient produtos={produtos} categorias={categorias} banners={banners} />;
+  const convite = await lerConfigConvite();
+
+  return (
+    <HomeClient produtos={produtos} categorias={categorias} banners={banners} convite={convite} />
+  );
 }

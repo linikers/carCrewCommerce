@@ -29,6 +29,7 @@ import {
   LocalShipping,
   ViewCarousel,
   Payment,
+  MarkEmailRead,
 } from "@mui/icons-material";
 
 interface MenuItem {
@@ -56,6 +57,7 @@ const gruposMenu: { titulo: string | null; itens: MenuItem[] }[] = [
     itens: [
       { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
       { label: "Clientes", icon: <People />, path: "/admin/clientes" },
+      { label: "Leads", icon: <MarkEmailRead />, path: "/admin/leads" },
     ],
   },
   {

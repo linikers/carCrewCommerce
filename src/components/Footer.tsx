@@ -1,5 +1,6 @@
 "use client";
 
+import CapturaLead from "@/components/CapturaLead";
 import {
   Box,
   Container,
@@ -75,6 +76,14 @@ export default function Footer() {
                 <Facebook />
               </IconButton>
             </Box>
+          </Box>
+
+          {/* Captura de e-mail (7.1) */}
+          <Box sx={{ flex: { xs: "1 1 100%", md: "1 1 30%" }, color: "#cfcfcf" }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, color: "#E65100" }}>
+              Receba lançamentos
+            </Typography>
+            <CapturaLead origem="footer" />
           </Box>
 
           {/* Links rápidos */}
