@@ -1,25 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Orbitron } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import localFont from "next/font/local";
 import MuiProvider from "@/lib/MuiProvider";
 import { CartProvider } from "@/lib/CartContext";
 import AuthProvider from "@/lib/AuthProvider";
 import "./globals.css";
 import Script from "next/script";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const orbitron = Orbitron({
+// Fontes servidas pelo próprio projeto — sem `next/font/google` no build.
+//
+// O build da Vercel falhava em `next/font/google` ("queries have exactly one
+// entry") ao buscar a Orbitron: o download da fonte acontece durante o build e
+// é a única dependência de rede dele. Com o arquivo no repo, o build é
+// determinístico — e mais rápido.
+const orbitron = localFont({
+  src: "./fonts/orbitron-latin.woff2",
   variable: "--font-orbitron",
-  subsets: ["latin"],
-  weight: ["700", "800", "900"],
+  // variável: um arquivo cobre 400–900
+  weight: "400 900",
+  display: "swap",
+  fallback: ["Orbitron", "system-ui", "sans-serif"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
@@ -129,7 +130,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${orbitron.variable}`}
     >
       <body>
         <AuthProvider>
