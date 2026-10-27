@@ -21,6 +21,16 @@ import {
  * O módulo de pedidos não importa o de estoque (regra de fronteira). Quem
  * liga os dois é a rota — o único lugar que pode conhecer ambos.
  */
+/** Devolve ao estoque o que o pedido baixou (cancelamento). */
+export type DevolverEstoque = (
+  tx: TransactionClient,
+  pedidoId: string,
+  itens: { produtoId: number; quantidade: number; nome: string }[]
+) => Promise<void>;
+
+/** Reabre o pedido: baixa o estoque de novo. */
+export type RetomarEstoque = DevolverEstoque;
+
 export type BaixaEstoque = (
   tx: TransactionClient,
   pedidoId: string,
@@ -129,6 +139,94 @@ export async function criarPedido({
     }
 
     return pedido;
+  });
+}
+
+/**
+ * Muda o status do pedido tratando o estoque (#121).
+ *
+ * - cancelar: devolve o que foi baixado (uma vez só, marcado em
+ *   `estoqueDevolvido`)
+ * - reabrir: baixa de novo, e falha se não houver saldo
+ *
+ * As portas de estoque vêm de fora (a rota injeta), porque o módulo de pedidos
+ * não importa o de estoque.
+ */
+export async function mudarStatusPedido(args: {
+  pedidoId: string;
+  novoStatus: string;
+  devolverEstoque?: DevolverEstoque;
+  retomarEstoque?: RetomarEstoque;
+}) {
+  const { pedidoId, novoStatus, devolverEstoque, retomarEstoque } = args;
+
+  return prisma.$transaction(async (tx) => {
+    const pedido = await tx.pedido.findUnique({
+      where: { id: pedidoId },
+      include: { itens: true },
+    });
+
+    if (!pedido) throw new ErroPedido("Pedido não encontrado", "SEM_ITENS");
+
+    if (pedido.status === novoStatus) {
+      return { pedido, mudouEstoque: false as const };
+    }
+
+    const itens = pedido.itens.length
+      ? pedido.itens.map((i) => ({
+          produtoId: i.produtoId ?? 0,
+          quantidade: i.quantidade,
+          nome: i.nome,
+        }))
+      : await itensDoPedido(pedidoId).then((lista) =>
+          lista.map((i) => ({ produtoId: i.produtoId, quantidade: i.quantidade, nome: i.nome }))
+        );
+
+    const cancelando = novoStatus === "cancelado" && pedido.status !== "cancelado";
+    const reabrindo = pedido.status === "cancelado" && novoStatus !== "cancelado";
+
+    let mudouEstoque = false;
+
+    if (cancelando && !pedido.estoqueDevolvido) {
+      if (devolverEstoque) {
+        await devolverEstoque(tx, pedidoId, itens);
+      } else {
+        // sem o módulo de estoque: devolve direto no saldo
+        for (const item of itens) {
+          if (!item.produtoId) continue;
+          await tx.produto.update({
+            where: { id: item.produtoId },
+            data: { estoque: { increment: item.quantidade } },
+          });
+        }
+      }
+      mudouEstoque = true;
+    }
+
+    if (reabrindo && pedido.estoqueDevolvido) {
+      if (retomarEstoque) {
+        await retomarEstoque(tx, pedidoId, itens);
+      } else {
+        for (const item of itens) {
+          if (!item.produtoId) continue;
+          await tx.produto.update({
+            where: { id: item.produtoId },
+            data: { estoque: { decrement: item.quantidade } },
+          });
+        }
+      }
+      mudouEstoque = true;
+    }
+
+    const atualizado = await tx.pedido.update({
+      where: { id: pedidoId },
+      data: {
+        status: novoStatus,
+        estoqueDevolvido: cancelando ? true : reabrindo ? false : pedido.estoqueDevolvido,
+      },
+    });
+
+    return { pedido: atualizado, mudouEstoque };
   });
 }
 
