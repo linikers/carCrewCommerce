@@ -165,7 +165,9 @@ export default function AdminBanners() {
 
               {/* Upload Imagem Desktop */}
               <Box>
-                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>Imagem Desktop (1600×600)</Typography>
+                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
+                  Imagem Desktop <Box component="span" sx={{ color: "#888", fontWeight: 400 }}>— recomendado 1200×400 (3:1)</Box>
+                </Typography>
                 <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                   <CloudinaryUpload
                     onUpload={(url) => setForm({...form, imgDesktop: url})}
@@ -192,7 +194,9 @@ export default function AdminBanners() {
 
               {/* Upload Imagem Mobile */}
               <Box>
-                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>Imagem Mobile (800×400)</Typography>
+                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
+                  Imagem Mobile <Box component="span" sx={{ color: "#888", fontWeight: 400 }}>— recomendado 400×350 (vertical)</Box>
+                </Typography>
                 <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                   <CloudinaryUpload
                     onUpload={(url) => setForm({...form, imgMobile: url})}
