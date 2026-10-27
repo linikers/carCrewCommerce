@@ -64,6 +64,18 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: `/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "drvnlgib2"}/**`,
       },
+      // Fotos vindas do catálogo do Mercado Livre (importação do catálogo do
+      // seller). Sem isso o next/image devolve 400 e o card fica em branco.
+      {
+        protocol: "https",
+        hostname: "http2.mlstatic.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "http2.mlstatic.com",
+        pathname: "/**",
+      },
     ],
   },
 };
