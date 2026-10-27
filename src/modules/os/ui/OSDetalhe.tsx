@@ -8,6 +8,10 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   IconButton,
   MenuItem,
@@ -21,7 +25,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ArrowBack, DeleteOutlined, Add } from "@mui/icons-material";
+import { ArrowBack, DeleteOutlined, Add, Edit } from "@mui/icons-material";
 import { formatBRL, formatDataCurta } from "@/lib/format";
 import {
   STATUS_OS,
@@ -63,6 +67,19 @@ export default function OSDetalhe({ id }: { id: string }) {
   const [ordem, setOrdem] = useState<Ordem | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  // edição dos dados da OS (cliente, veículo, data de abertura)
+  const [editando, setEditando] = useState(false);
+  const [form, setForm] = useState({
+    clienteNome: "",
+    clienteTelefone: "",
+    veiculo: "",
+    placa: "",
+    km: "",
+    descricaoProblema: "",
+    observacoes: "",
+    prazo: "",
+    dataAbertura: "",
+  });
   const [ok, setOk] = useState("");
   const [item, setItem] = useState({ tipo: "servico", descricao: "", quantidade: "1", valorUnit: "" });
   const [salvando, setSalvando] = useState(false);
@@ -103,6 +120,43 @@ export default function OSDetalhe({ id }: { id: string }) {
     } finally {
       setSalvando(false);
     }
+  };
+
+  const abrirEdicao = () => {
+    if (!ordem) return;
+    setForm({
+      clienteNome: ordem.clienteNome,
+      clienteTelefone: ordem.clienteTelefone || "",
+      veiculo: ordem.veiculo,
+      placa: ordem.placa || "",
+      km: ordem.km ? String(ordem.km) : "",
+      descricaoProblema: ordem.descricaoProblema,
+      observacoes: ordem.observacoes || "",
+      prazo: ordem.prazo ? String(ordem.prazo).slice(0, 10) : "",
+      dataAbertura: String(ordem.criadoEm).slice(0, 10),
+    });
+    setEditando(true);
+  };
+
+  const salvarEdicao = async () => {
+    await acao(
+      {
+        acao: "editar",
+        dados: {
+          clienteNome: form.clienteNome,
+          clienteTelefone: form.clienteTelefone || null,
+          veiculo: form.veiculo,
+          placa: form.placa || null,
+          km: form.km ? Number(form.km) : null,
+          descricaoProblema: form.descricaoProblema,
+          observacoes: form.observacoes || null,
+          prazo: form.prazo || null,
+          dataAbertura: form.dataAbertura || null,
+        },
+      },
+      "Dados da OS atualizados."
+    );
+    setEditando(false);
   };
 
   const adicionar = async () => {
@@ -158,6 +212,15 @@ export default function OSDetalhe({ id }: { id: string }) {
               {ordem.prazo ? ` · prazo ${formatDataCurta(ordem.prazo)}` : ""}
             </Typography>
           </Box>
+
+          <Button
+            variant="outlined"
+            startIcon={<Edit />}
+            onClick={abrirEdicao}
+            sx={{ textTransform: "none", height: 40 }}
+          >
+            Editar dados
+          </Button>
 
           <TextField
             size="small"
@@ -246,6 +309,29 @@ export default function OSDetalhe({ id }: { id: string }) {
         </Table>
       </TableContainer>
 
+      {fechada && (
+        <Alert
+          severity={ordem.status === "entregue" ? "info" : "warning"}
+          sx={{ mb: 2, fontSize: "0.82rem" }}
+          action={
+            ordem.status === "entregue" ? (
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => acao({ acao: "status", status: "concluida" }, "OS reaberta.")}
+                sx={{ textTransform: "none" }}
+              >
+                Reabrir
+              </Button>
+            ) : undefined
+          }
+        >
+          {ordem.status === "entregue"
+            ? "OS entregue: peças e serviços estão travados. Reabra para corrigir e feche de novo."
+            : "OS cancelada: não dá para incluir itens (o estoque já foi devolvido). Abra uma nova OS."}
+        </Alert>
+      )}
+
       {!fechada && (
         <Paper sx={{ p: 2, borderRadius: 3 }}>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "120px 1fr 90px 130px auto" }, gap: 1.5, alignItems: "center" }}>
@@ -274,6 +360,43 @@ export default function OSDetalhe({ id }: { id: string }) {
           </Box>
         </Paper>
       )}
+
+      <Dialog open={editando} onClose={() => setEditando(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>Editar dados da OS</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5, mt: 1 }}>
+            <TextField size="small" label="Cliente" value={form.clienteNome}
+              onChange={(e) => setForm({ ...form, clienteNome: e.target.value })} />
+            <TextField size="small" label="Telefone" value={form.clienteTelefone}
+              onChange={(e) => setForm({ ...form, clienteTelefone: e.target.value })} />
+            <TextField size="small" label="Veículo" value={form.veiculo}
+              onChange={(e) => setForm({ ...form, veiculo: e.target.value })} />
+            <TextField size="small" label="Placa" value={form.placa}
+              onChange={(e) => setForm({ ...form, placa: e.target.value.toUpperCase() })} />
+            <TextField size="small" type="number" label="KM" value={form.km}
+              onChange={(e) => setForm({ ...form, km: e.target.value })} />
+            <TextField size="small" type="date" label="Data de abertura" value={form.dataAbertura}
+              slotProps={{ inputLabel: { shrink: true } }}
+              onChange={(e) => setForm({ ...form, dataAbertura: e.target.value })} />
+            <TextField size="small" type="date" label="Prazo" value={form.prazo}
+              slotProps={{ inputLabel: { shrink: true } }}
+              onChange={(e) => setForm({ ...form, prazo: e.target.value })} />
+          </Box>
+          <TextField size="small" fullWidth multiline minRows={2} label="Problema relatado" sx={{ mt: 1.5 }}
+            value={form.descricaoProblema}
+            onChange={(e) => setForm({ ...form, descricaoProblema: e.target.value })} />
+          <TextField size="small" fullWidth multiline minRows={2} label="Observações" sx={{ mt: 1.5 }}
+            value={form.observacoes}
+            onChange={(e) => setForm({ ...form, observacoes: e.target.value })} />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setEditando(false)} sx={{ textTransform: "none" }}>Cancelar</Button>
+          <Button variant="contained" onClick={salvarEdicao} disabled={salvando || !form.clienteNome || !form.veiculo}
+            sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}>
+            Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2, gap: 3 }}>
         <Typography sx={{ fontSize: "0.85rem", color: "#666" }}>Total da OS</Typography>

@@ -44,7 +44,10 @@ interface Ordem {
   itens: { id: string }[];
 }
 
+const hoje = () => new Date().toISOString().slice(0, 10);
+
 const VAZIA = {
+  dataAbertura: hoje(),
   clienteNome: "",
   clienteTelefone: "",
   veiculo: "",
@@ -103,6 +106,7 @@ export default function ListaOS() {
           ...form,
           km: form.km ? Number(form.km) : null,
           prazo: form.prazo || null,
+          dataAbertura: form.dataAbertura || null,
         }),
       });
       const d = await res.json();
@@ -246,6 +250,14 @@ export default function ListaOS() {
             <TextField size="small" label="Veículo (modelo/ano)" value={form.veiculo} placeholder="Gol G5 2012" onChange={(e) => setForm({ ...form, veiculo: e.target.value })} />
             <TextField size="small" label="Placa" value={form.placa} onChange={(e) => setForm({ ...form, placa: e.target.value.toUpperCase() })} />
             <TextField size="small" type="number" label="KM" value={form.km} onChange={(e) => setForm({ ...form, km: e.target.value })} />
+            <TextField
+              size="small"
+              type="date"
+              label="Data de abertura"
+              value={form.dataAbertura}
+              onChange={(e) => setForm({ ...form, dataAbertura: e.target.value })}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
             <TextField size="small" type="date" label="Prazo" value={form.prazo} onChange={(e) => setForm({ ...form, prazo: e.target.value })} slotProps={{ inputLabel: { shrink: true } }} />
             <TextField
               size="small"
