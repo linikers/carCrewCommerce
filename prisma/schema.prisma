@@ -232,6 +232,33 @@ model CredencialCanal {
   @@map("credencial_canal")
 }
 
+/// Mensagem trocada com o cliente sobre um pedido — #122 (6.5).
+///
+/// Antes a operação saía do painel, abria o WhatsApp Web e perdia o histórico:
+/// ninguém sabia o que foi dito ao cliente, nem quando. Aqui cada mensagem fica
+/// registrada com autor, canal e hora.
+///
+/// Envio automático (SMTP / WhatsApp API) fica para depois: por enquanto a tela
+/// registra e abre o app com o texto pronto.
+model MensagemPedido {
+  id       String @id @default(cuid())
+  pedidoId String @map("pedido_id")
+  /// whatsapp | email | interno
+  canal    String
+  /// saida (loja → cliente) | entrada (cliente → loja)
+  direcao  String @default("saida")
+  texto    String
+  autorId  String? @map("autor_id")
+  /// true quando a mensagem saiu de fato (ou foi registrada como enviada)
+  enviado  Boolean @default(false)
+  criadoEm DateTime @default(now()) @map("criado_em")
+
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+
+  @@index([pedidoId, criadoEm])
+  @@map("mensagens_pedido")
+}
+
 model Configuracao {
   chave String @id
   valor Json
@@ -292,6 +319,7 @@ model Pedido {
   /// momento da compra). Mantido só para leitura de pedido antigo.
   items     Json?
   itens     PedidoItem[]
+  mensagens MensagemPedido[]
   total     Float
   status    String   @default("pendente")
   createdAt DateTime @default(now()) @map("created_at")
