@@ -28,6 +28,7 @@ import {
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { labelStatus, STATUS_COLOR } from "@/lib/pedido-status";
+import ConversaPedido from "@/modules/pedidos/ui/ConversaPedido";
 import { formatBRL } from "@/lib/format";
 import { formatarDocumento } from "@/lib/documento";
 
@@ -453,6 +454,13 @@ export default function PedidoDetalhe() {
                   </Box>
                 )}
               </Paper>
+
+              {/* 6.5: falar com o cliente sem sair do pedido */}
+              <ConversaPedido
+                pedidoId={pedido.id}
+                clienteNome={pedido.clienteNome ?? pedido.user?.name ?? null}
+                status={pedido.status}
+              />
             </>
           )}
         </Container>

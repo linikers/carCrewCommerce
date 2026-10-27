@@ -232,6 +232,63 @@ export async function mudarStatusPedido(args: {
   });
 }
 
+/** Nome, telefone e e-mail do pedido — para montar o link de envio. */
+export async function contatoDoPedido(pedidoId: string) {
+  return prisma.pedido.findUnique({
+    where: { id: pedidoId },
+    select: { clienteNome: true, clienteTelefone: true, clienteEmail: true, status: true },
+  });
+}
+
+/** Mensagens trocadas sobre o pedido, mais recentes primeiro. */
+export async function listarMensagens(pedidoId: string) {
+  const mensagens = await prisma.mensagemPedido.findMany({
+    where: { pedidoId },
+    orderBy: { criadoEm: "desc" },
+    take: 200,
+  });
+
+  const ids = [...new Set(mensagens.map((m) => m.autorId).filter(Boolean))] as string[];
+  const usuarios = ids.length
+    ? await prisma.user.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, name: true, email: true },
+      })
+    : [];
+  const porId = new Map(usuarios.map((u) => [u.id, u]));
+
+  return mensagens.map((m) => ({
+    ...m,
+    autor: m.autorId ? porId.get(m.autorId)?.name || porId.get(m.autorId)?.email || null : null,
+  }));
+}
+
+export async function registrarMensagem(args: {
+  pedidoId: string;
+  canal: string;
+  texto: string;
+  autorId: string | null;
+  enviado: boolean;
+}) {
+  return prisma.mensagemPedido.create({
+    data: {
+      pedidoId: args.pedidoId,
+      canal: args.canal,
+      direcao: "saida",
+      texto: args.texto.trim(),
+      autorId: args.autorId,
+      enviado: args.enviado,
+    },
+  });
+}
+
+export async function marcarMensagemEnviada(pedidoId: string, mensagemId: string) {
+  return prisma.mensagemPedido.updateMany({
+    where: { id: mensagemId, pedidoId },
+    data: { enviado: true },
+  });
+}
+
 /**
  * Histórico de status (#123): lê a auditoria e resolve o nome de quem mudou.
  * Pedido sem histórico novo cai no fallback: uma linha com o status atual.
