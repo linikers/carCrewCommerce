@@ -22,6 +22,7 @@ export type IdModulo =
   | "frete"
   | "estoque"
   | "fiscal"
+  | "compras"
   | "financeiro"
   | "marketplace"
   | "pdv"
@@ -91,6 +92,7 @@ export const MODULOS: Modulo[] = [
       { rota: "/admin/pedidos", rotulo: "Pedidos", grupo: "Operação" },
       { rota: "/admin/clientes", rotulo: "Clientes", grupo: "Operação" },
       { rota: "/admin/leads", rotulo: "Leads", grupo: "Operação" },
+      { rota: "/admin/mensagens", rotulo: "Mensagens", grupo: "Configuração", emBreve: true },
     ],
     tabelas: ["pedidos", "pedido_itens", "leads", "users"],
   },
@@ -124,9 +126,23 @@ export const MODULOS: Modulo[] = [
     // emitir não exige o módulo de estoque: a nota precisa de pedido + itens +
     // dados fiscais. Estoques e movimentos são outra conversa (#73).
     dependeDe: ["pedidos"],
-    telas: [{ rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" }],
+    telas: [
+      { rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" },
+      { rota: "/admin/fiscal/notas", rotulo: "Notas emitidas", grupo: "Operação", emBreve: true },
+    ],
     tabelas: ["empresa_fiscal", "fiscal_notas"],
     issue: 79,
+  },
+  {
+    id: "compras",
+    nome: "Compras e fornecedores",
+    descricao:
+      "Cadastro de fornecedor, pedido de compra e entrada no estoque com o custo real da peça.",
+    padraoAtivo: false,
+    dependeDe: ["catalogo"],
+    telas: [{ rota: "/admin/compras", rotulo: "Compras", grupo: "Operação", emBreve: true }],
+    tabelas: ["fornecedores", "compras", "compra_itens"],
+    issue: 76,
   },
   {
     id: "financeiro",

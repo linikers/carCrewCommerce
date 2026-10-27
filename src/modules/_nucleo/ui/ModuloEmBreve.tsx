@@ -46,6 +46,43 @@ const CONTEUDO: Partial<Record<IdModulo, Conteudo>> = {
     ],
     issue: 88,
   },
+  compras: {
+    titulo: "Compras e fornecedores",
+    resumo:
+      "Cadastro de fornecedor, pedido de compra e entrada no estoque com o custo real da peça. Hoje o custo é desconhecido.",
+    itens: [
+      "Fornecedor: nome, CNPJ, contato e prazo de entrega",
+      "Pedido de compra com itens e valor unitário",
+      "Recebimento dá entrada no estoque (movimento)",
+      "Gera conta a pagar quando o financeiro estiver ligado",
+      "Sem fornecedor cadastrado a venda continua normal",
+    ],
+    issue: 76,
+  },
+  fiscal: {
+    titulo: "Notas emitidas",
+    resumo:
+      "Lista das notas geradas por pedido, com status na SEFAZ e o motivo quando houver rejeição.",
+    itens: [
+      "Nota por pedido, com número e série",
+      "Status: autorizada, rejeitada, cancelada",
+      "Rejeição mostra o código e o motivo da SEFAZ",
+      "Baixar o XML e o DANFE em PDF",
+    ],
+    issue: 79,
+  },
+  pedidos: {
+    titulo: "Mensagens",
+    resumo:
+      "Configuração do canal usado para falar com o cliente: manual, gateway próprio ou Cloud API oficial.",
+    itens: [
+      "Modo manual (padrão): registra a mensagem e abre o app",
+      "Gateway próprio: URL e token de um número já pareado",
+      "Cloud API da Meta: número dedicado e templates aprovados",
+      "Chave liga/desliga por canal e botão de teste",
+    ],
+    issue: 149,
+  },
   relatorios: {
     titulo: "Relatórios",
     resumo:

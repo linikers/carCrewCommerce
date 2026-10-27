@@ -76,6 +76,8 @@ const gruposMenu: { titulo: string | null; itens: MenuItem[] }[] = (() => {
         icon: ICONE_POR_ROTA[tela.rota] ?? <Extension />,
         path: tela.rota,
         emBreve: tela.emBreve,
+        // tela que ainda não existe não navega: item desabilitado com a marca
+        disabled: tela.emBreve,
       });
     }
   }
