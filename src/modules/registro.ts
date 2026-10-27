@@ -161,9 +161,10 @@ export const MODULOS: Modulo[] = [
   {
     id: "os",
     nome: "Ordem de serviço",
-    descricao: "Ordens da oficina: serviço, peça aplicada, prazo e orçamento.",
+    descricao: "Ordens da oficina: veículo, diagnóstico, peça, serviço e prazo.",
     padraoAtivo: false,
-    dependeDe: ["pedidos", "estoque"],
+    // OS usa peça e serviço; não exige o módulo de estoque para abrir a ordem
+    dependeDe: [],
     telas: [{ rota: "/admin/os", rotulo: "Ordens de serviço", grupo: "Operação" }],
     tabelas: ["os_ordens", "os_itens"],
     issue: 80,
