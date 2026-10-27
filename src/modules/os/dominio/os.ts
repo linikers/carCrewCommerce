@@ -85,7 +85,9 @@ const TRANSICOES: Record<StatusOS, StatusOS[]> = {
   aprovada: ["execucao", "orcamento", "cancelada"],
   execucao: ["concluida", "cancelada"],
   concluida: ["entregue", "execucao"],
-  entregue: [],
+  // reabrir só para corrigir: voltar de "entregue" para "concluída" não mexe
+  // em estoque (a baixa aconteceu na venda, não no status)
+  entregue: ["concluida"],
   cancelada: [],
 };
 

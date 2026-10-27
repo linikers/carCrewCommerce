@@ -55,6 +55,8 @@ export async function criarOS(dados: {
   descricaoProblema: string;
   observacoes?: string | null;
   prazo?: string | null;
+  /** data de abertura (YYYY-MM-DD). Ausente = agora */
+  dataAbertura?: string | null;
 }) {
   validarNovaOS(dados);
 
@@ -72,6 +74,9 @@ export async function criarOS(dados: {
       descricaoProblema: dados.descricaoProblema.trim(),
       observacoes: dados.observacoes || null,
       prazo: dados.prazo ? new Date(dados.prazo) : null,
+      ...(dados.dataAbertura
+        ? { criadoEm: new Date(`${dados.dataAbertura}T12:00:00`) }
+        : {}),
     },
   });
 }
@@ -165,6 +170,7 @@ export async function atualizarOS(
     descricaoProblema: string;
     observacoes: string | null;
     prazo: string | null;
+    dataAbertura: string | null;
   }>
 ) {
   return prisma.ordemServico.update({
@@ -179,6 +185,9 @@ export async function atualizarOS(
         ? { descricaoProblema: dados.descricaoProblema.trim() }
         : {}),
       ...(dados.observacoes !== undefined ? { observacoes: dados.observacoes } : {}),
+      ...(dados.dataAbertura
+        ? { criadoEm: new Date(`${dados.dataAbertura}T12:00:00`) }
+        : {}),
       ...(dados.prazo !== undefined ? { prazo: dados.prazo ? new Date(dados.prazo) : null } : {}),
     },
   });
