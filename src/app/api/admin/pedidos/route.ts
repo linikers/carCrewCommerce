@@ -73,13 +73,16 @@ export async function PATCH(request: NextRequest) {
     // saldo do produto. A rota é quem liga as duas pontas.
     const estoqueLigado = await moduloAtivo("estoque");
 
+    let statusAnterior: string | null = null;
+
     try {
-      await mudarStatusPedido({
+      const resultado = await mudarStatusPedido({
         pedidoId: id,
         novoStatus: status,
         devolverEstoque: estoqueLigado ? estornarEstoqueDoPedido : undefined,
         retomarEstoque: estoqueLigado ? retomarEstoqueDoPedido : undefined,
       });
+      statusAnterior = resultado.statusAnterior;
     } catch (e) {
       if (e instanceof ErroPedido) {
         return NextResponse.json({ error: e.message }, { status: 404 });
@@ -87,10 +90,12 @@ export async function PATCH(request: NextRequest) {
       throw e;
     }
 
+    // 6.6: sem o "antes" o histórico não conta a história — só o estado final.
     await auditar({
       entidade: "pedido",
       entidadeId: id,
       acao: "alterar",
+      antes: statusAnterior ? { status: statusAnterior } : undefined,
       depois: { status },
     });
 
