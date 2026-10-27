@@ -115,14 +115,14 @@ export const MODULOS: Modulo[] = [
   {
     id: "fiscal",
     nome: "Fiscal (NF-e)",
-    descricao: "Cadastro fiscal da empresa e emissão de nota nos pedidos.",
+    descricao:
+      "Cadastro fiscal da empresa e política de emissão por canal (site opcional, marketplace padrão).",
     padraoAtivo: false,
-    dependeDe: ["pedidos", "estoque"],
-    telas: [
-      { rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" },
-      { rota: "/admin/fiscal/notas", rotulo: "Notas emitidas", grupo: "Operação" },
-    ],
-    tabelas: ["fiscal_emitente", "fiscal_notas", "fiscal_eventos"],
+    // emitir não exige o módulo de estoque: a nota precisa de pedido + itens +
+    // dados fiscais. Estoques e movimentos são outra conversa (#73).
+    dependeDe: ["pedidos"],
+    telas: [{ rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" }],
+    tabelas: ["empresa_fiscal", "fiscal_notas"],
     issue: 79,
   },
   {

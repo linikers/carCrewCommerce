@@ -24,6 +24,13 @@ export interface ProdutoData {
   imagens?: string[];
   destaque?: boolean;
   ordem?: number;
+  // fiscal (#78)
+  ncm?: string | null;
+  cest?: string | null;
+  cfop?: string | null;
+  origem?: number | null;
+  cstIcms?: string | null;
+  unidade?: string | null;
 }
 
 export async function lerProdutos(): Promise<ProdutoData[]> {
@@ -50,6 +57,12 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
     profundidade: p.profundidade,
     veiculos: p.veiculos,
     imagens: p.imagens,
+    ncm: p.ncm,
+    cest: p.cest,
+    cfop: p.cfop,
+    origem: p.origem,
+    cstIcms: p.cstIcms,
+    unidade: p.unidade,
   }));
 }
 
@@ -61,6 +74,12 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
       update: {
         nome: p.nome,
       sku: p.sku ?? null,
+      ncm: p.ncm ?? null,
+      cest: p.cest ?? null,
+      cfop: p.cfop ?? null,
+      origem: p.origem ?? 0,
+      cstIcms: p.cstIcms ?? null,
+      unidade: p.unidade ?? "UN",
         descricao: p.descricao || null,
         preco: p.preco,
         imgUrl: p.imgUrl || null,

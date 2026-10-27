@@ -57,6 +57,12 @@ export default function EditarProduto() {
     profundidade: "",
     veiculos: "",
     sku: "",
+    // fiscal (#78)
+    ncm: "",
+    cfop: "",
+    cstIcms: "",
+    unidade: "UN",
+    origem: "0",
     destaque: false,
     ordem: "0",
     ativo: true,
@@ -82,6 +88,11 @@ export default function EditarProduto() {
           category: data.category,
           parcelamento: String(data.parcelamento),
           sku: data.sku || "",
+          ncm: data.ncm || "",
+          cfop: data.cfop || "",
+          cstIcms: data.cstIcms || "",
+          unidade: data.unidade || "UN",
+          origem: String(data.origem ?? 0),
           estoque: String(data.estoque),
           destaque: Boolean(data.destaque),
           ordem: String(data.ordem ?? 0),
@@ -163,6 +174,35 @@ export default function EditarProduto() {
                   <TextField fullWidth label="SKU (código interno)" value={form.sku}
                     placeholder="CC-0001" helperText="Aparece na busca do painel"
                     onChange={(e) => setForm({ ...form, sku: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.05em", fontSize: "0.72rem" }}>
+                    Fiscal — necessário para emitir nota
+                  </Typography>
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="NCM" value={form.ncm} placeholder="87088000"
+                    helperText="8 dígitos" onChange={(e) => setForm({ ...form, ncm: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="CFOP" value={form.cfop} placeholder="5102"
+                    helperText="4 dígitos" onChange={(e) => setForm({ ...form, cfop: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="CST/ICMS" value={form.cstIcms} placeholder="102"
+                    onChange={(e) => setForm({ ...form, cstIcms: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="Unidade" value={form.unidade} placeholder="UN"
+                    onChange={(e) => setForm({ ...form, unidade: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField select fullWidth label="Origem" value={form.origem}
+                    onChange={(e) => setForm({ ...form, origem: e.target.value })}>
+                    <MenuItem value="0">0 — Nacional</MenuItem>
+                    <MenuItem value="1">1 — Estrangeira (importação direta)</MenuItem>
+                    <MenuItem value="2">2 — Estrangeira (mercado interno)</MenuItem>
+                  </TextField>
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <TextField fullWidth label="Descrição" multiline rows={3} value={form.descricao}

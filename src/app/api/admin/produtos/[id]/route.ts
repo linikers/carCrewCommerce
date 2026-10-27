@@ -34,6 +34,20 @@ export async function GET(
     ativo: produto.ativo,
     destaque: produto.destaque,
     ordem: produto.ordem,
+    // fiscal (#78) — sem isto o formulário abria vazio e o "salvar" apagava
+    ncm: produto.ncm,
+    cest: produto.cest,
+    cfop: produto.cfop,
+    origem: produto.origem,
+    cstIcms: produto.cstIcms,
+    unidade: produto.unidade,
+    // frete e galeria: o formulário de edição também depende destes
+    peso: produto.peso,
+    altura: produto.altura,
+    largura: produto.largura,
+    profundidade: produto.profundidade,
+    veiculos: produto.veiculos,
+    galeria: produto.imagens ?? [],
     criadoEm: produto.criadoEm.toISOString(),
   });
 }
@@ -62,6 +76,28 @@ export async function PUT(
       where: { id: Number(id) },
       data: {
         nome: body.nome ?? existente.nome,
+        // fiscal (#78)
+        ncm:
+          body.ncm !== undefined
+            ? body.ncm
+              ? String(body.ncm).replace(/\D/g, "")
+              : null
+            : existente.ncm,
+        cest:
+          body.cest !== undefined
+            ? body.cest
+              ? String(body.cest).replace(/\D/g, "")
+              : null
+            : existente.cest,
+        cfop:
+          body.cfop !== undefined
+            ? body.cfop
+              ? String(body.cfop).replace(/\D/g, "")
+              : null
+            : existente.cfop,
+        origem: body.origem !== undefined ? Number(body.origem) : existente.origem,
+        cstIcms: body.cstIcms !== undefined ? body.cstIcms || null : existente.cstIcms,
+        unidade: body.unidade !== undefined ? body.unidade || "UN" : existente.unidade,
         sku:
           body.sku !== undefined
             ? body.sku
