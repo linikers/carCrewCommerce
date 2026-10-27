@@ -31,7 +31,13 @@ async function main() {
   console.log("🌱 Seeding database...");
 
   // 1. Categorias
+  // O seed roda no build da Vercel. Se a tabela já tem dado, ele NÃO sobrescreve:
+  // senão todo deploy reverte o que o dono editou no painel (#161).
   const categorias = readJSON("categorias.json");
+  const categoriasExistentes = await prisma.categoria.count();
+  if (categoriasExistentes > 0) {
+    console.log(`  ⏭  ${categoriasExistentes} categorias já existem — seed de categorias pulado`);
+  } else
   for (const cat of categorias) {
     await prisma.categoria.upsert({
       where: { slug: cat.slug },
@@ -50,10 +56,14 @@ async function main() {
       },
     });
   }
-  console.log(`  ✅ ${categorias.length} categorias`);
+  console.log(`  ✅ ${await prisma.categoria.count()} categorias`);
 
   // 2. Produtos
   const produtos = readJSON("produtos.json");
+  const produtosExistentes = await prisma.produto.count();
+  if (produtosExistentes > 0) {
+    console.log(`  ⏭  ${produtosExistentes} produtos já existem — seed de produtos pulado`);
+  } else
   for (const p of produtos) {
     await prisma.produto.upsert({
       where: { id: p.id },
@@ -84,10 +94,14 @@ async function main() {
       },
     });
   }
-  console.log(`  ✅ ${produtos.length} produtos`);
+  console.log(`  ✅ ${await prisma.produto.count()} produtos`);
 
   // 3. Banners
   const banners = readJSON("banners.json");
+  const bannersExistentes = await prisma.banner.count();
+  if (bannersExistentes > 0) {
+    console.log(`  ⏭  ${bannersExistentes} banners já existem — seed de banners pulado`);
+  } else
   for (const b of banners) {
     await prisma.banner.upsert({
       where: { id: b.id },
@@ -116,7 +130,7 @@ async function main() {
       },
     });
   }
-  console.log(`  ✅ ${banners.length} banners`);
+  console.log(`  ✅ ${await prisma.banner.count()} banners`);
 
   // 4. Usuários
   const usuarios = readJSON("usuarios.json");
