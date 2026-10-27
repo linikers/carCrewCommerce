@@ -35,6 +35,12 @@ export interface TelaModulo {
   rotulo: string;
   /** Grupo do menu (Catálogo, Operação, Configuração…). */
   grupo: "Catálogo" | "Operação" | "Configuração";
+  /**
+   * Tela que ainda não foi construída. Aparece no menu com a marca "em breve"
+   * e abre uma página explicando o que o módulo vai fazer — melhor que ligar o
+   * módulo e o menu não mudar nada.
+   */
+  emBreve?: boolean;
 }
 
 export interface Modulo {
@@ -128,9 +134,9 @@ export const MODULOS: Modulo[] = [
     descricao: "Contas a pagar e a receber, fluxo de caixa e conciliação de pedidos.",
     padraoAtivo: false,
     dependeDe: ["pedidos"],
-    // sem tela ainda: aparece no painel de módulos, mas não no menu (item de
-    // menu que leva a lugar nenhum é pior que item ausente)
-    telas: [],
+    telas: [
+      { rota: "/admin/financeiro", rotulo: "Financeiro", grupo: "Operação", emBreve: true },
+    ],
     tabelas: ["fin_titulos", "fin_lancamentos"],
     issue: 77,
   },
@@ -152,7 +158,9 @@ export const MODULOS: Modulo[] = [
     descricao: "Venda presencial com emissão de NFC-e e baixa imediata do estoque.",
     padraoAtivo: false,
     dependeDe: ["estoque", "fiscal"],
-    telas: [],
+    telas: [
+      { rota: "/admin/pdv", rotulo: "PDV", grupo: "Operação", emBreve: true },
+    ],
     tabelas: ["pdv_vendas"],
     issue: 88,
   },
@@ -173,7 +181,9 @@ export const MODULOS: Modulo[] = [
     descricao: "Dashboards de venda, margem e giro com dado do próprio banco.",
     padraoAtivo: false,
     dependeDe: ["pedidos"],
-    telas: [],
+    telas: [
+      { rota: "/admin/relatorios", rotulo: "Relatórios", grupo: "Operação", emBreve: true },
+    ],
     tabelas: [],
     issue: 92,
   },
