@@ -24,7 +24,7 @@ export async function GET() {
 
   const cadastroCompleto = Boolean(
     empresa?.razaoSocial &&
-      cnpjValido(empresa.cnpj) &&
+      cnpjValido(empresa.cnpj ?? "") &&
       empresa.ie &&
       empresa.cidade &&
       empresa.uf

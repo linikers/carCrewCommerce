@@ -10,6 +10,7 @@ export const STATUS_OS = [
   "aberta",
   "orcamento",
   "aprovada",
+  "aguardando_peca",
   "execucao",
   "concluida",
   "entregue",
@@ -22,6 +23,7 @@ export const STATUS_OS_LABEL: Record<StatusOS, string> = {
   aberta: "Aberta",
   orcamento: "Orçamento enviado",
   aprovada: "Aprovada pelo cliente",
+  aguardando_peca: "Aguardando peça",
   execucao: "Em execução",
   concluida: "Concluída",
   entregue: "Entregue",
@@ -32,23 +34,40 @@ export const STATUS_OS_COR: Record<StatusOS, "default" | "info" | "warning" | "p
   aberta: "default",
   orcamento: "info",
   aprovada: "warning",
+  aguardando_peca: "info",
   execucao: "primary",
   concluida: "success",
   entregue: "success",
   cancelada: "error",
 };
 
-export const TIPO_ITEM_LABEL: Record<"peca" | "servico", string> = {
+export const TIPO_ITEM_LABEL: Record<"peca" | "servico" | "terceiro", string> = {
   peca: "Peça",
   servico: "Serviço",
+  terceiro: "Serviço de terceiro",
+};
+
+/** De onde veio a peça. `catalogo` baixa estoque; `externa` não. */
+export const ORIGEM_PECA_LABEL: Record<"catalogo" | "externa", string> = {
+  catalogo: "Do catálogo",
+  externa: "Comprada fora",
 };
 
 export interface ItemOS {
-  tipo: "peca" | "servico";
+  tipo: "peca" | "servico" | "terceiro";
   descricao: string;
   produtoId?: number | null;
+  origem?: "catalogo" | "externa" | null;
+  /** custo do item (peça comprada fora / terceiro) */
+  custo?: number | null;
+  terceiro?: string | null;
   quantidade: number;
   valorUnit: number;
+}
+
+/** Item do catálogo é o único que mexe em estoque. */
+export function baixaEstoque(item: Pick<ItemOS, "tipo" | "origem" | "produtoId">): boolean {
+  return item.tipo === "peca" && item.origem === "catalogo" && !!item.produtoId;
 }
 
 export class ErroOS extends Error {
@@ -82,7 +101,8 @@ export function calcularTotais(itens: ItemOS[]) {
 const TRANSICOES: Record<StatusOS, StatusOS[]> = {
   aberta: ["orcamento", "aprovada", "cancelada"],
   orcamento: ["aprovada", "aberta", "cancelada"],
-  aprovada: ["execucao", "orcamento", "cancelada"],
+  aprovada: ["aguardando_peca", "execucao", "orcamento", "cancelada"],
+  aguardando_peca: ["execucao", "aprovada", "cancelada"],
   execucao: ["concluida", "cancelada"],
   concluida: ["entregue", "execucao"],
   // reabrir só para corrigir: voltar de "entregue" para "concluída" não mexe
@@ -112,8 +132,11 @@ export function validarNovaOS(dados: {
 
 export function validarItem(item: ItemOS): void {
   if (!item.descricao?.trim()) throw new ErroOS("Descrição do item é obrigatória", "ITEM");
-  if (!["peca", "servico"].includes(item.tipo)) {
+  if (!["peca", "servico", "terceiro"].includes(item.tipo)) {
     throw new ErroOS("Tipo do item inválido", "ITEM");
+  }
+  if (item.tipo === "peca" && item.origem === "catalogo" && !item.produtoId) {
+    throw new ErroOS("Peça do catálogo precisa estar vinculada a um produto", "ITEM");
   }
   if (!Number.isFinite(item.quantidade) || item.quantidade <= 0) {
     throw new ErroOS("Quantidade inválida", "ITEM");
