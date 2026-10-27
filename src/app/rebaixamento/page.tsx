@@ -6,13 +6,13 @@ import { serviceSchema, itemListSchema, breadcrumbSchema } from "@/lib/seo-schem
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Rebaixamento de Carro em Maringá | Car Crew Garage",
+    absolute: "Rebaixados em Maringá | Peças e Instalação — Car Crew Garage",
   },
   description:
-    "Tudo para rebaixar seu carro em Maringá-PR: calços antirruído, kits de rebaixamento, bandejas e pontas de eixo. Deixe seu carro na altura ideal com segurança. Venda e instalação.",
+    "Tudo para carro rebaixado em Maringá-PR: calços antirruído, kits de rebaixamento, bandejas e pontas de eixo. Deixe seu carro na altura ideal com segurança. Venda e instalação.",
   alternates: { canonical: "/rebaixamento" },
   openGraph: {
-    title: "Rebaixamento de Carro em Maringá — Car Crew Garage",
+    title: "Rebaixados em Maringá — Car Crew Garage",
     description: "Calços antirruído, kits, bandejas e pontas de eixo para rebaixar seu carro com segurança. Venda e instalação em Maringá-PR.",
     type: "website",
     images: ["/og-image.jpg"],
@@ -45,7 +45,7 @@ export default async function RebaixamentoPage() {
 
   const schema = [
     serviceSchema({
-      name: "Rebaixamento de Carro em Maringá",
+      name: "Rebaixados em Maringá",
       serviceType: "Rebaixamento de Suspensão Automotiva",
       description:
         "Peças e instalação para rebaixar carro: calços antirruído, kits de rebaixamento, bandejas reforçadas e pontas de eixo. Deixe seu carro na altura ideal com segurança. Atendimento em Maringá/PR e região.",
@@ -68,7 +68,7 @@ export default async function RebaixamentoPage() {
         />
       ))}
       <CategoriaLanding
-        h1="Rebaixamento de Carro em Maringá"
+        h1="Rebaixados em Maringá"
         intro={[
           "Rebaixar o carro é o primeiro passo pra deixar o visual com a cara do dono — mas precisa ser feito com peças certas e instalação caprichada. Na Car Crew Garage você encontra calços antirruído, kits de rebaixamento, bandejas reforçadas e pontas de eixo para rebaixar com segurança e sem barulho.",
           "Atendemos os principais modelos do mercado brasileiro: Gol, Voyage, Saveiro, Corsa, Celta, Prisma, Civic, Corolla e muito mais. Seja rebaixamento leve ou projeto mais baixo, nossa equipe em Maringá-PR monta o conjunto ideal pro seu carro — e enviamos peças para todo o Brasil.",

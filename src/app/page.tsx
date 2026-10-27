@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     absolute: "Car Crew Garage — Suspensão Automotiva Custom em Maringá-PR",
   },
   description:
-    "Loja e oficina de suspensão automotiva em Maringá: suspensão a ar, rebaixamento, suspensão esportiva, bolsas de ar, compressores, calços antirruído e amortecedores. Entrega para todo o Brasil.",
+    "Loja e oficina de suspensão automotiva em Maringá: suspensão a ar, rebaixados, suspensão esportiva, bolsas de ar, compressores, calços antirruído e amortecedores. Entrega para todo o Brasil.",
   alternates: { canonical: "/" },
 };
 

@@ -52,7 +52,7 @@ const faqItems: FaqItem[] = [
   {
     question: "A suspensão rebaixada ou lift é legalizada?",
     answer:
-      "Sim, é possível legalizar suspensão rebaixada e lift, respeitando os limites do CONTRAN. Para rebaixamento, o limite é de 10 cm em relação à altura original do veículo (Resolução CONTRAN nº 292/2008). Para lift (elevação), não há limite de altura fixado, mas o veículo precisa passar por vistoria técnica e homologação junto ao DETRAN/PR, com laudo de inspeção veicular. A Car Crew Garage orienta todos os clientes sobre a documentação e o processo de regularização.",
+      "Sim, é possível legalizar suspensão rebaixada e lift, respeitando os limites do CONTRAN. Para carros rebaixados, o limite é de 10 cm em relação à altura original do veículo (Resolução CONTRAN nº 292/2008). Para lift (elevação), não há limite de altura fixado, mas o veículo precisa passar por vistoria técnica e homologação junto ao DETRAN/PR, com laudo de inspeção veicular. A Car Crew Garage orienta todos os clientes sobre a documentação e o processo de regularização.",
   },
   {
     question: "Posso parcelar a instalação?",

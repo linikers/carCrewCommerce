@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 
 const atalhos = [
   { label: "Suspensão a ar", href: "/suspensao-a-ar" },
-  { label: "Rebaixamento", href: "/rebaixamento" },
+  { label: "Rebaixados", href: "/rebaixamento" },
   { label: "Suspensão esportiva", href: "/suspensao-esportiva" },
   { label: "Off-road", href: "/off-road" },
 ];

@@ -48,7 +48,7 @@ export default async function SuspensaoArPage() {
       name: "Suspensão a Ar em Maringá",
       serviceType: "Suspensão Pneumática Automotiva",
       description:
-        "Venda e instalação de sistemas de suspensão a ar: bolsas de ar, compressores e controles bluetooth. Rebaixamento com conforto e nivelamento para qualquer veículo. Atendimento em Maringá/PR e região.",
+        "Venda e instalação de sistemas de suspensão a ar: bolsas de ar, compressores e controles bluetooth. Rebaixados com conforto e nivelamento para qualquer veículo. Atendimento em Maringá/PR e região.",
       url: `${siteUrl}/suspensao-a-ar`,
     }),
     itemListSchema(produtos, siteUrl),

@@ -8,7 +8,7 @@ import { formatData } from "@/lib/format";
 export const metadata: Metadata = {
   title: "Blog — suspensão automotiva sem enrolação",
   description:
-    "Rebaixamento, suspensão a ar, lift e manutenção: conteúdo técnico para decidir antes de comprar a peça.",
+    "Rebaixados, suspensão a ar, lift e manutenção: conteúdo técnico para decidir antes de comprar a peça.",
   alternates: { canonical: "/blog" },
 };
 

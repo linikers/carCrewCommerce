@@ -66,7 +66,7 @@ export default function SobrePage() {
             </Typography>
           </Box>
           <Typography variant="body1" sx={{ lineHeight: 1.9, color: "#444", mb: 2 }}>
-            Seja para um rebaixamento de alto nível, um kit lift preparado para qualquer
+            Seja para um carro rebaixado de alto nível, um kit lift preparado para qualquer
             desafio ou uma customização completa, nossa missão é entregar um resultado
             que supere expectativas e faça seu veículo se destacar por onde passar.
           </Typography>
