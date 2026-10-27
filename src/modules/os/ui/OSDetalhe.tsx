@@ -6,6 +6,7 @@ import {
   Alert,
   Box,
   Button,
+  ButtonBase,
   Chip,
   CircularProgress,
   Dialog,
@@ -70,6 +71,7 @@ export default function OSDetalhe({ id }: { id: string }) {
   const [erro, setErro] = useState("");
   const [ok, setOk] = useState("");
   const [linkAberto, setLinkAberto] = useState(false);
+  const [itemAberto, setItemAberto] = useState(false);
   // edição dos dados da OS (cliente, veículo, data de abertura)
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState({
@@ -87,7 +89,7 @@ export default function OSDetalhe({ id }: { id: string }) {
     { id: string; veiculo: string; status: string; criadoEm: string; total: number }[]
   >([]);
   const [item, setItem] = useState({
-    tipo: "servico",
+    tipo: "peca",
     origem: "catalogo" as "catalogo" | "externa",
     produtoId: null as number | null,
     descricao: "",
@@ -229,6 +231,7 @@ export default function OSDetalhe({ id }: { id: string }) {
     setItem({ ...item, produtoId: null, descricao: "", quantidade: "1", valorUnit: "", custo: "", terceiro: "" });
     setBuscaProduto("");
     setAchados([]);
+    setItemAberto(false);
   };
 
   if (carregando) {
@@ -345,11 +348,33 @@ export default function OSDetalhe({ id }: { id: string }) {
         </Paper>
       )}
 
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1.5 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Peças e serviços</Typography>
-        <Typography sx={{ fontSize: "0.75rem", color: "#888", ml: "auto" }}>
-          Peças {formatBRL(ordem.totalPecas)} · Serviços {formatBRL(ordem.totalServicos)}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1.5, flexWrap: "wrap" }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Itens da OS</Typography>
+        <Typography sx={{ fontSize: "0.75rem", color: "#888" }}>
+          Produtos {formatBRL(ordem.totalPecas)} · Serviços {formatBRL(ordem.totalServicos)}
         </Typography>
+
+        {!fechada && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => {
+              setItem({ ...item, tipo: "peca", origem: "catalogo", produtoId: null, descricao: "", quantidade: "1", valorUnit: "", custo: "", terceiro: "" });
+              setBuscaProduto("");
+              setAchados([]);
+              setItemAberto(true);
+            }}
+            sx={{
+              ml: "auto",
+              backgroundColor: "#BF360C",
+              textTransform: "none",
+              fontWeight: 700,
+              "&:hover": { backgroundColor: "#8C2A09" },
+            }}
+          >
+            Adicionar produto
+          </Button>
+        )}
       </Box>
 
       <TableContainer component={Paper} sx={{ borderRadius: 3, mb: 2 }}>
@@ -426,123 +451,145 @@ export default function OSDetalhe({ id }: { id: string }) {
         </Alert>
       )}
 
-      {!fechada && (
-        <Paper sx={{ p: 2, borderRadius: 3 }}>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "120px 1fr 90px 130px auto" }, gap: 1.5, alignItems: "center" }}>
+
+      <Dialog open={itemAberto} onClose={() => setItemAberto(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>Adicionar produto</DialogTitle>
+        <DialogContent>
+          <TextField
+            select
+            fullWidth
+            size="small"
+            label="O que você está lançando"
+            value={item.tipo === "peca" && item.origem === "catalogo" ? "catalogo" : item.tipo === "peca" ? "externa" : item.tipo}
+            onChange={(e) => {
+              const escolha = e.target.value;
+              if (escolha === "catalogo") {
+                setItem({ ...item, tipo: "peca", origem: "catalogo" });
+              } else if (escolha === "externa") {
+                setItem({ ...item, tipo: "peca", origem: "externa", produtoId: null });
+              } else {
+                setItem({ ...item, tipo: escolha, origem: "externa", produtoId: null });
+              }
+            }}
+            sx={{ mt: 1 }}
+            helperText={
+              item.tipo === "peca" && item.origem === "catalogo"
+                ? "Baixa o estoque na hora"
+                : item.tipo === "peca"
+                  ? "Não mexe no estoque — peça comprada fora"
+                  : "Mão de obra ou serviço de terceiro"
+            }
+          >
+            <MenuItem value="catalogo">Produto do catálogo (baixa estoque)</MenuItem>
+            <MenuItem value="externa">Produto comprado fora (sem estoque)</MenuItem>
+            <MenuItem value="servico">Mão de obra (serviço próprio)</MenuItem>
+            <MenuItem value="terceiro">Serviço de terceiro</MenuItem>
+          </TextField>
+
+          {item.tipo === "peca" && item.origem === "catalogo" ? (
+            <Box sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                size="small"
+                label="Buscar peça no catálogo"
+                placeholder="Nome ou SKU"
+                value={buscaProduto}
+                onChange={(e) => {
+                  setBuscaProduto(e.target.value);
+                  void buscarProduto(e.target.value);
+                }}
+                helperText={item.produtoId ? "Peça vinculada — o estoque dessa peça será baixado" : "Escolha uma peça da lista"}
+              />
+              {achados.length > 0 && (
+                <Box sx={{ border: "1px solid #e0e0e0", borderRadius: 2, mt: 1, maxHeight: 200, overflowY: "auto" }}>
+                  {achados.map((p) => (
+                    <ButtonBase
+                      key={p.id}
+                      onClick={() => escolherProduto(p)}
+                      sx={{
+                        display: "block",
+                        width: "100%",
+                        textAlign: "left",
+                        p: 1.25,
+                        fontSize: "0.82rem",
+                        borderBottom: "1px solid #f0f0f0",
+                        "&:hover": { backgroundColor: "#f5f5f5" },
+                      }}
+                    >
+                      <Box component="span" sx={{ fontWeight: 700 }}>{p.nome}</Box>
+                      <Box component="span" sx={{ color: "#777" }}>
+                        {" "}· {formatBRL(p.preco)} · {p.estoque} em estoque
+                      </Box>
+                    </ButtonBase>
+                  ))}
+                </Box>
+              )}
+            </Box>
+          ) : (
+            <TextField
+              fullWidth
+              size="small"
+              label={item.tipo === "terceiro" ? "O que o terceiro vai fazer" : item.tipo === "peca" ? "Descrição da peça" : "Descrição do serviço"}
+              value={item.descricao}
+              onChange={(e) => setItem({ ...item, descricao: e.target.value })}
+              sx={{ mt: 2 }}
+            />
+          )}
+
+          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.5, mt: 2 }}>
             <TextField
               size="small"
-              select
-              label="Tipo"
-              value={item.tipo === "peca" && item.origem === "externa" ? "peca_externa" : item.tipo}
-              onChange={(e) => {
-                const escolha = e.target.value;
-                if (escolha === "peca_externa") {
-                  setItem({ ...item, tipo: "peca", origem: "externa", produtoId: null });
-                } else {
-                  setItem({
-                    ...item,
-                    tipo: escolha,
-                    produtoId: escolha === "peca" ? item.produtoId : null,
-                    origem: escolha === "peca" ? "catalogo" : "externa",
-                  });
-                }
-              }}
-            >
-              <MenuItem value="servico">Serviço</MenuItem>
-              <MenuItem value="peca">Peça do catálogo</MenuItem>
-              <MenuItem value="peca_externa">Peça comprada fora</MenuItem>
-              <MenuItem value="terceiro">Serviço de terceiro</MenuItem>
-            </TextField>
-
-            {item.tipo === "peca" ? (
-              <Box>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="Peça do catálogo"
-                  placeholder="Digite o nome ou SKU"
-                  value={buscaProduto}
-                  onChange={(e) => {
-                    setBuscaProduto(e.target.value);
-                    void buscarProduto(e.target.value);
-                  }}
-                />
-                {achados.length > 0 && (
-                  <Box sx={{ border: "1px solid #ddd", borderRadius: 1, mt: 0.5, maxHeight: 180, overflowY: "auto" }}>
-                    {achados.map((p) => (
-                      <Box
-                        key={p.id}
-                        onClick={() => escolherProduto(p)}
-                        sx={{ p: 1, cursor: "pointer", fontSize: "0.8rem", "&:hover": { backgroundColor: "#f5f5f5" } }}
-                      >
-                        {p.nome} · {formatBRL(p.preco)} · {p.estoque} em estoque
-                      </Box>
-                    ))}
-                  </Box>
-                )}
-              </Box>
-            ) : (
-              <TextField size="small" label="Descrição" value={item.descricao} onChange={(e) => setItem({ ...item, descricao: e.target.value })} />
-            )}
-            <TextField size="small" type="number" label="Qtd" value={item.quantidade} onChange={(e) => setItem({ ...item, quantidade: e.target.value })} />
-            <TextField size="small" label="Valor unitário" placeholder="0,00" value={item.valorUnit} onChange={(e) => setItem({ ...item, valorUnit: e.target.value })} />
-            <Button
-              variant="outlined"
-              startIcon={<Add />}
-              onClick={adicionar}
-              disabled={salvando || !item.descricao || !item.valorUnit}
-              sx={{ textTransform: "none", height: 40 }}
-            >
-              Adicionar
-            </Button>
+              type="number"
+              label="Quantidade"
+              value={item.quantidade}
+              onChange={(e) => setItem({ ...item, quantidade: e.target.value })}
+              slotProps={{ htmlInput: { min: 1 } }}
+            />
+            <TextField
+              size="small"
+              label="Valor unitário"
+              placeholder="0,00"
+              value={item.valorUnit}
+              onChange={(e) => setItem({ ...item, valorUnit: e.target.value })}
+            />
           </Box>
 
-          <Box sx={{ display: "flex", gap: 1.5, mt: 1.5, flexWrap: "wrap" }}>
-            {item.tipo === "peca" && (
-              <TextField
-                size="small"
-                select
-                label="Origem da peça"
-                value={item.origem}
-                onChange={(e) => setItem({ ...item, origem: e.target.value as "catalogo" | "externa", produtoId: e.target.value === "externa" ? null : item.produtoId })}
-                sx={{ width: 190 }}
-                helperText={item.origem === "catalogo" ? "Baixa o estoque" : "Não mexe no estoque"}
-              >
-                <MenuItem value="catalogo">Do catálogo</MenuItem>
-                <MenuItem value="externa">Comprada fora</MenuItem>
-              </TextField>
-            )}
+          {item.tipo === "terceiro" && (
+            <TextField
+              fullWidth
+              size="small"
+              label="Terceiro (quem executa)"
+              value={item.terceiro}
+              onChange={(e) => setItem({ ...item, terceiro: e.target.value })}
+              sx={{ mt: 2 }}
+            />
+          )}
 
-            {item.tipo === "terceiro" && (
-              <TextField
-                size="small"
-                label="Terceiro"
-                value={item.terceiro}
-                onChange={(e) => setItem({ ...item, terceiro: e.target.value })}
-                sx={{ width: 200 }}
-              />
-            )}
-
-            {(item.tipo === "terceiro" || item.origem === "externa") && (
-              <TextField
-                size="small"
-                label="Custo (opcional)"
-                placeholder="0,00"
-                value={item.custo}
-                onChange={(e) => setItem({ ...item, custo: e.target.value })}
-                helperText="Só para calcular margem"
-                sx={{ width: 170 }}
-              />
-            )}
-
-            {item.produtoId && (
-              <Typography sx={{ fontSize: "0.75rem", color: "#0E7A3F", alignSelf: "center" }}>
-                Peça vinculada ao catálogo — estoque será baixado
-              </Typography>
-            )}
-          </Box>
-        </Paper>
-      )}
+          {(item.tipo === "terceiro" || (item.tipo === "peca" && item.origem === "externa")) && (
+            <TextField
+              fullWidth
+              size="small"
+              label="Custo (opcional)"
+              placeholder="0,00"
+              value={item.custo}
+              onChange={(e) => setItem({ ...item, custo: e.target.value })}
+              sx={{ mt: 2 }}
+              helperText="Só aparece no PDF interno, para calcular margem"
+            />
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setItemAberto(false)} sx={{ textTransform: "none" }}>Cancelar</Button>
+          <Button
+            variant="contained"
+            onClick={adicionar}
+            disabled={salvando || !item.descricao || !item.valorUnit}
+            sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}
+          >
+            {salvando ? "Adicionando…" : "Adicionar"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={editando} onClose={() => setEditando(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: 700 }}>Editar dados da OS</DialogTitle>
