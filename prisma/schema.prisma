@@ -308,6 +308,11 @@ model Pedido {
   // 5.5: sem CPF/CNPJ o pedido não vira nota fiscal depois (6.12).
   clienteDocumento String? @map("cliente_documento")
 
+  /// 6.2: pedido cancelado devolvia estoque a lugar nenhum. Esta marca diz se
+  /// a devolução já aconteceu — evita devolver duas vezes e diz se precisa
+  /// baixar de novo ao reabrir.
+  estoqueDevolvido Boolean @default(false) @map("estoque_devolvido")
+
   user User? @relation(fields: [userId], references: [id])
 
   @@map("pedidos")

@@ -1,4 +1,11 @@
 import { requireAdmin } from "@/lib/api-auth";
+import { moduloAtivo } from "@/modules/config";
+import {
+  estornarEstoqueDoPedido,
+  retomarEstoqueDoPedido,
+} from "@/modules/estoque/dados/movimentos";
+import { mudarStatusPedido } from "@/modules/pedidos/dados/pedidos";
+import { ErroPedido } from "@/modules/pedidos/dominio/pedido";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { STATUS_PEDIDO, statusValido } from "@/lib/pedido-status";
@@ -60,16 +67,24 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // updateMany: se o pedido não existir, count vem 0 — antes o `update`
-    // estourava, caía no catch e devolvia { success: true, mock: true }.
-    // A tela mostrava "status alterado" sem ter alterado nada.
-    const { count } = await prisma.pedido.updateMany({
-      where: { id },
-      data: { status, updatedAt: new Date() },
-    });
+    // 6.2: cancelar precisa devolver o estoque, senão o saldo fica baixado
+    // para sempre. Com o módulo de estoque ligado a devolução vira movimento
+    // (com histórico e possibilidade de reabrir); desligado, vai direto no
+    // saldo do produto. A rota é quem liga as duas pontas.
+    const estoqueLigado = await moduloAtivo("estoque");
 
-    if (count === 0) {
-      return NextResponse.json({ error: "Pedido não encontrado" }, { status: 404 });
+    try {
+      await mudarStatusPedido({
+        pedidoId: id,
+        novoStatus: status,
+        devolverEstoque: estoqueLigado ? estornarEstoqueDoPedido : undefined,
+        retomarEstoque: estoqueLigado ? retomarEstoqueDoPedido : undefined,
+      });
+    } catch (e) {
+      if (e instanceof ErroPedido) {
+        return NextResponse.json({ error: e.message }, { status: 404 });
+      }
+      throw e;
     }
 
     await auditar({

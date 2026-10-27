@@ -82,6 +82,64 @@ export async function baixarEstoqueDoPedido(
   }
 }
 
+/**
+ * Devolve ao estoque tudo que o pedido baixou (#121).
+ *
+ * Chamado no cancelamento. O controle de "já devolvi" fica em
+ * `pedidos.estoque_devolvido` — contar movimento não serve, porque pedido
+ * cancelado e reaberto tem os dois tipos no histórico.
+ */
+export async function estornarEstoqueDoPedido(
+  tx: Tx,
+  pedidoId: string,
+  itens: { produtoId: number; quantidade: number; nome: string }[]
+) {
+  const curto = pedidoId.slice(-6).toUpperCase();
+
+  for (const item of itens) {
+    if (!item.produtoId) continue;
+    await registrarMovimento(
+      {
+        produtoId: item.produtoId,
+        tipo: "estorno",
+        quantidade: item.quantidade,
+        motivo: `Cancelamento — pedido ${curto}`,
+        origem: "estorno",
+        pedidoId,
+      },
+      tx
+    );
+  }
+}
+
+/**
+ * Reabre pedido cancelado: baixa o estoque outra vez. Se não houver saldo
+ * (vendeu depois do cancelamento), a transação falha com a mensagem de saldo —
+ * melhor recusar do que ficar com saldo negativo.
+ */
+export async function retomarEstoqueDoPedido(
+  tx: Tx,
+  pedidoId: string,
+  itens: { produtoId: number; quantidade: number; nome: string }[]
+) {
+  const curto = pedidoId.slice(-6).toUpperCase();
+
+  for (const item of itens) {
+    if (!item.produtoId) continue;
+    await registrarMovimento(
+      {
+        produtoId: item.produtoId,
+        tipo: "saida",
+        quantidade: item.quantidade,
+        motivo: `Reativação — pedido ${curto}`,
+        origem: "pedido",
+        pedidoId,
+      },
+      tx
+    );
+  }
+}
+
 /** Saldo de todas as peças (para a tela de estoque). */
 export async function listarSaldos() {
   return prisma.produto.findMany({
