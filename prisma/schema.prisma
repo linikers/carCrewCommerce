@@ -214,7 +214,7 @@ model OrdemServico {
   descricaoProblema String  @map("descricao_problema")
   observacoes       String?
 
-  /// aberta | orcamento | aprovada | execucao | concluida | entregue | cancelada
+  /// abre | orcamento | aprovada | aguardando_peca | execucao | concluida | entregue | cancelada
   status String @default("aberta")
 
   totalPecas    Float @default(0) @map("total_pecas")
@@ -222,6 +222,10 @@ model OrdemServico {
   total         Float @default(0)
 
   prazo DateTime?
+
+  /// link público do orçamento: o cliente abre sem login e aprova/recusa
+  tokenPublico String? @unique @map("token_publico")
+  aprovadoEm   DateTime? @map("aprovado_em")
 
   criadoEm     DateTime @default(now()) @map("criado_em")
   atualizadoEm DateTime @updatedAt @map("atualizado_em")
@@ -239,6 +243,12 @@ model OsItem {
   tipo      String
   descricao String
   produtoId Int?   @map("produto_id")
+  /// de onde veio a peça: catalogo (baixa estoque) | externa (comprada fora)
+  origem    String?
+  /// custo do item (peça comprada fora / serviço de terceiro). Nulo = desconhecido
+  custo     Float?
+  /// quem executou o serviço de terceiro
+  terceiro  String?
   quantidade Int
   valorUnit  Float @map("valor_unit")
   total      Float

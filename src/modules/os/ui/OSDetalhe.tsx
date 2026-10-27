@@ -25,7 +25,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ArrowBack, DeleteOutlined, Add, Edit } from "@mui/icons-material";
+import { ArrowBack, DeleteOutlined, Add, Edit, Send } from "@mui/icons-material";
 import { formatBRL, formatDataCurta } from "@/lib/format";
 import {
   STATUS_OS,
@@ -59,6 +59,7 @@ interface Ordem {
   total: number;
   prazo: string | null;
   criadoEm: string;
+  tokenPublico?: string | null;
   itens: Item[];
 }
 
@@ -67,6 +68,8 @@ export default function OSDetalhe({ id }: { id: string }) {
   const [ordem, setOrdem] = useState<Ordem | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  const [ok, setOk] = useState("");
+  const [linkAberto, setLinkAberto] = useState(false);
   // edição dos dados da OS (cliente, veículo, data de abertura)
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState({
@@ -80,8 +83,21 @@ export default function OSDetalhe({ id }: { id: string }) {
     prazo: "",
     dataAbertura: "",
   });
-  const [ok, setOk] = useState("");
-  const [item, setItem] = useState({ tipo: "servico", descricao: "", quantidade: "1", valorUnit: "" });
+  const [historico, setHistorico] = useState<
+    { id: string; veiculo: string; status: string; criadoEm: string; total: number }[]
+  >([]);
+  const [item, setItem] = useState({
+    tipo: "servico",
+    origem: "catalogo" as "catalogo" | "externa",
+    produtoId: null as number | null,
+    descricao: "",
+    quantidade: "1",
+    valorUnit: "",
+    custo: "",
+    terceiro: "",
+  });
+  const [buscaProduto, setBuscaProduto] = useState("");
+  const [achados, setAchados] = useState<{ id: number; nome: string; preco: number; estoque: number }[]>([]);
   const [salvando, setSalvando] = useState(false);
 
   const carregar = async () => {
@@ -91,8 +107,17 @@ export default function OSDetalhe({ id }: { id: string }) {
       setCarregando(false);
       return;
     }
-    setOrdem(await res.json());
+    const dados = await res.json();
+    setOrdem(dados);
     setCarregando(false);
+
+    if (dados?.placa) {
+      const h = await fetch(`/api/admin/os/historico?placa=${encodeURIComponent(dados.placa)}&ignorar=${id}`);
+      if (h.ok) {
+        const hd = await h.json();
+        setHistorico(hd.ordens ?? []);
+      }
+    }
   };
 
   useEffect(() => {
@@ -120,6 +145,31 @@ export default function OSDetalhe({ id }: { id: string }) {
     } finally {
       setSalvando(false);
     }
+  };
+
+  const buscarProduto = async (termo: string) => {
+    setBuscaProduto(termo);
+    if (termo.trim().length < 2) {
+      setAchados([]);
+      return;
+    }
+    const res = await fetch(`/api/admin/busca?q=${encodeURIComponent(termo)}`);
+    if (!res.ok) return;
+    const d = await res.json();
+    setAchados((d.produtos ?? []).slice(0, 6));
+  };
+
+  const escolherProduto = (p: { id: number; nome: string; preco: number }) => {
+    setItem({
+      ...item,
+      produtoId: p.id,
+      origem: "catalogo",
+      tipo: "peca",
+      descricao: p.nome,
+      valorUnit: String(p.preco),
+    });
+    setBuscaProduto(p.nome);
+    setAchados([]);
   };
 
   const abrirEdicao = () => {
@@ -165,14 +215,20 @@ export default function OSDetalhe({ id }: { id: string }) {
         acao: "item",
         item: {
           tipo: item.tipo,
+          origem: item.tipo === "peca" ? item.origem : null,
+          produtoId: item.origem === "catalogo" ? item.produtoId : null,
           descricao: item.descricao,
           quantidade: Number(item.quantidade),
           valorUnit: Number(String(item.valorUnit).replace(",", ".")),
+          custo: item.custo ? Number(String(item.custo).replace(",", ".")) : null,
+          terceiro: item.terceiro || null,
         },
       },
       "Item adicionado."
     );
-    setItem({ tipo: item.tipo, descricao: "", quantidade: "1", valorUnit: "" });
+    setItem({ ...item, produtoId: null, descricao: "", quantidade: "1", valorUnit: "", custo: "", terceiro: "" });
+    setBuscaProduto("");
+    setAchados([]);
   };
 
   if (carregando) {
@@ -222,6 +278,15 @@ export default function OSDetalhe({ id }: { id: string }) {
             Editar dados
           </Button>
 
+          <Button
+            variant="outlined"
+            startIcon={<Send />}
+            onClick={() => setLinkAberto(true)}
+            sx={{ textTransform: "none", height: 40 }}
+          >
+            Enviar orçamento
+          </Button>
+
           <TextField
             size="small"
             select
@@ -250,6 +315,26 @@ export default function OSDetalhe({ id }: { id: string }) {
           </Typography>
         )}
       </Paper>
+
+      {historico.length > 0 && (
+        <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, mb: 3 }}>
+          <Typography sx={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#888", mb: 1 }}>
+            Este carro já passou aqui ({historico.length})
+          </Typography>
+          {historico.map((h) => (
+            <Box
+              key={h.id}
+              onClick={() => router.push(`/admin/os/${h.id}`)}
+              sx={{ display: "flex", gap: 2, py: 0.75, cursor: "pointer", fontSize: "0.82rem", "&:hover": { color: "#BF360C" } }}
+            >
+              <Box component="span" sx={{ color: "#888", minWidth: 78 }}>{formatDataCurta(h.criadoEm)}</Box>
+              <Box component="span" sx={{ flex: 1 }}>{h.veiculo}</Box>
+              <Box component="span" sx={{ color: "#888" }}>{STATUS_OS_LABEL[h.status as StatusOS] ?? h.status}</Box>
+              <Box component="span" sx={{ fontWeight: 600 }}>{formatBRL(h.total)}</Box>
+            </Box>
+          ))}
+        </Paper>
+      )}
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1.5 }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Peças e serviços</Typography>
@@ -339,13 +424,57 @@ export default function OSDetalhe({ id }: { id: string }) {
               size="small"
               select
               label="Tipo"
-              value={item.tipo}
-              onChange={(e) => setItem({ ...item, tipo: e.target.value })}
+              value={item.tipo === "peca" && item.origem === "externa" ? "peca_externa" : item.tipo}
+              onChange={(e) => {
+                const escolha = e.target.value;
+                if (escolha === "peca_externa") {
+                  setItem({ ...item, tipo: "peca", origem: "externa", produtoId: null });
+                } else {
+                  setItem({
+                    ...item,
+                    tipo: escolha,
+                    produtoId: escolha === "peca" ? item.produtoId : null,
+                    origem: escolha === "peca" ? "catalogo" : "externa",
+                  });
+                }
+              }}
             >
               <MenuItem value="servico">Serviço</MenuItem>
-              <MenuItem value="peca">Peça</MenuItem>
+              <MenuItem value="peca">Peça do catálogo</MenuItem>
+              <MenuItem value="peca_externa">Peça comprada fora</MenuItem>
+              <MenuItem value="terceiro">Serviço de terceiro</MenuItem>
             </TextField>
-            <TextField size="small" label="Descrição" value={item.descricao} onChange={(e) => setItem({ ...item, descricao: e.target.value })} />
+
+            {item.tipo === "peca" ? (
+              <Box>
+                <TextField
+                  size="small"
+                  fullWidth
+                  label="Peça do catálogo"
+                  placeholder="Digite o nome ou SKU"
+                  value={buscaProduto}
+                  onChange={(e) => {
+                    setBuscaProduto(e.target.value);
+                    void buscarProduto(e.target.value);
+                  }}
+                />
+                {achados.length > 0 && (
+                  <Box sx={{ border: "1px solid #ddd", borderRadius: 1, mt: 0.5, maxHeight: 180, overflowY: "auto" }}>
+                    {achados.map((p) => (
+                      <Box
+                        key={p.id}
+                        onClick={() => escolherProduto(p)}
+                        sx={{ p: 1, cursor: "pointer", fontSize: "0.8rem", "&:hover": { backgroundColor: "#f5f5f5" } }}
+                      >
+                        {p.nome} · {formatBRL(p.preco)} · {p.estoque} em estoque
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            ) : (
+              <TextField size="small" label="Descrição" value={item.descricao} onChange={(e) => setItem({ ...item, descricao: e.target.value })} />
+            )}
             <TextField size="small" type="number" label="Qtd" value={item.quantidade} onChange={(e) => setItem({ ...item, quantidade: e.target.value })} />
             <TextField size="small" label="Valor unitário" placeholder="0,00" value={item.valorUnit} onChange={(e) => setItem({ ...item, valorUnit: e.target.value })} />
             <Button
@@ -357,6 +486,51 @@ export default function OSDetalhe({ id }: { id: string }) {
             >
               Adicionar
             </Button>
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 1.5, mt: 1.5, flexWrap: "wrap" }}>
+            {item.tipo === "peca" && (
+              <TextField
+                size="small"
+                select
+                label="Origem da peça"
+                value={item.origem}
+                onChange={(e) => setItem({ ...item, origem: e.target.value as "catalogo" | "externa", produtoId: e.target.value === "externa" ? null : item.produtoId })}
+                sx={{ width: 190 }}
+                helperText={item.origem === "catalogo" ? "Baixa o estoque" : "Não mexe no estoque"}
+              >
+                <MenuItem value="catalogo">Do catálogo</MenuItem>
+                <MenuItem value="externa">Comprada fora</MenuItem>
+              </TextField>
+            )}
+
+            {item.tipo === "terceiro" && (
+              <TextField
+                size="small"
+                label="Terceiro"
+                value={item.terceiro}
+                onChange={(e) => setItem({ ...item, terceiro: e.target.value })}
+                sx={{ width: 200 }}
+              />
+            )}
+
+            {(item.tipo === "terceiro" || item.origem === "externa") && (
+              <TextField
+                size="small"
+                label="Custo (opcional)"
+                placeholder="0,00"
+                value={item.custo}
+                onChange={(e) => setItem({ ...item, custo: e.target.value })}
+                helperText="Só para calcular margem"
+                sx={{ width: 170 }}
+              />
+            )}
+
+            {item.produtoId && (
+              <Typography sx={{ fontSize: "0.75rem", color: "#0E7A3F", alignSelf: "center" }}>
+                Peça vinculada ao catálogo — estoque será baixado
+              </Typography>
+            )}
           </Box>
         </Paper>
       )}
@@ -394,6 +568,57 @@ export default function OSDetalhe({ id }: { id: string }) {
           <Button variant="contained" onClick={salvarEdicao} disabled={salvando || !form.clienteNome || !form.veiculo}
             sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}>
             Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={linkAberto} onClose={() => setLinkAberto(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>Enviar orçamento ao cliente</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ fontSize: "0.82rem", color: "#666", mb: 2 }}>
+            O cliente abre o link sem login, vê peças e serviços (sem custo interno) e aprova ou
+            recusa. Quando aprova, esta OS vai para <strong>Aprovada pelo cliente</strong>.
+          </Typography>
+
+          <TextField
+            fullWidth
+            size="small"
+            value={ordem.tokenPublico ? `${typeof window !== "undefined" ? window.location.origin : ""}/orcamento/${ordem.tokenPublico}` : ""}
+            slotProps={{ input: { readOnly: true } }}
+            helperText={ordem.tokenPublico ? "" : "Esta OS é antiga e não tem link. Abra uma nova."}
+          />
+
+          {ordem.status === "aberta" && (
+            <Alert severity="info" sx={{ mt: 2, fontSize: "0.78rem" }}>
+              Mude o status para <strong>Orçamento enviado</strong> antes de mandar — assim o
+              painel mostra que ele está esperando resposta.
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setLinkAberto(false)} sx={{ textTransform: "none" }}>Fechar</Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              if (ordem.tokenPublico) {
+                void navigator.clipboard.writeText(`${window.location.origin}/orcamento/${ordem.tokenPublico}`);
+              }
+            }}
+            sx={{ textTransform: "none" }}
+          >
+            Copiar link
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (!ordem.tokenPublico) return;
+              const link = `${window.location.origin}/orcamento/${ordem.tokenPublico}`;
+              const texto = `Olá, ${ordem.clienteNome}! Seu orçamento da Car Crew para o ${ordem.veiculo} está pronto: ${link}`;
+              window.open(`https://wa.me/${(ordem.clienteTelefone || "").replace(/\D/g, "")}?text=${encodeURIComponent(texto)}`, "_blank");
+            }}
+            sx={{ backgroundColor: "#25D366", textTransform: "none", fontWeight: 700, "&:hover": { backgroundColor: "#1eb955" } }}
+          >
+            Enviar no WhatsApp
           </Button>
         </DialogActions>
       </Dialog>
