@@ -112,6 +112,9 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
   }, []);
 
   const [bannerIndex, setBannerIndex] = useState(0);
+  // Proporção real da arte carregada (largura/altura). Serve para o container
+  // ter a MESMA forma do arquivo — assim nada é cortado, em nenhuma largura.
+  const [bannerRatio, setBannerRatio] = useState<number | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -192,11 +195,13 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
             backgroundColor: banners[bannerIndex]?.corFundo || "#1A1A1A",
             color: banners[bannerIndex]?.corTexto || "#fff",
             overflow: "hidden",
-            // A arte desktop é 1200x400: com altura fixa de 350 o `cover`
-            // cortava o CTA pintado no SVG. Com aspect-ratio a arte cabe
-            // inteira em qualquer largura.
-            minHeight: { xs: 0, md: 0 },
-            height: { xs: 250, md: 360 },
+            // A arte desktop é 1200x400 (3:1) e a mobile 400x350. Com altura
+            // fixa, `cover` cortava até 44% da arte em tela larga — e o texto
+            // pintado no SVG ia junto. Agora o container assume a proporção do
+            // arquivo: 3:1 em 1440 vira 480 px de altura, sem corte.
+            aspectRatio: bannerRatio ? String(bannerRatio) : undefined,
+            height: bannerRatio ? "auto" : { xs: 250, md: 360 },
+            maxHeight: { xs: 460, md: 620 },
             display: "flex",
             alignItems: "center",
             transition: "background-color 0.5s ease",
@@ -207,12 +212,20 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
             fetchPriority="high"
             src={isMobile ? banners[bannerIndex]?.imgMobile : banners[bannerIndex]?.imgDesktop}
             alt={banners[bannerIndex]?.titulo}
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              if (img.naturalWidth && img.naturalHeight) {
+                setBannerRatio(img.naturalWidth / img.naturalHeight);
+              }
+            }}
             sx={{
               position: "absolute",
               width: "100%",
               height: "100%",
-              objectFit: { xs: "contain", md: "cover" },
-              objectPosition: { xs: "center center", md: "center bottom" },
+              // contain: a arte aparece inteira. Como o container já tem a
+              // proporção do arquivo, não sobra faixa.
+              objectFit: "contain",
+              objectPosition: "center center",
               inset: 0,
             }}
           />
