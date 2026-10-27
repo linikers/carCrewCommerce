@@ -43,35 +43,59 @@ interface MenuItem {
   tag?: string;
 }
 
+/** Ícone por rota — o registro de módulos é dado puro, sem JSX. */
+const ICONE_POR_ROTA: Record<string, React.ReactNode> = {
+  "/admin/produtos": <Inventory2 />,
+  "/admin/categorias": <Category />,
+  "/admin/banners": <ViewCarousel />,
+  "/admin/pedidos": <ShoppingBag />,
+  "/admin/clientes": <People />,
+  "/admin/leads": <MarkEmailRead />,
+  "/admin/estoque": <Inventory2 />,
+  "/admin/frete": <LocalShipping />,
+  "/admin/pagamentos": <Payment />,
+  "/admin/modulos": <Extension />,
+};
+
 // 5.3: a lista era um bloco só, sem hierarquia. Agrupada por área de
 // trabalho — o que se usa junto fica junto.
-const gruposMenu: { titulo: string | null; itens: MenuItem[] }[] = [
-  { titulo: null, itens: [{ label: "Dashboard", icon: <Dashboard />, path: "/admin" }] },
-  {
-    titulo: "Catálogo",
-    itens: [
-      { label: "Produtos", icon: <Inventory2 />, path: "/admin/produtos" },
-      { label: "Categorias", icon: <Category />, path: "/admin/categorias" },
-      { label: "Banners", icon: <ViewCarousel />, path: "/admin/banners" },
-    ],
-  },
-  {
-    titulo: "Operação",
-    itens: [
-      { label: "Pedidos", icon: <ShoppingBag />, path: "/admin/pedidos" },
-      { label: "Clientes", icon: <People />, path: "/admin/clientes" },
-      { label: "Leads", icon: <MarkEmailRead />, path: "/admin/leads" },
-    ],
-  },
-  {
-    titulo: "Configuração",
-    itens: [
-      { label: "Frete", icon: <LocalShipping />, path: "/admin/frete" },
-      { label: "Pagamentos", icon: <Payment />, path: "/admin/pagamentos" },
-      { label: "Módulos", icon: <Extension />, path: "/admin/modulos" },
-    ],
-  },
-];
+//
+// A partir do #73 o menu é **derivado do registro de módulos**: tela nova de
+// módulo aparece aqui sozinha. Antes era lista fixa — o Estoque foi ligado e
+// não apareceu no menu (a tela existia, sem porta de entrada).
+const gruposMenu: { titulo: string | null; itens: MenuItem[] }[] = (() => {
+  const porGrupo: Record<string, MenuItem[]> = { Catálogo: [], Operação: [], Configuração: [] };
+
+  for (const modulo of MODULOS) {
+    for (const tela of modulo.telas) {
+      porGrupo[tela.grupo]?.push({
+        label: tela.rotulo,
+        icon: ICONE_POR_ROTA[tela.rota] ?? <Extension />,
+        path: tela.rota,
+      });
+    }
+  }
+
+  // telas que não pertencem a módulo (configuração solta do painel)
+  porGrupo["Configuração"].push({
+    label: "Pagamentos",
+    icon: <Payment />,
+    path: "/admin/pagamentos",
+  });
+  porGrupo["Configuração"].push({
+    label: "Módulos",
+    icon: <Extension />,
+    path: "/admin/modulos",
+  });
+
+  return [
+    { titulo: null, itens: [{ label: "Dashboard", icon: <Dashboard />, path: "/admin" }] },
+    ...(["Catálogo", "Operação", "Configuração"] as const).map((titulo) => ({
+      titulo,
+      itens: porGrupo[titulo],
+    })),
+  ];
+})();
 
 // rota do painel -> módulo dono. Usado para esconder o que está desligado.
 const moduloDaRota: Record<string, string> = MODULOS.reduce(

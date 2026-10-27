@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ErroPedido, normalizarItens } from "@/modules/pedidos/dominio/pedido";
 import { criarPedido } from "@/modules/pedidos/dados/pedidos";
+import { baixarEstoqueDoPedido } from "@/modules/estoque/dados/movimentos";
+import { moduloAtivo } from "@/modules/config";
 
 /**
  * Casca fina do checkout: lê o corpo, normaliza e chama o módulo de pedidos.
@@ -34,12 +36,16 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     const userId = (session?.user as { id?: string } | undefined)?.id ?? null;
 
+    // Composition root: a rota é o único lugar que conhece os dois módulos.
+    const estoqueLigado = await moduloAtivo("estoque");
+
     const pedido = await criarPedido({
       itens,
       userId,
       frete: Number(freight) || 0,
       paymentMethod,
       form: form ?? null,
+      baixarEstoque: estoqueLigado ? baixarEstoqueDoPedido : undefined,
     });
 
     return NextResponse.json({
