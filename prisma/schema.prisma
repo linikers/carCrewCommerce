@@ -186,6 +186,60 @@ model EmpresaFiscal {
   @@map("empresa_fiscal")
 }
 
+/// Ordem de serviço da oficina — #80.
+///
+/// Oficina não vende só peça: entra veículo, diagnóstico, serviço e prazo. Sem
+/// OS o orçamento é conversa no WhatsApp e o histórico do carro se perde.
+model OrdemServico {
+  id String @id @default(cuid())
+
+  clienteNome      String  @map("cliente_nome")
+  clienteTelefone  String? @map("cliente_telefone")
+  clienteEmail     String? @map("cliente_email")
+  clienteDocumento String? @map("cliente_documento")
+
+  veiculo String
+  placa   String?
+  km      Int?
+
+  descricaoProblema String  @map("descricao_problema")
+  observacoes       String?
+
+  /// aberta | orcamento | aprovada | execucao | concluida | entregue | cancelada
+  status String @default("aberta")
+
+  totalPecas    Float @default(0) @map("total_pecas")
+  totalServicos Float @default(0) @map("total_servicos")
+  total         Float @default(0)
+
+  prazo DateTime?
+
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  itens OsItem[]
+
+  @@index([status])
+  @@index([clienteTelefone])
+  @@map("os_ordens")
+}
+
+model OsItem {
+  id        String @id @default(cuid())
+  ordemId   String @map("ordem_id")
+  tipo      String
+  descricao String
+  produtoId Int?   @map("produto_id")
+  quantidade Int
+  valorUnit  Float @map("valor_unit")
+  total      Float
+
+  ordem OrdemServico @relation(fields: [ordemId], references: [id], onDelete: Cascade)
+
+  @@index([ordemId])
+  @@map("os_itens")
+}
+
 /// Certificado A1 da empresa (#78/#79).
 ///
 /// O .pfx fica **cifrado** (AES-256-GCM) no banco, com a senha cifrada junto —
