@@ -22,6 +22,7 @@ export type IdModulo =
   | "frete"
   | "estoque"
   | "fiscal"
+  | "compras"
   | "financeiro"
   | "marketplace"
   | "pdv"
@@ -35,6 +36,12 @@ export interface TelaModulo {
   rotulo: string;
   /** Grupo do menu (Catálogo, Operação, Configuração…). */
   grupo: "Catálogo" | "Operação" | "Configuração";
+  /**
+   * Tela que ainda não foi construída. Aparece no menu com a marca "em breve"
+   * e abre uma página explicando o que o módulo vai fazer — melhor que ligar o
+   * módulo e o menu não mudar nada.
+   */
+  emBreve?: boolean;
 }
 
 export interface Modulo {
@@ -85,6 +92,7 @@ export const MODULOS: Modulo[] = [
       { rota: "/admin/pedidos", rotulo: "Pedidos", grupo: "Operação" },
       { rota: "/admin/clientes", rotulo: "Clientes", grupo: "Operação" },
       { rota: "/admin/leads", rotulo: "Leads", grupo: "Operação" },
+      { rota: "/admin/mensagens", rotulo: "Mensagens", grupo: "Configuração", emBreve: true },
     ],
     tabelas: ["pedidos", "pedido_itens", "leads", "users"],
   },
@@ -118,9 +126,23 @@ export const MODULOS: Modulo[] = [
     // emitir não exige o módulo de estoque: a nota precisa de pedido + itens +
     // dados fiscais. Estoques e movimentos são outra conversa (#73).
     dependeDe: ["pedidos"],
-    telas: [{ rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" }],
+    telas: [
+      { rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" },
+      { rota: "/admin/fiscal/notas", rotulo: "Notas emitidas", grupo: "Operação", emBreve: true },
+    ],
     tabelas: ["empresa_fiscal", "fiscal_notas"],
     issue: 79,
+  },
+  {
+    id: "compras",
+    nome: "Compras e fornecedores",
+    descricao:
+      "Cadastro de fornecedor, pedido de compra e entrada no estoque com o custo real da peça.",
+    padraoAtivo: false,
+    dependeDe: ["catalogo"],
+    telas: [{ rota: "/admin/compras", rotulo: "Compras", grupo: "Operação", emBreve: true }],
+    tabelas: ["fornecedores", "compras", "compra_itens"],
+    issue: 76,
   },
   {
     id: "financeiro",
@@ -128,9 +150,9 @@ export const MODULOS: Modulo[] = [
     descricao: "Contas a pagar e a receber, fluxo de caixa e conciliação de pedidos.",
     padraoAtivo: false,
     dependeDe: ["pedidos"],
-    // sem tela ainda: aparece no painel de módulos, mas não no menu (item de
-    // menu que leva a lugar nenhum é pior que item ausente)
-    telas: [],
+    telas: [
+      { rota: "/admin/financeiro", rotulo: "Financeiro", grupo: "Operação", emBreve: true },
+    ],
     tabelas: ["fin_titulos", "fin_lancamentos"],
     issue: 77,
   },
@@ -152,7 +174,9 @@ export const MODULOS: Modulo[] = [
     descricao: "Venda presencial com emissão de NFC-e e baixa imediata do estoque.",
     padraoAtivo: false,
     dependeDe: ["estoque", "fiscal"],
-    telas: [],
+    telas: [
+      { rota: "/admin/pdv", rotulo: "PDV", grupo: "Operação", emBreve: true },
+    ],
     tabelas: ["pdv_vendas"],
     issue: 88,
   },
@@ -173,7 +197,9 @@ export const MODULOS: Modulo[] = [
     descricao: "Dashboards de venda, margem e giro com dado do próprio banco.",
     padraoAtivo: false,
     dependeDe: ["pedidos"],
-    telas: [],
+    telas: [
+      { rota: "/admin/relatorios", rotulo: "Relatórios", grupo: "Operação", emBreve: true },
+    ],
     tabelas: [],
     issue: 92,
   },

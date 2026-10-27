@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   Badge,
+  Chip,
   Box,
   Drawer,
   List,
@@ -41,6 +42,8 @@ interface MenuItem {
   path: string;
   disabled?: boolean;
   tag?: string;
+  /** tela ainda não construída: aparece com a marca "em breve" */
+  emBreve?: boolean;
 }
 
 /** Ícone por rota — o registro de módulos é dado puro, sem JSX. */
@@ -72,6 +75,9 @@ const gruposMenu: { titulo: string | null; itens: MenuItem[] }[] = (() => {
         label: tela.rotulo,
         icon: ICONE_POR_ROTA[tela.rota] ?? <Extension />,
         path: tela.rota,
+        emBreve: tela.emBreve,
+        // tela que ainda não existe não navega: item desabilitado com a marca
+        disabled: tela.emBreve,
       });
     }
   }
@@ -259,7 +265,18 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               {item.icon}
             </ListItemIcon>
             <ListItemText
-              primary={item.label}
+              primary={
+                <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                  {item.label}
+                  {item.emBreve && (
+                    <Chip
+                      size="small"
+                      label="em breve"
+                      sx={{ height: 16, fontSize: "0.55rem", backgroundColor: "rgba(255,255,255,0.12)", color: "#ddd" }}
+                    />
+                  )}
+                </Box>
+              }
               sx={{ "& .MuiListItemText-primary": { fontSize: "0.9rem" } }}
             />
             {contadorDe(item.path) > 0 && (
@@ -316,7 +333,18 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               {item.icon}
             </ListItemIcon>
             <ListItemText
-              primary={item.label}
+              primary={
+                <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                  {item.label}
+                  {item.emBreve && (
+                    <Chip
+                      size="small"
+                      label="em breve"
+                      sx={{ height: 16, fontSize: "0.55rem", backgroundColor: "rgba(255,255,255,0.12)", color: "#ddd" }}
+                    />
+                  )}
+                </Box>
+              }
               sx={{ "& .MuiListItemText-primary": { fontSize: "0.85rem" } }}
             />
           </ListItemButton>
