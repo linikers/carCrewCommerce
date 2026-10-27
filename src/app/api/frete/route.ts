@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { exigirModulo } from "@/modules/guard";
-import { cotar, type ItemFrete } from "@/modules/frete/dominio/cotacao";
+import type { ItemFrete } from "@/modules/frete/dominio/cotacao";
+import { cotarFrete } from "@/modules/frete/dados/servico";
 
 /**
  * Casca fina: valida o corpo e chama o domínio do módulo de frete.
@@ -21,7 +22,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ erro: "Sem itens para cotar" }, { status: 400 });
     }
 
-    const cotacao = cotar(body.cepDestino, itens);
+    const valorDeclarado = Number((body as { valorDeclarado?: number }).valorDeclarado) || 0;
+    const cotacao = await cotarFrete(body.cepDestino, itens, valorDeclarado);
     if (!cotacao) {
       return NextResponse.json({ erro: "CEP inválido" }, { status: 400 });
     }

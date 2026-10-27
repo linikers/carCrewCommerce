@@ -126,6 +126,7 @@ model Produto {
   categoria Categoria @relation(fields: [categorySlug], references: [slug])
 
   itensPedido PedidoItem[]
+  movimentos  EstoqueMovimento[]
 
   @@map("produtos")
 }
@@ -375,6 +376,35 @@ model Pedido {
 ///
 /// Guarda **foto** do produto (nome, SKU, preço) no momento da compra: mudar
 /// o preço do catálogo depois não reescreve o que o cliente pagou.
+/// Movimento de estoque — #73.
+///
+/// `Produto.estoque` era um número digitado à mão: sem histórico, sem quem
+/// mexeu, sem como reconciliar quando a contagem física divergisse. Cada
+/// entrada, saída, ajuste ou estorno vira uma linha aqui; o saldo do produto
+/// passa a ser a soma dos movimentos (mantida em `Produto.estoque` para não
+/// somar a tabela inteira em toda listagem).
+model EstoqueMovimento {
+  id        String   @id @default(cuid())
+  produtoId Int      @map("produto_id")
+  tipo      String
+  /// positivo = entra, negativo = sai. Zero só em ajuste de conferência.
+  quantidade Int
+  /// saldo do produto depois deste movimento
+  saldoDepois Int   @map("saldo_depois")
+  motivo     String
+  /// de onde veio: pedido, manual, compra, estorno, conferencia
+  origem     String
+  pedidoId   String?  @map("pedido_id")
+  usuarioId  String?  @map("usuario_id")
+  criadoEm   DateTime @default(now()) @map("criado_em")
+
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@index([produtoId, criadoEm])
+  @@index([pedidoId])
+  @@map("estoque_movimentos")
+}
+
 model PedidoItem {
   id        String  @id @default(cuid())
   pedidoId  String  @map("pedido_id")

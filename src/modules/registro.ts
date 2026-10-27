@@ -105,10 +105,7 @@ export const MODULOS: Modulo[] = [
       "Movimento de estoque, saldo por depósito e custo médio — em vez de um número digitado à mão.",
     padraoAtivo: false,
     dependeDe: ["catalogo", "pedidos"],
-    telas: [
-      { rota: "/admin/estoque", rotulo: "Estoque", grupo: "Operação" },
-      { rota: "/admin/estoque/movimentos", rotulo: "Movimentos", grupo: "Operação" },
-    ],
+    telas: [{ rota: "/admin/estoque", rotulo: "Estoque", grupo: "Operação" }],
     tabelas: ["estoque_movimentos", "estoque_saldos"],
     issue: 73,
   },
@@ -131,10 +128,9 @@ export const MODULOS: Modulo[] = [
     descricao: "Contas a pagar e a receber, fluxo de caixa e conciliação de pedidos.",
     padraoAtivo: false,
     dependeDe: ["pedidos"],
-    telas: [
-      { rota: "/admin/financeiro", rotulo: "Financeiro", grupo: "Operação" },
-      { rota: "/admin/financeiro/contas", rotulo: "Contas", grupo: "Operação" },
-    ],
+    // sem tela ainda: aparece no painel de módulos, mas não no menu (item de
+    // menu que leva a lugar nenhum é pior que item ausente)
+    telas: [],
     tabelas: ["fin_titulos", "fin_lancamentos"],
     issue: 77,
   },
@@ -156,7 +152,7 @@ export const MODULOS: Modulo[] = [
     descricao: "Venda presencial com emissão de NFC-e e baixa imediata do estoque.",
     padraoAtivo: false,
     dependeDe: ["estoque", "fiscal"],
-    telas: [{ rota: "/admin/pdv", rotulo: "PDV", grupo: "Operação" }],
+    telas: [],
     tabelas: ["pdv_vendas"],
     issue: 88,
   },
@@ -177,7 +173,7 @@ export const MODULOS: Modulo[] = [
     descricao: "Dashboards de venda, margem e giro com dado do próprio banco.",
     padraoAtivo: false,
     dependeDe: ["pedidos"],
-    telas: [{ rota: "/admin/relatorios", rotulo: "Relatórios", grupo: "Operação" }],
+    telas: [],
     tabelas: [],
     issue: 92,
   },
