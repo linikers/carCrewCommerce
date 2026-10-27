@@ -73,6 +73,7 @@ export default async function ProdutoPage(props: {
     nome: dbProduto.nome,
     descricao: dbProduto.descricao || "",
     preco: dbProduto.preco,
+    descontoPercent: dbProduto.descontoPercent ?? 0,
     imgUrl: dbProduto.imgUrl || "/produtos/placeholder.svg",
     category: dbProduto.categorySlug as any,
     parcelamento: dbProduto.parcelamento || 12,

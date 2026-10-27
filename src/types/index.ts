@@ -5,6 +5,8 @@ export interface Produto {
   nome: string;
   descricao: string;
   preco: number;
+  /** desconto à vista em % (0 = sem desconto) */
+  descontoPercent?: number;
   imgUrl: string;
   galeria?: string[];
   destaque?: boolean;

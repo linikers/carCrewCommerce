@@ -1,5 +1,6 @@
 "use client";
 
+import { calcularPreco } from "@/lib/preco";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, notFound, useRouter } from "next/navigation";
@@ -61,7 +62,8 @@ export default function ProdutoDetalheClient({
   }
 
   const parcelas = produto.parcelamento || 12;
-  const valorParcela = produto.preco / parcelas;
+  const preco = calcularPreco(produto.preco, produto.descontoPercent);
+  const valorParcela = preco.por / parcelas;
   const sobConsulta = produto.preco <= 0;
 
   // view_item — mede quais peças recebem visita
@@ -84,7 +86,7 @@ export default function ProdutoDetalheClient({
   const waLink = `https://wa.me/5544998133182?text=${encodeURIComponent(
     sobConsulta
       ? `Olá! Quero um orçamento para: ${produto.nome}`
-      : `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
+      : `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(preco.por)})`
   )}`;
 
   // 2.5: a página dizia "frete no checkout" e o checkout é que pedia o CEP.
@@ -306,7 +308,21 @@ export default function ProdutoDetalheClient({
                 mb: 1,
               }}
             >
-              {sobConsulta ? "Sob Consulta" : formatBRL(produto.preco)}
+              {sobConsulta ? (
+                "Sob Consulta"
+              ) : preco.temDesconto ? (
+                <Box component="span" sx={{ display: "inline-flex", alignItems: "baseline", gap: 1.5, flexWrap: "wrap" }}>
+                  <Box component="span" sx={{ color: "#9a9a9a", fontSize: "1rem", fontWeight: 500, textDecoration: "line-through" }}>
+                    {formatBRL(preco.de)}
+                  </Box>
+                  {formatBRL(preco.por)}
+                  <Box component="span" sx={{ backgroundColor: "#0E7A3F", color: "#fff", fontSize: "0.7rem", fontWeight: 700, px: 1, py: 0.3, borderRadius: 1 }}>
+                    -{preco.percentual}% à vista
+                  </Box>
+                </Box>
+              ) : (
+                formatBRL(preco.por)
+              )}
             </Typography>
 
             {!sobConsulta && (

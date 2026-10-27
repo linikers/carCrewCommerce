@@ -57,6 +57,7 @@ export default function EditarProduto() {
     profundidade: "",
     veiculos: "",
     sku: "",
+    descontoPercent: "0",
     // fiscal (#78)
     ncm: "",
     cfop: "",
@@ -88,6 +89,7 @@ export default function EditarProduto() {
           category: data.category,
           parcelamento: String(data.parcelamento),
           sku: data.sku || "",
+          descontoPercent: String(data.descontoPercent ?? 0),
           ncm: data.ncm || "",
           cfop: data.cfop || "",
           cstIcms: data.cstIcms || "",
@@ -174,6 +176,11 @@ export default function EditarProduto() {
                   <TextField fullWidth label="SKU (código interno)" value={form.sku}
                     placeholder="CC-0001" helperText="Aparece na busca do painel"
                     onChange={(e) => setForm({ ...form, sku: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="Desconto (%)" type="number" value={form.descontoPercent}
+                    helperText="Vitrine e pedido"
+                    onChange={(e) => setForm({ ...form, descontoPercent: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#666", textTransform: "uppercase", letterSpacing: "0.05em", fontSize: "0.72rem" }}>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { calcularPreco } from "@/lib/preco";
 import {
   Card,
   CardMedia,
@@ -25,7 +26,8 @@ export default function ProductCard({
   onAddToCart,
 }: ProductCardProps) {
   const parcelas = produto.parcelamento || 12;
-  const valorParcela = produto.preco / parcelas;
+  const preco = calcularPreco(produto.preco, produto.descontoPercent);
+  const valorParcela = preco.por / parcelas;
   const sobConsulta = produto.preco <= 0;
 
   return (
@@ -144,7 +146,21 @@ export default function ProductCard({
             mb: 0.5,
           }}
         >
-          {sobConsulta ? "Sob Consulta" : formatBRL(produto.preco)}
+          {sobConsulta ? (
+            "Sob Consulta"
+          ) : preco.temDesconto ? (
+            <Box component="span" sx={{ display: "inline-flex", alignItems: "baseline", gap: 1 }}>
+              <Box component="span" sx={{ color: "#9a9a9a", fontSize: "0.9rem", fontWeight: 500, textDecoration: "line-through" }}>
+                {formatBRL(preco.de)}
+              </Box>
+              {formatBRL(preco.por)}
+              <Box component="span" sx={{ backgroundColor: "#0E7A3F", color: "#fff", fontSize: "0.65rem", fontWeight: 700, px: 0.75, py: 0.25, borderRadius: 1 }}>
+                -{preco.percentual}%
+              </Box>
+            </Box>
+          ) : (
+            formatBRL(preco.por)
+          )}
         </Typography>
 
         {/* Parcelamento */}
@@ -217,7 +233,7 @@ export default function ProductCard({
                 variant="outlined"
                 startIcon={<WhatsApp />}
                 href={`https://wa.me/5544998133182?text=${encodeURIComponent(
-                  `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(produto.preco)})`
+                  `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(preco.por)})`
                 )}`}
                 target="_blank"
                 onClick={(e) => {

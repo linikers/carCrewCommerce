@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { formatBRL } from "@/lib/format";
+import { calcularPreco } from "@/lib/preco";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -35,11 +36,13 @@ import {
   Visibility,
   VisibilityOff,
   Inventory2,
+  LocalOffer,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Produto {
   sku?: string | null;
+  descontoPercent?: number;
   id: number;
   nome: string;
   preco: number;
@@ -58,6 +61,10 @@ export default function AdminProdutos() {
   const [erro, setErro] = useState("");
   const [pagina, setPagina] = useState(0);           // 0-based, como o TablePagination
   const [porPagina, setPorPagina] = useState(20);
+  // desconto em lote (#desconto): aplica no que está filtrado na tela
+  const [descontoAberto, setDescontoAberto] = useState(false);
+  const [descontoPercent, setDescontoPercent] = useState("5");
+  const [salvandoDesconto, setSalvandoDesconto] = useState(false);
   const [ordemPor, setOrdemPor] = useState<"id" | "nome" | "preco" | "estoque">("id");
   const [ordemDir, setOrdemDir] = useState<"asc" | "desc">("desc");
   // 6.3/6.4: sem visão de "sem preço" e "estoque baixo" a lista não servia
@@ -91,6 +98,27 @@ export default function AdminProdutos() {
     const termo = params.get("q");
     if (termo) setSearch(termo);
   }, []);
+
+
+
+  const aplicarDesconto = async (percentual: number, ids: number[]) => {
+    setSalvandoDesconto(true);
+    try {
+      const res = await fetch("/api/admin/produtos/desconto", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids, percentual }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Falha ao aplicar");
+      setDescontoAberto(false);
+      await carregar();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Falha ao aplicar o desconto");
+    } finally {
+      setSalvandoDesconto(false);
+    }
+  };
 
   const alternarAtivo = async (id: number, ativoAtual: boolean) => {
     try {
@@ -128,7 +156,7 @@ export default function AdminProdutos() {
             sx={{ mt: 2, backgroundColor: "#BF360C", textTransform: "none" }}>
             Login Admin
           </Button>
-        </Container>
+      </Container>
       </Box>
     );
   }
@@ -191,6 +219,15 @@ export default function AdminProdutos() {
             sx={{ backgroundColor: "#BF360C", "&:hover": { bgcolor: "#BF360C" }, textTransform: "none" }}
           >
             Novo Produto
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<LocalOffer />}
+            onClick={() => setDescontoAberto(true)}
+            sx={{ textTransform: "none", borderColor: "#BF360C", color: "#BF360C" }}
+          >
+            Desconto
           </Button>
         </Box>
 
@@ -289,7 +326,30 @@ export default function AdminProdutos() {
                       {p.nome}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, color: p.preco > 0 ? "#BF360C" : "#999" }}>
-                      {p.preco > 0 ? formatBRL(p.preco) : "Sob consulta"}
+                      {p.preco > 0 ? (
+                        (() => {
+                          const preco = calcularPreco(p.preco, p.descontoPercent);
+                          return preco.temDesconto ? (
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+                              <Box component="span" sx={{ color: "#9a9a9a", textDecoration: "line-through", fontSize: "0.72rem", fontWeight: 500 }}>
+                                {formatBRL(preco.de)}
+                              </Box>
+                              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                {formatBRL(preco.por)}
+                                <Chip
+                                  size="small"
+                                  label={`-${preco.percentual}%`}
+                                  sx={{ height: 16, fontSize: "0.6rem", backgroundColor: "#E8F5EC", color: "#0E7A3F", fontWeight: 700 }}
+                                />
+                              </Box>
+                            </Box>
+                          ) : (
+                            formatBRL(preco.por)
+                          );
+                        })()
+                      ) : (
+                        "Sob consulta"
+                      )}
                     </TableCell>
                     <TableCell>
                       <Chip label={p.category} size="small" variant="outlined" />
@@ -345,6 +405,53 @@ export default function AdminProdutos() {
             />
           </TableContainer>
         )}
+        <Dialog open={descontoAberto} onClose={() => setDescontoAberto(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>Aplicar desconto</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ fontSize: "0.82rem", color: "#666", mb: 2 }}>
+            Vai valer para <strong>{filtrados.length} produto(s)</strong> — exatamente o que está
+            filtrado nesta tela. O preço com desconto aparece na vitrine, no carrinho e é o valor
+            gravado no pedido.
+          </Typography>
+
+          <TextField
+            size="small"
+            type="number"
+            label="Desconto (%)"
+            value={descontoPercent}
+            onChange={(e) => setDescontoPercent(e.target.value)}
+            slotProps={{ htmlInput: { min: 0, max: 90, step: 0.5 } }}
+            helperText="0 remove o desconto. Máximo 90%."
+            fullWidth
+          />
+
+          {Number(descontoPercent) > 0 && (
+            <Typography sx={{ fontSize: "0.75rem", color: "#0E7A3F", mt: 1.5 }}>
+              Exemplo: peça de {formatBRL(100)} passa a {formatBRL(calcularPreco(100, Number(descontoPercent)).por)}.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setDescontoAberto(false)} sx={{ textTransform: "none" }}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => aplicarDesconto(0, filtrados.map((p) => p.id))}
+            disabled={salvandoDesconto}
+            sx={{ textTransform: "none", color: "#b3261e" }}
+          >
+            Remover desconto
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => aplicarDesconto(Number(descontoPercent), filtrados.map((p) => p.id))}
+            disabled={salvandoDesconto || !descontoPercent}
+            sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}
+          >
+            {salvandoDesconto ? "Aplicando…" : "Aplicar"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       </Container>
 
       {/* Modal excluir */}
