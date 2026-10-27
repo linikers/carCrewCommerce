@@ -186,6 +186,51 @@ model EmpresaFiscal {
   @@map("empresa_fiscal")
 }
 
+/// Certificado A1 da empresa (#78/#79).
+///
+/// O .pfx fica **cifrado** (AES-256-GCM) no banco, com a senha cifrada junto —
+/// o arquivo nunca vai para o repo nem para o disco do servidor. A chave de
+/// cifra vem de `CONFIG_SECRET_KEY` (env).
+model CertificadoDigital {
+  id String @id @default("unica")
+
+  nomeArquivo String @map("nome_arquivo")
+  /// base64 do blob cifrado (iv + tag + ciphertext)
+  conteudo    String
+  /// senha do .pfx, cifrada com a mesma chave
+  senha       String
+
+  titular  String?
+  cnpj     String?
+  emissor  String?
+  validoDe DateTime? @map("valido_de")
+  validoAte DateTime? @map("valido_ate")
+
+  criadoEm    DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  @@map("certificado_digital")
+}
+
+/// Credenciais de canal de venda (Shopee, Mercado Livre…).
+///
+/// Guarda o que a integração precisa para autenticar, cifrado. O `canal` é a
+/// chave: um registro por marketplace. Sincronizar catálogo/pedido é o #83/#84
+/// — aqui é só o cadastro para o dia em que a integração rodar.
+model CredencialCanal {
+  id String @id @default(cuid())
+
+  canal String @unique
+  /// JSON cifrado com os campos do canal
+  dados String
+  ativo Boolean @default(false)
+
+  conectadoEm DateTime? @map("conectado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  @@map("credencial_canal")
+}
+
 model Configuracao {
   chave String @id
   valor Json

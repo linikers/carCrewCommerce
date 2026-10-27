@@ -22,7 +22,8 @@ import {
   Typography,
   FormControlLabel,
 } from "@mui/material";
-import { WarningAmber, VerifiedUser, Lock } from "@mui/icons-material";
+import { WarningAmber, VerifiedUser } from "@mui/icons-material";
+import CertificadoA1 from "./CertificadoA1";
 
 interface Empresa {
   razaoSocial: string;
@@ -324,26 +325,6 @@ export default function FiscalAdmin() {
           <TextField size="small" type="number" label="Próximo número" value={empresa.proximoNumero} onChange={(e) => setEmpresa({ ...empresa, proximoNumero: Number(e.target.value) })} />
         </Box>
 
-        <Typography sx={{ fontWeight: 700, mt: 3, mb: 1 }}>Certificado A1</Typography>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-          <Lock sx={{ fontSize: 16, color: "#888" }} />
-          <Typography sx={{ fontSize: "0.75rem", color: "#777" }}>
-            O arquivo .pfx e a senha ficam nos segredos do deploy — nunca no banco nem no
-            repositório. Aqui registramos só nome e validade para avisar quando vencer.
-          </Typography>
-        </Box>
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
-          <TextField size="small" label="Nome do arquivo" placeholder="certificado-carcrew.pfx" value={empresa.certificadoNome || ""} onChange={(e) => setEmpresa({ ...empresa, certificadoNome: e.target.value })} />
-          <TextField
-            size="small"
-            type="date"
-            label="Validade"
-            value={empresa.certificadoValidade ? String(empresa.certificadoValidade).slice(0, 10) : ""}
-            onChange={(e) => setEmpresa({ ...empresa, certificadoValidade: e.target.value || null })}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-        </Box>
-
         <Button
           variant="contained"
           onClick={salvarEmpresa}
@@ -353,6 +334,8 @@ export default function FiscalAdmin() {
           {salvando ? "Salvando…" : "Salvar cadastro"}
         </Button>
       </Paper>
+
+      <CertificadoA1 onMudou={carregar} />
 
       {/* Pendências */}
       <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>

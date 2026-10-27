@@ -119,7 +119,45 @@ export async function salvarPolitica(pedido: Partial<PoliticaEmissao>): Promise<
   return nova;
 }
 
-/** Peças que não podem entrar numa nota por falta de campo fiscal. */
+/** Certificado A1 guardado (sem os campos cifrados). */
+export async function lerCertificadoSalvo() {
+  return prisma.certificadoDigital.findUnique({
+    where: { id: "unica" },
+    select: {
+      nomeArquivo: true,
+      titular: true,
+      cnpj: true,
+      emissor: true,
+      validoDe: true,
+      validoAte: true,
+      atualizadoEm: true,
+    },
+  });
+}
+
+export async function gravarCertificado(dados: {
+  nomeArquivo: string;
+  conteudo: string;
+  senha: string;
+  titular: string | null;
+  cnpj: string | null;
+  emissor: string | null;
+  validoDe: Date | null;
+  validoAte: Date | null;
+}) {
+  return prisma.certificadoDigital.upsert({
+    where: { id: "unica" },
+    create: { id: "unica", ...dados },
+    update: dados,
+    select: { nomeArquivo: true, titular: true, cnpj: true, validoAte: true },
+  });
+}
+
+export async function removerCertificado() {
+  await prisma.certificadoDigital.deleteMany({ where: { id: "unica" } });
+}
+
+/** Peças que podem entrar numa nota por falta de campo fiscal. */
 export async function listarPendencias(): Promise<PendenciaProduto[]> {
   const produtos = await prisma.produto.findMany({
     select: {
