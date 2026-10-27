@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { lerPoliticaPreco, precoSiteDe } from "@/lib/politica-preco";
 import prisma from "@/lib/prisma";
 import ProdutoDetalheClient from "@/components/ProdutoDetalheClient";
 import type { Produto, Categoria } from "@/types";
@@ -60,10 +61,13 @@ export default async function ProdutoPage(props: {
   const numericId = Number(id);
 
   // Buscar produto do banco
-  const dbProduto = await prisma.produto.findUnique({
-    where: { id: numericId },
-    include: { categoria: true },
-  });
+  const [dbProduto, politicaPreco] = await Promise.all([
+    prisma.produto.findUnique({
+      where: { id: numericId },
+      include: { categoria: true, precosCanal: true },
+    }),
+    lerPoliticaPreco(),
+  ]);
 
   if (!dbProduto || !dbProduto.ativo) notFound();
 
@@ -72,7 +76,9 @@ export default async function ProdutoPage(props: {
     id: dbProduto.id,
     nome: dbProduto.nome,
     descricao: dbProduto.descricao || "",
-    preco: dbProduto.preco,
+    // preço do site já com a política do canal (#preco); promoção do item fica
+    // no descontoPercent
+    preco: precoSiteDe(dbProduto, politicaPreco),
     descontoPercent: dbProduto.descontoPercent ?? 0,
     imgUrl: dbProduto.imgUrl || "/produtos/placeholder.svg",
     category: dbProduto.categorySlug as any,

@@ -104,6 +104,9 @@ model Produto {
   /// UN, CX, KG, M, PC…
   unidade      String?   @default("UN")
   descricao    String?
+  /// Preço de referência (o praticado no marketplace). Nulo = usa `preco`.
+  precoBase    Float?    @map("preco_base")
+  /// Preço de venda NO SITE, já com a política do canal aplicada.
   preco        Float
   imgUrl       String?
   imagens      String[]  @default([])
@@ -131,6 +134,7 @@ model Produto {
 
   itensPedido PedidoItem[]
   movimentos  EstoqueMovimento[]
+  precosCanal PrecoCanal[]
 
   @@map("produtos")
 }
@@ -352,6 +356,8 @@ model Pedido {
   itens     PedidoItem[]
   total     Float
   status    String   @default("pendente")
+  /// canal de venda: site | shopee | mercado_livre | manual | pdv
+  canal     String   @default("site")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -387,6 +393,24 @@ model Pedido {
 /// entrada, saída, ajuste ou estorno vira uma linha aqui; o saldo do produto
 /// passa a ser a soma dos movimentos (mantida em `Produto.estoque` para não
 /// somar a tabela inteira em toda listagem).
+/// Preço diferente por canal, por item (#preco-canal).
+/// Nada aqui = usa a política global do canal.
+model PrecoCanal {
+  id         String   @id @default(cuid())
+  produtoId  Int      @map("produto_id")
+  produto    Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  canal      String
+  /// % sobre o preço base. Null = não sobrescreve
+  percentual Float?
+  /// preço fixo no canal. Null = calcula pelo percentual
+  precoFixo  Float?  @map("preco_fixo")
+  criadoEm   DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  @@unique([produtoId, canal])
+  @@map("preco_canal")
+}
+
 model EstoqueMovimento {
   id        String   @id @default(cuid())
   produtoId Int      @map("produto_id")

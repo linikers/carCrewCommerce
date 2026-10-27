@@ -12,7 +12,14 @@ import { getAdminId } from "@/lib/api-auth";
  * A gravação nunca derruba a operação: se o log falhar, a alteração continua
  * valendo e o erro vai para o console.
  */
-export type EntidadeAuditada = "produto" | "pedido" | "categoria" | "banner" | "pagamento" | "frete";
+export type EntidadeAuditada =
+  | "produto"
+  | "pedido"
+  | "categoria"
+  | "banner"
+  | "pagamento"
+  | "frete"
+  | "configuracao";
 
 export async function auditar(params: {
   entidade: EntidadeAuditada;
