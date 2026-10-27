@@ -22,7 +22,7 @@ export const CONTEUDO_CATEGORIA: Record<string, ConteudoCategoria> = {
   "bolsas-de-ar": {
     titulo: "Bolsas de ar para suspensão",
     intro:
-      "A bolsa de ar é a mola do sistema pneumático: substitui a mola helicoidal e permite subir e descer o carro pelo compressor. Trabalhamos com bolsas para kits dianteiros e traseiros, nas medidas mais usadas em rebaixamento e suspensão a ar montada no Brasil.",
+      "A bolsa de ar é a mola do sistema pneumático: substitui a mola helicoidal e permite subir e descer o carro pelo compressor. Trabalhamos com bolsas para kits dianteiros e traseiros, nas medidas mais usadas em carros rebaixados e suspensão a ar montada no Brasil.",
     atencao:
       "Antes de comprar, confira o diâmetro da bolsa e o tipo de fixação (rosqueada ou com bico) do seu kit. Bolsa de medida errada monta, mas rasga no primeiro curso completo.",
     landing: { href: "/suspensao-a-ar", label: "Como funciona a suspensão a ar" },
@@ -41,12 +41,12 @@ export const CONTEUDO_CATEGORIA: Record<string, ConteudoCategoria> = {
       "Amortecedor controla o movimento da mola. Em carro rebaixado, o curso útil diminui: amortecedor de curso curto evita que o batente trabalhe no fim do curso e que o carro fique quicando.",
     atencao:
       "Rebaixar só com mola e manter o amortecedor original é o erro mais comum: a peça passa a trabalhar fora da faixa e vaza. Confira curso e fixação antes de fechar o par.",
-    landing: { href: "/rebaixamento", label: "Rebaixamento sem perder conforto" },
+    landing: { href: "/rebaixamento", label: "Rebaixados sem perder conforto" },
   },
   bandejas: {
     titulo: "Bandejas e balanças de suspensão",
     intro:
-      "Bandeja é o braço que prende a manga de eixo ao chassi. Em carro baixo ela trabalha em ângulo diferente do original, por isso modelos com geometria corrigida ou reforçados aparecem tanto em rebaixamento quanto em uso esportivo.",
+      "Bandeja é o braço que prende a manga de eixo ao chassi. Em carro baixo ela trabalha em ângulo diferente do original, por isso modelos com geometria corrigida ou reforçados aparecem tanto em carros rebaixados quanto em uso esportivo.",
     atencao:
       "Bucha e pivô gastos aparecem como barulho em lombada e direção puxando. Trocar a bandeja sem revisar bucha e alinhamento depois devolve o problema em poucas semanas.",
     landing: { href: "/suspensao-esportiva", label: "Suspensão esportiva" },

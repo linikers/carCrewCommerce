@@ -396,7 +396,7 @@ export default function Header({
                 >
                   {[
                     { href: "/suspensao-a-ar", label: "Suspensão a ar" },
-                    { href: "/rebaixamento", label: "Rebaixamento" },
+                    { href: "/rebaixamento", label: "Rebaixados" },
                     { href: "/suspensao-esportiva", label: "Suspensão esportiva" },
                     { href: "/off-road", label: "Off-road 4x4" },
                   ].map((l) => (
@@ -491,7 +491,7 @@ export default function Header({
             <Divider sx={{ my: 1 }} />
             {[
               { href: "/suspensao-a-ar", label: "Suspensão a ar" },
-              { href: "/rebaixamento", label: "Rebaixamento" },
+              { href: "/rebaixamento", label: "Rebaixados" },
               { href: "/suspensao-esportiva", label: "Suspensão esportiva" },
               { href: "/off-road", label: "Off-road 4x4" },
             ].map((l) => (

@@ -96,7 +96,7 @@ export default function Footer() {
             </Typography>
             {[
               { label: "Suspensão a Ar", href: "/suspensao-a-ar" },
-              { label: "Rebaixamento", href: "/rebaixamento" },
+              { label: "Rebaixados", href: "/rebaixamento" },
               { label: "Suspensão Esportiva", href: "/suspensao-esportiva" },
               { label: "Suspensão Off-Road", href: "/off-road" },
               { label: "Bolsas de Ar", href: "/?cat=bolsas-de-ar" },

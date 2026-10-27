@@ -77,7 +77,7 @@ const seoLinks = [
   },
   {
     href: "/rebaixamento",
-    titulo: "Rebaixamento",
+    titulo: "Rebaixados",
     desc: "Calços antirruído, kits, bandejas e pontas de eixo",
     icone: <ArrowDownward sx={{ fontSize: 30 }} />,
   },
@@ -579,7 +579,7 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
               mb: 1.5,
             }}
           >
-            Suspensão a ar, rebaixamento e lift em Maringá
+            Suspensão a ar, rebaixados e lift em Maringá
             <Box component="span" sx={{ display: "block", fontSize: { xs: "1rem", md: "1.25rem" }, fontWeight: 600, color: "#666", mt: 1 }}>
               Peças em estoque, instalação na oficina e envio para todo o Brasil
             </Box>
@@ -588,7 +588,7 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
             variant="body1"
             sx={{ color: "#666", maxWidth: 780, mx: "auto", fontSize: { xs: "0.95rem", md: "1.05rem" }, lineHeight: 1.8 }}
           >
-            Especialistas em suspensão a ar, rebaixamento e suspensão esportiva em Maringá-PR.
+            Especialistas em suspensão a ar, carros rebaixados e suspensão esportiva em Maringá-PR.
             Bolsas de ar, compressores, calços antirruído, amortecedores, kits e componentes para
             deixar seu carro com a altura e o desempenho que você sempre quis. Entrega para todo o Brasil.
           </Typography>
