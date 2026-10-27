@@ -168,8 +168,10 @@ export async function mudarStatusPedido(args: {
 
     if (!pedido) throw new ErroPedido("Pedido não encontrado", "SEM_ITENS");
 
+    const statusAnterior = pedido.status;
+
     if (pedido.status === novoStatus) {
-      return { pedido, mudouEstoque: false as const };
+      return { pedido, mudouEstoque: false as const, statusAnterior };
     }
 
     const itens = pedido.itens.length
@@ -226,7 +228,43 @@ export async function mudarStatusPedido(args: {
       },
     });
 
-    return { pedido: atualizado, mudouEstoque };
+    return { pedido: atualizado, mudouEstoque, statusAnterior };
+  });
+}
+
+/**
+ * Histórico de status (#123): lê a auditoria e resolve o nome de quem mudou.
+ * Pedido sem histórico novo cai no fallback: uma linha com o status atual.
+ */
+export async function historicoDoPedido(pedidoId: string) {
+  const registros = await prisma.auditoria.findMany({
+    where: { entidade: "pedido", entidadeId: pedidoId },
+    orderBy: { criadoEm: "desc" },
+    take: 100,
+  });
+
+  const ids = [...new Set(registros.map((r) => r.userId).filter(Boolean))] as string[];
+  const usuarios = ids.length
+    ? await prisma.user.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, name: true, email: true },
+      })
+    : [];
+  const porId = new Map(usuarios.map((u) => [u.id, u]));
+
+  return registros.map((r) => {
+    const antes = (r.antes ?? {}) as { status?: string };
+    const depois = (r.depois ?? {}) as { status?: string };
+    const usuario = r.userId ? porId.get(r.userId) : null;
+
+    return {
+      id: r.id,
+      quando: r.criadoEm,
+      de: antes.status ?? null,
+      para: depois.status ?? null,
+      quem: usuario?.name || usuario?.email || null,
+      acao: r.acao,
+    };
   });
 }
 

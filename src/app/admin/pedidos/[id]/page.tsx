@@ -88,6 +88,9 @@ const statusColors: Record<string, "warning" | "info" | "primary" | "success" | 
 
 export default function PedidoDetalhe() {
   const { data: session, status: authStatus } = useSession();
+  const [historico, setHistorico] = useState<
+    { id: number; quando: string; de: string | null; para: string | null; quem: string | null }[]
+  >([]);
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -125,6 +128,16 @@ export default function PedidoDetalhe() {
       setLoading(false);
     }
   }
+
+  // 6.6: histórico recarrega a cada mudança de status
+  useEffect(() => {
+    if (!id) return;
+    fetch(`/api/admin/pedidos/${id}/historico`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setHistorico)
+      .catch(() => setHistorico([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, pedido?.status]);
 
   async function alterarStatus(novoStatus: string) {
     if (!pedido) return;
@@ -403,6 +416,42 @@ export default function PedidoDetalhe() {
                     </Button>
                   )}
                 </Box>
+              </Paper>
+
+              {/* 6.6: quem mudou o status, quando e de quê para quê */}
+              <Paper sx={{ p: 3, borderRadius: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: "#1A1A1A" }}>
+                  Histórico
+                </Typography>
+
+                {historico.length === 0 ? (
+                  <Typography variant="body2" sx={{ color: "#777" }}>
+                    Nenhuma mudança registrada ainda. A partir da primeira alteração,
+                    cada troca de status aparece aqui com autor e hora.
+                  </Typography>
+                ) : (
+                  <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
+                    {historico.map((h) => (
+                      <Box
+                        component="li"
+                        key={h.id}
+                        sx={{ display: "flex", gap: 1.5, py: 1, borderBottom: "1px solid #f2f2f2", "&:last-of-type": { borderBottom: 0 } }}
+                      >
+                        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#BF360C", mt: 0.9, flexShrink: 0 }} />
+                        <Box>
+                          <Typography sx={{ fontSize: "0.85rem", color: "#1A1A1A" }}>
+                            {h.de
+                              ? `${labelStatus(h.de)} → ${labelStatus(h.para ?? "")}`
+                              : `Status: ${labelStatus(h.para ?? "")}`}
+                          </Typography>
+                          <Typography sx={{ fontSize: "0.72rem", color: "#888" }}>
+                            {new Date(h.quando).toLocaleString("pt-BR")} · {h.quem || "sistema"}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
               </Paper>
             </>
           )}
