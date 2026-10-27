@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Box, Container, Divider, Paper, Typography } from "@mui/material";
+import { Box, Button, Container, Divider, Paper, Typography } from "@mui/material";
 import { lerOrcamentoPublico } from "@/modules/os/dados/os";
 import { TIPO_ITEM_LABEL } from "@/modules/os/dominio/os";
 import DecisaoOrcamento from "@/modules/os/ui/DecisaoOrcamento";
@@ -74,6 +74,18 @@ export default async function OrcamentoPage(props: { params: Promise<{ token: st
           <Typography sx={{ fontSize: "1.15rem", fontWeight: 800, color: "#BF360C" }}>{brl(orcamento.total)}</Typography>
         </Box>
       </Paper>
+
+      <Box sx={{ mt: 3 }}>
+        <Button
+          variant="text"
+          href={`/api/orcamento/${token}/pdf`}
+          target="_blank"
+          rel="noopener"
+          sx={{ textTransform: "none", color: "#555", fontSize: "0.82rem" }}
+        >
+          Baixar PDF do orçamento
+        </Button>
+      </Box>
 
       <DecisaoOrcamento token={token} jaRespondido={respondido} />
 

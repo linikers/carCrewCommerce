@@ -19,7 +19,8 @@ export type EntidadeAuditada =
   | "banner"
   | "pagamento"
   | "frete"
-  | "configuracao";
+  | "configuracao"
+  | "empresa";
 
 export async function auditar(params: {
   entidade: EntidadeAuditada;

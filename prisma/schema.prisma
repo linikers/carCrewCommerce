@@ -164,7 +164,8 @@ model EmpresaFiscal {
 
   razaoSocial  String  @map("razao_social")
   nomeFantasia String? @map("nome_fantasia")
-  cnpj         String  @unique
+  /// Nulo enquanto a empresa não informar — o fiscal cobra no momento de emitir
+  cnpj         String? @unique
   ie           String?
   im           String?
   /// 1 = Simples Nacional, 2 = Simples (excesso), 3 = Regime Normal
@@ -180,6 +181,12 @@ model EmpresaFiscal {
   uf          String?
   telefone    String?
   email       String?
+
+  /// logo em JPG (data URI base64) — usado no PDF da OS
+  logo        String?
+
+  /// redes sociais e site: { instagram, facebook, tiktok, youtube, site }
+  redesSociais Json? @map("redes_sociais")
 
   /// homologacao | producao
   ambiente      String  @default("homologacao")

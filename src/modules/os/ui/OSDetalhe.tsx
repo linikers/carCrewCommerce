@@ -25,7 +25,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ArrowBack, DeleteOutlined, Add, Edit, Send } from "@mui/icons-material";
+import { ArrowBack, DeleteOutlined, Add, Edit, Send, PictureAsPdf } from "@mui/icons-material";
 import { formatBRL, formatDataCurta } from "@/lib/format";
 import {
   STATUS_OS,
@@ -268,6 +268,15 @@ export default function OSDetalhe({ id }: { id: string }) {
               {ordem.prazo ? ` · prazo ${formatDataCurta(ordem.prazo)}` : ""}
             </Typography>
           </Box>
+
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdf />}
+            onClick={() => window.open(`/api/admin/os/${ordem.id}/pdf`, "_blank")}
+            sx={{ textTransform: "none", height: 40, borderColor: "#BF360C", color: "#BF360C" }}
+          >
+            PDF
+          </Button>
 
           <Button
             variant="outlined"
@@ -597,6 +606,18 @@ export default function OSDetalhe({ id }: { id: string }) {
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setLinkAberto(false)} sx={{ textTransform: "none" }}>Fechar</Button>
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdf />}
+            onClick={() => {
+              if (ordem.tokenPublico) {
+                window.open(`/api/orcamento/${ordem.tokenPublico}/pdf`, "_blank");
+              }
+            }}
+            sx={{ textTransform: "none" }}
+          >
+            PDF do orçamento
+          </Button>
           <Button
             variant="outlined"
             onClick={() => {

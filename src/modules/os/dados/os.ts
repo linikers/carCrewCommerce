@@ -343,3 +343,11 @@ export async function historicoPorPlaca(placa: string, ignorarId?: string) {
     },
   });
 }
+
+/** OS completa (com custo) para o PDF interno. */
+export async function lerOSParaPDF(ordemId: string) {
+  return prisma.ordemServico.findUnique({
+    where: { id: ordemId },
+    include: { itens: { orderBy: { id: "asc" } } },
+  });
+}
