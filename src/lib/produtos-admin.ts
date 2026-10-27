@@ -140,3 +140,13 @@ export async function proximoId(): Promise<number> {
   });
   return (ultimo?.id || 0) + 1;
 }
+
+/** Produtos com preço para a prévia da política (#preco). */
+export async function produtosParaExemplo(limite = 3) {
+  return prisma.produto.findMany({
+    where: { ativo: true, preco: { gt: 0 } },
+    orderBy: { id: "asc" },
+    take: limite,
+    select: { nome: true, preco: true, precoBase: true },
+  });
+}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { lerPoliticaPreco, precoSiteDe } from "@/lib/politica-preco";
 import prisma from "@/lib/prisma";
 import HomeClient from "@/components/HomeClient";
 import { lerConfigConvite } from "@/lib/site-config";
@@ -21,10 +22,14 @@ export default async function HomePage() {
   let banners: any[] = [];
 
   try {
-    const dbProdutos = await prisma.produto.findMany({
-      where: { ativo: true },
-      orderBy: { id: "asc" },
-    });
+    const [dbProdutos, politicaPreco] = await Promise.all([
+      prisma.produto.findMany({
+        where: { ativo: true },
+        orderBy: { id: "asc" },
+        include: { precosCanal: true },
+      }),
+      lerPoliticaPreco(),
+    ]);
 
     produtos = dbProdutos.map((p) => ({
       id: p.id,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { calcularPreco } from "@/lib/preco";
 import { notFound } from "next/navigation";
+import { lerPoliticaPreco, precoSiteDe } from "@/lib/politica-preco";
 import prisma from "@/lib/prisma";
 import { Container, Box, Typography, Paper, Button, Divider } from "@mui/material";
 import Header from "@/components/Header";
@@ -16,9 +17,11 @@ async function carregarCategoria(slug: string) {
   const categoria = await prisma.categoria.findUnique({ where: { slug } });
   if (!categoria) return null;
 
+  const politicaPreco = await lerPoliticaPreco();
   const produtos = await prisma.produto.findMany({
     where: { categorySlug: slug, ativo: true },
     orderBy: [{ destaque: "desc" }, { ordem: "asc" }, { id: "asc" }],
+    include: { precosCanal: true },
   });
 
   return { categoria, produtos };

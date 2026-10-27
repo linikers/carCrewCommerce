@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { calcularPreco } from "@/lib/preco";
+import { lerPoliticaPreco, precoSiteDe } from "@/lib/politica-preco";
 import type { JsonArray, TransactionClient } from "@/generated/prisma/internal/prismaNamespace";
 import {
   ErroPedido,
@@ -51,9 +52,13 @@ export async function criarPedido({
 
   return prisma.$transaction(async (tx) => {
     // 1. Lê os produtos e trava a decisão de estoque dentro da transação
-    const produtos = await tx.produto.findMany({
-      where: { id: { in: itens.map((i) => i.produtoId) } },
-    });
+    const [produtos, politicaPreco] = await Promise.all([
+      tx.produto.findMany({
+        where: { id: { in: itens.map((i) => i.produtoId) } },
+        include: { precosCanal: true },
+      }),
+      lerPoliticaPreco(),
+    ]);
     const porId = new Map(produtos.map((p) => [p.id, p]));
 
     const itensPedido: ItemPedido[] = [];
@@ -76,7 +81,9 @@ export async function criarPedido({
       // foto do produto no momento da compra: mudar o catálogo depois não
       // reescreve o que o cliente pagou. O desconto entra aqui — o preço que o
       // cliente viu na vitrine é o que o servidor cobra.
-      const precoFinal = calcularPreco(produto.preco, produto.descontoPercent).por;
+      // preço do site (política do canal) + promoção do item
+      const precoSite = precoSiteDe(produto, politicaPreco);
+      const precoFinal = calcularPreco(precoSite, produto.descontoPercent).por;
 
       itensPedido.push({
         produtoId: produto.id,
@@ -99,6 +106,8 @@ export async function criarPedido({
         total,
         frete: frete || 0,
         status: paymentMethod === "pix" ? "aguardando_pagamento" : "pago",
+        // origem da venda: sem isso não existe margem por canal (#preco)
+        canal: "site",
         clienteNome: (form?.nome as string) || null,
         clienteTelefone: (form?.telefone as string) || null,
         clienteEmail: (form?.email as string) || null,
@@ -115,7 +124,7 @@ export async function criarPedido({
           : undefined,
         itens: { create: itensPedido },
       },
-      select: { id: true, status: true, total: true },
+      select: { id: true, status: true, total: true, canal: true },
     });
 
     // 2. Baixa de estoque na mesma transação do pedido.

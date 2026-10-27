@@ -77,6 +77,7 @@ export const MODULOS: Modulo[] = [
     telas: [
       { rota: "/admin/produtos", rotulo: "Produtos", grupo: "Catálogo" },
       { rota: "/admin/categorias", rotulo: "Categorias", grupo: "Catálogo" },
+      { rota: "/admin/precos", rotulo: "Preços", grupo: "Configuração" },
       { rota: "/admin/banners", rotulo: "Banners", grupo: "Catálogo" },
     ],
     tabelas: ["produtos", "categorias", "banners"],
