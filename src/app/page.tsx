@@ -31,6 +31,7 @@ export default async function HomePage() {
       nome: p.nome,
       descricao: p.descricao || "",
       preco: p.preco,
+      descontoPercent: p.descontoPercent ?? 0,
       imgUrl: p.imgUrl || "/produtos/placeholder.svg",
       category: p.categorySlug,
       parcelamento: p.parcelamento || 12,

@@ -1,5 +1,6 @@
 "use client";
 
+import { calcularPreco } from "@/lib/preco";
 import {
   createContext,
   useContext,
@@ -103,7 +104,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const total = items.reduce(
-    (sum, item) => sum + item.produto.preco * item.quantidade,
+    // preço com desconto: o mesmo que o servidor grava no pedido
+    (sum, item) =>
+      sum + calcularPreco(item.produto.preco, item.produto.descontoPercent).por * item.quantidade,
     0
   );
   const totalItens = items.reduce((sum, item) => sum + item.quantidade, 0);

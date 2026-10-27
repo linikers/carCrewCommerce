@@ -9,6 +9,7 @@ export interface ProdutoData {
   sku?: string | null;
   descricao: string;
   preco: number;
+  descontoPercent?: number;
   imgUrl: string;
   category: string;
   parcelamento: number;
@@ -45,6 +46,7 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
     sku: p.sku,
     descricao: p.descricao || "",
     preco: p.preco,
+    descontoPercent: p.descontoPercent,
     imgUrl: p.imgUrl || "/produtos/placeholder.svg",
     category: p.categorySlug,
     parcelamento: p.parcelamento,
@@ -66,6 +68,21 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
   }));
 }
 
+/** Aplica desconto em lote nos ids informados (0 remove). */
+export async function aplicarDescontoEmLote(ids: number[], percentual: number) {
+  const antes = await prisma.produto.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, descontoPercent: true },
+  });
+
+  const { count } = await prisma.produto.updateMany({
+    where: { id: { in: ids } },
+    data: { descontoPercent: percentual },
+  });
+
+  return { atualizados: count, antes };
+}
+
 export async function salvarProdutos(produtos: ProdutoData[]) {
   // Upsert em lote — cria ou atualiza cada produto
   for (const p of produtos) {
@@ -82,6 +99,7 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
       unidade: p.unidade ?? "UN",
         descricao: p.descricao || null,
         preco: p.preco,
+      descontoPercent: p.descontoPercent ?? 0,
         imgUrl: p.imgUrl || null,
         categorySlug: p.category,
         peso: p.peso ?? null,

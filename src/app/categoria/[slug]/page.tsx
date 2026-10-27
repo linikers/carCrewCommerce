@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { calcularPreco } from "@/lib/preco";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { Container, Box, Typography, Paper, Button, Divider } from "@mui/material";
@@ -139,6 +140,7 @@ export default async function CategoriaPage(props: { params: Promise<{ slug: str
           >
             {produtos.map((p) => {
               const semPreco = !p.preco || p.preco <= 0;
+              const precoCat = calcularPreco(p.preco, p.descontoPercent);
               return (
                 <Paper
                   key={p.id}
@@ -172,7 +174,21 @@ export default async function CategoriaPage(props: { params: Promise<{ slug: str
                     <Box sx={{ mt: "auto", pt: 1 }}>
                       <Divider sx={{ mb: 1 }} />
                       <Typography variant="subtitle1" sx={{ fontWeight: 800, color: semPreco ? "#8a8a8a" : "#1A1A1A" }}>
-                        {semPreco ? "Sob consulta" : formatBRL(p.preco)}
+                        {semPreco ? (
+                          "Sob consulta"
+                        ) : precoCat.temDesconto ? (
+                          <Box component="span">
+                            <Box component="span" sx={{ color: "#9a9a9a", textDecoration: "line-through", fontSize: "0.8rem", mr: 0.75 }}>
+                              {formatBRL(precoCat.de)}
+                            </Box>
+                            {formatBRL(precoCat.por)}
+                            <Box component="span" sx={{ backgroundColor: "#0E7A3F", color: "#fff", fontSize: "0.6rem", fontWeight: 700, px: 0.6, py: 0.2, borderRadius: 1, ml: 0.75 }}>
+                              -{precoCat.percentual}%
+                            </Box>
+                          </Box>
+                        ) : (
+                          formatBRL(precoCat.por)
+                        )}
                       </Typography>
                     </Box>
                   </Box>

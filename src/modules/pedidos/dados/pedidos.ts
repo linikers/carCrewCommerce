@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { calcularPreco } from "@/lib/preco";
 import type { JsonArray, TransactionClient } from "@/generated/prisma/internal/prismaNamespace";
 import {
   ErroPedido,
@@ -73,14 +74,17 @@ export async function criarPedido({
       }
 
       // foto do produto no momento da compra: mudar o catálogo depois não
-      // reescreve o que o cliente pagou
+      // reescreve o que o cliente pagou. O desconto entra aqui — o preço que o
+      // cliente viu na vitrine é o que o servidor cobra.
+      const precoFinal = calcularPreco(produto.preco, produto.descontoPercent).por;
+
       itensPedido.push({
         produtoId: produto.id,
         nome: produto.nome,
         sku: produto.sku,
-        preco: produto.preco,
+        preco: precoFinal,
         quantidade: item.quantidade,
-        total: Number((produto.preco * item.quantidade).toFixed(2)),
+        total: Number((precoFinal * item.quantidade).toFixed(2)),
       });
     }
 

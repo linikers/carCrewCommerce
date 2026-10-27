@@ -110,6 +110,10 @@ model Produto {
   categorySlug String    @map("category_slug")
   parcelamento Int       @default(1)
   estoque      Int       @default(0)
+
+  /// Desconto à vista na loja, em %. 0 = sem desconto. Aplicado em card, PDP,
+  /// carrinho e no preço gravado do pedido (o servidor recalcula).
+  descontoPercent Float @default(0) @map("desconto_percent")
   veiculos     String[]
   ativo        Boolean   @default(true)
   // 1.5: curadoria da home — antes era o catálogo inteiro em ordem de id.

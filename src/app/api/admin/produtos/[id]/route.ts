@@ -76,6 +76,10 @@ export async function PUT(
       where: { id: Number(id) },
       data: {
         nome: body.nome ?? existente.nome,
+        // desconto individual (#desconto)
+        ...(body.descontoPercent !== undefined
+          ? { descontoPercent: Math.min(90, Math.max(0, Number(body.descontoPercent) || 0)) }
+          : {}),
         // fiscal (#78)
         ncm:
           body.ncm !== undefined
