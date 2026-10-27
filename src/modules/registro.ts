@@ -141,11 +141,13 @@ export const MODULOS: Modulo[] = [
   {
     id: "marketplace",
     nome: "Marketplace",
-    descricao: "Publicação e sincronização de anúncios em Shopee e Mercado Livre.",
+    descricao:
+      "Cadastro das contas de Shopee e Mercado Livre e, depois, publicação e sincronização de anúncios.",
     padraoAtivo: false,
-    dependeDe: ["catalogo", "estoque"],
+    // cadastrar credencial não exige estoque; sincronizar vai exigir (#85)
+    dependeDe: ["catalogo"],
     telas: [{ rota: "/admin/marketplace", rotulo: "Marketplace", grupo: "Operação" }],
-    tabelas: ["mkt_canais", "mkt_anuncios", "mkt_pedidos"],
+    tabelas: ["credencial_canal", "mkt_anuncios", "mkt_pedidos"],
     issue: 82,
   },
   {
