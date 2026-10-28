@@ -119,7 +119,6 @@ const moduloDaRota: Record<string, string> = MODULOS.reduce(
 );
 
 const pageLinks: MenuItem[] = [
-  { label: "Página FAQ", icon: <Category />, path: "/faq" },
   { label: "Página Off-Road", icon: <Category />, path: "/off-road" },
 ];
 
