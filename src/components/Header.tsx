@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   AppBar,
@@ -45,7 +45,11 @@ interface HeaderProps {
   onCartOpen?: () => void;
   onSearch?: (term: string) => void;
   activeCategory?: string | null;
-  onCategorySelect?: (slug: string | null) => void;
+  /**
+   * Termo que veio da URL (?q=). Vem como prop em vez de `useSearchParams()`
+   * porque o hook exige Suspense e quebrava o prerender de /_not-found.
+   */
+  initialQuery?: string;
 }
 
 export default function Header({
@@ -53,7 +57,7 @@ export default function Header({
   onCartOpen,
   onSearch,
   activeCategory,
-  onCategorySelect,
+  initialQuery = "",
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
@@ -64,12 +68,22 @@ export default function Header({
     solucoes: ItemMenu[];
     categoriasOcultas: string[];
   }>({ barra: [], solucoes: [], categoriasOcultas: [] });
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(initialQuery);
   const [categoriesMenuAnchor, setCategoriesMenuAnchor] =
     useState<null | HTMLElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
   const contato = useEmpresa();
+
+  // Item ativo do menu: a rota /categoria/<slug> manda; na home vale o filtro
+  // dos cards (activeCategory). `aria-current` sai daqui para o leitor de tela.
+  const categoriaDaRota = pathname?.startsWith("/categoria/")
+    ? (pathname.split("/")[2] ?? null)
+    : null;
+  const categoriaAtiva = categoriaDaRota ?? activeCategory ?? null;
+
+
 
   useEffect(() => {
     Promise.all([
@@ -99,15 +113,26 @@ export default function Header({
     onSearch?.(term);
   };
 
-  // Fora da home não existe filtro local: Enter/Submit leva para a home com o termo.
-  // (antes, o campo de busca não fazia nada em /produto, /faq, /checkout etc.)
+  /**
+   * Busca com um destino só, sem perder contexto:
+   * - home: filtra na hora (o HomeClient escuta onSearch) e escreve ?q= na URL
+   * - /categoria/<slug>: continua na categoria (?q=) — o recorte é mantido
+   * - qualquer outra página: /busca?q= (antes ia para a home e perdia a página)
+   */
   const submitSearch = (term: string) => {
-    if (onSearch) {
-      onSearch(term);
-      return;
-    }
     const q = term.trim();
-    router.push(q ? `/?q=${encodeURIComponent(q)}` : "/");
+    const destino =
+      onSearch && pathname === "/"
+        ? "/"
+        : pathname?.startsWith("/categoria/")
+          ? pathname
+          : "/busca";
+
+    if (onSearch && pathname === "/") {
+      onSearch(term);
+    }
+
+    router.push(q ? `${destino}?q=${encodeURIComponent(q)}` : destino);
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
@@ -142,13 +167,17 @@ export default function Header({
           >
             {/* Hamburger (mobile only) */}
             <IconButton
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Abrir menu"
+              aria-expanded={mobileMenuOpen}
               sx={{
                 display: { xs: "flex", lg: "none" },
                 position: "absolute",
                 left: 0,
                 zIndex: 1,
+                width: 44,
+                height: 44,
               }}
-              onClick={() => setMobileMenuOpen(true)}
             >
               <MenuIcon />
             </IconButton>
@@ -179,7 +208,10 @@ export default function Header({
               <UserMenu />
               <IconButton
                 onClick={onCartOpen}
+                aria-label="Abrir carrinho"
                 sx={{
+                  width: 44,
+                  height: 44,
                   color: "#1A1A1A",
                   transition: "color 0.2s ease",
                   "&:hover": { color: "primary.main" },
@@ -304,17 +336,12 @@ export default function Header({
                 {categoriasVisiveis.map((cat) => (
                   <Button
                     key={cat.slug}
-                    onClick={() => {
-                      // Redireciona pra home filtrada se não estiver na página principal
-                      if (!onCategorySelect) {
-                        router.push("/categoria/" + cat.slug);
-                        return;
-                      }
-                      onCategorySelect(activeCategory === cat.slug ? null : cat.slug);
-                    }}
+                    component={Link}
+                    href={`/categoria/${cat.slug}`}
+                    aria-current={categoriaAtiva === cat.slug ? "page" : undefined}
                     sx={{
                       color:
-                        activeCategory === cat.slug ? "primary.main" : "#ffffff",
+                        categoriaAtiva === cat.slug ? "primary.main" : "#ffffff",
                       textTransform: "none",
                       fontSize: "0.85rem",
                       whiteSpace: "nowrap",
@@ -323,9 +350,9 @@ export default function Header({
                       py: 1.25,
                       minHeight: 44,
                       borderRadius: 0,
-                      fontWeight: activeCategory === cat.slug ? 600 : 400,
+                      fontWeight: categoriaAtiva === cat.slug ? 600 : 400,
                       borderBottom:
-                        activeCategory === cat.slug
+                        categoriaAtiva === cat.slug
                           ? "2px solid #E65100"
                           : "2px solid transparent",
                       letterSpacing: "0.01em",
@@ -387,7 +414,11 @@ export default function Header({
                 {menu.barra.map((item) => (
                   <Button
                     key={item.id}
-                    onClick={() => router.push(item.href)}
+                    component={Link}
+                    href={item.href}
+                    aria-current={
+                      pathname === item.href ? "page" : undefined
+                    }
                     sx={{
                       color: "#ffffff",
                       textTransform: "none",
@@ -460,18 +491,37 @@ export default function Header({
         }}
       >
         <Box sx={{ pt: 2 }}>
-          {/* Logo no drawer */}
-          <Box sx={{ px: 2, pb: 2 }}>
+          {/* Logo + fechar: a gaveta só fechava tocando fora, o que ninguém
+              descobre no celular (issue #163). */}
+          <Box
+            sx={{
+              px: 2,
+              pb: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 1,
+            }}
+          >
             <Link href="/" onClick={() => setMobileMenuOpen(false)}>
               <CarCrewLogoText />
             </Link>
+            <IconButton
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Fechar menu"
+              sx={{ width: 44, height: 44 }}
+            >
+              <Close />
+            </IconButton>
           </Box>
           <Divider />
 
           <List>
             <ListItemButton
               onClick={() => setCategoriesOpen(!categoriesOpen)}
-              sx={{ mb: 0.5 }}
+              aria-expanded={categoriesOpen}
+              aria-controls="menu-categorias"
+              sx={{ mb: 0.5, minHeight: 44 }}
             >
               <ListItemIcon>
                 <MenuIcon />
@@ -479,27 +529,23 @@ export default function Header({
               <ListItemText primary="Categorias" />
               {categoriesOpen ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
-            <Collapse in={categoriesOpen}>
+            <Collapse in={categoriesOpen} id="menu-categorias">
               <List disablePadding>
                 {categoriasVisiveis.map((cat) => (
                   <ListItemButton
                     key={cat.slug}
-                    sx={{ pl: 4 }}
-                    onClick={() => {
-                      if (!onCategorySelect) {
-                        router.push("/categoria/" + cat.slug);
-                        setMobileMenuOpen(false);
-                        return;
-                      }
-                      onCategorySelect?.(cat.slug);
-                      setMobileMenuOpen(false);
-                    }}
+                    component={Link}
+                    href={`/categoria/${cat.slug}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    aria-current={categoriaAtiva === cat.slug ? "page" : undefined}
+                    sx={{ pl: 4, minHeight: 44 }}
                   >
                     <ListItemText
                       primary={cat.nome}
                       sx={{
                         color:
-                          activeCategory === cat.slug ? "primary.main" : "inherit",
+                          categoriaAtiva === cat.slug ? "primary.main" : "inherit",
+                        fontWeight: categoriaAtiva === cat.slug ? 600 : 400,
                       }}
                     />
                   </ListItemButton>
@@ -512,10 +558,10 @@ export default function Header({
             {menu.barra.map((item) => (
               <ListItemButton
                 key={item.id}
-                onClick={() => {
-                  router.push(item.href);
-                  setMobileMenuOpen(false);
-                }}
+                component={Link}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                sx={{ minHeight: 44 }}
               >
                 <ListItemIcon>
                   <ExpandMore sx={{ transform: "rotate(-90deg)", fontSize: 20 }} />
@@ -530,10 +576,10 @@ export default function Header({
             {menu.solucoes.map((item) => (
               <ListItemButton
                 key={item.id}
-                onClick={() => {
-                  router.push(item.href);
-                  setMobileMenuOpen(false);
-                }}
+                component={Link}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                sx={{ minHeight: 44 }}
               >
                 <ListItemIcon>
                   <ExpandMore sx={{ transform: "rotate(-90deg)", fontSize: 20 }} />
@@ -549,11 +595,10 @@ export default function Header({
             <Divider />
 
             <ListItemButton
-              onClick={() => {
-                router.push("/conta");
-                setMobileMenuOpen(false);
-              }}
-              sx={{ mb: 0.5 }}
+              component={Link}
+              href="/conta"
+              onClick={() => setMobileMenuOpen(false)}
+              sx={{ mb: 0.5, minHeight: 44 }}
             >
               <ListItemIcon>
                 <Person />

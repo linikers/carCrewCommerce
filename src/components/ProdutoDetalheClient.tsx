@@ -155,27 +155,34 @@ export default function ProdutoDetalheClient({
 
       <Container maxWidth="lg" sx={{ mt: 3, mb: 6, flex: 1 }}>
         {/* Breadcrumb */}
-        <Breadcrumbs sx={{ mb: 3, fontSize: "0.85rem" }}>
+        <Breadcrumbs
+          aria-label="Você está em"
+          sx={{ mb: 1.5, fontSize: "0.875rem", "& .MuiBreadcrumbs-separator": { color: "#bbb" } }}
+        >
           <MuiLink
-            component="button"
-            onClick={() => router.push("/")}
+            component={Link}
+            href="/"
             underline="hover"
-            sx={{ color: "#666", fontSize: "0.85rem" }}
+            sx={{ color: "#666", fontSize: "0.875rem", "&:hover": { color: "primary.main" } }}
           >
             Home
           </MuiLink>
           {categoria && (
             <MuiLink
               component={Link}
-              href={`/?cat=${categoria.slug}`}
+              href={`/categoria/${categoria.slug}`}
               underline="hover"
-              sx={{ color: "#666", fontSize: "0.85rem" }}
+              sx={{ color: "#666", fontSize: "0.875rem", "&:hover": { color: "primary.main" } }}
             >
               {categoria.nome}
             </MuiLink>
           )}
-          <Typography variant="body2" sx={{ color: "primary.main", fontSize: "0.85rem" }}>
-            {produto.nome.substring(0, 40)}...
+          <Typography
+            aria-current="page"
+            sx={{ color: "#666", fontSize: "0.875rem", fontWeight: 600, maxWidth: 320 }}
+            noWrap
+          >
+            {produto.nome}
           </Typography>
         </Breadcrumbs>
 

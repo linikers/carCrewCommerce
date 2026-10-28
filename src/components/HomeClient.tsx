@@ -38,18 +38,18 @@ import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/lib/CartContext";
 import { CategoriaSlug, Produto } from "@/types";
 
-interface ProdutoData extends Produto {
+export interface ProdutoData extends Produto {
   estoque: number;
   ativo: boolean;
 }
 
-interface CategoriaData {
+export interface CategoriaData {
   slug: string;
   nome: string;
   icone: string;
 }
 
-interface BannerData {
+export interface BannerData {
   titulo: string;
   subtitulo?: string;
   imgDesktop?: string;
@@ -66,6 +66,10 @@ interface HomeClientProps {
   banners: BannerData[];
   /** Convite de captura de lead — ligado/desligado no admin. */
   convite?: { ativo: boolean; atrasoSegundos: number };
+  /** ?q= da URL (link direto para busca na home) — vem do servidor. */
+  initialQuery?: string;
+  /** ?cat= da URL — vem do servidor. */
+  initialCategory?: string | null;
 }
 
 const seoLinks = [
@@ -95,21 +99,21 @@ const seoLinks = [
   },
 ];
 
-export default function HomeClient({ produtos, categorias, banners, convite }: HomeClientProps) {
+export default function HomeClient({
+  produtos,
+  categorias,
+  banners,
+  convite,
+  initialQuery = "",
+  initialCategory = null,
+}: HomeClientProps) {
   const [cartOpen, setCartOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(null);
+  const [searchTerm, setSearchTerm] = useState(initialQuery);
+  const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaSlug | null>(
+    (initialCategory as CategoriaSlug) ?? null
+  );
 
   const { items, totalItens, addToCart, removeFromCart, clearCart } = useCart();
-
-  // Lê ?cat=slug da URL na inicialização (ex: vindo do Header fora da home)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const cat = params.get("cat");
-    if (cat) setCategoriaAtiva(cat as CategoriaSlug);
-    const q = params.get("q");
-    if (q) setSearchTerm(q);
-  }, []);
 
   const [bannerIndex, setBannerIndex] = useState(0);
   // Proporção real da arte carregada (largura/altura). Serve para o container
@@ -129,7 +133,7 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackProduto, setSnackProduto] = useState("");
 
-  const handleAddToCart = (produto: any) => {
+  const handleAddToCart = (produto: Produto) => {
     addToCart(produto);
     setSnackProduto(produto.nome);
     setSnackOpen(true);
@@ -177,6 +181,8 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header
+        key={`header-${initialQuery}`}
+        initialQuery={initialQuery}
         cartItemCount={totalItens}
         onCartOpen={() => setCartOpen(true)}
         onSearch={(term) => {
@@ -184,7 +190,6 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
           setCategoriaAtiva(null);
         }}
         activeCategory={categoriaAtiva}
-        onCategorySelect={(slug) => setCategoriaAtiva(slug as CategoriaSlug | null)}
       />
 
       {/* Banner carrossel dinâmico */}
@@ -503,7 +508,7 @@ export default function HomeClient({ produtos, categorias, banners, convite }: H
             {listados.map((produto) => (
               <ProductCard
                 key={produto.id}
-                produto={produto as any}
+                produto={produto}
                 onAddToCart={handleAddToCart}
               />
             ))}

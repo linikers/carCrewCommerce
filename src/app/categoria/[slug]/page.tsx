@@ -1,28 +1,59 @@
 import type { Metadata } from "next";
-import { calcularPreco } from "@/lib/preco";
 import { notFound } from "next/navigation";
 import { lerPoliticaPreco, precoSiteDe } from "@/lib/politica-preco";
 import prisma from "@/lib/prisma";
-import { Container, Box, Typography, Paper, Button, Divider } from "@mui/material";
+import { Container, Box, Typography, Paper, Button } from "@mui/material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { lerConteudoCategoriaPublico } from "@/lib/categorias-conteudo-admin";
-import { formatBRL } from "@/lib/format";
+import ProdutoGrade from "@/components/ProdutoGrade";
+import type { Produto } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
 
-async function carregarCategoria(slug: string) {
+/** Sem acento e minúsculo: "amortecedor" acha "Amortecedor" e "amorteçedor". */
+function normalizar(texto: string) {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+async function carregarCategoria(slug: string, busca = "") {
   const categoria = await prisma.categoria.findUnique({ where: { slug } });
   if (!categoria) return null;
 
   const politicaPreco = await lerPoliticaPreco();
-  const produtos = await prisma.produto.findMany({
+  const brutos = await prisma.produto.findMany({
     where: { categorySlug: slug, ativo: true },
     orderBy: [{ destaque: "desc" }, { ordem: "asc" }, { id: "asc" }],
     include: { precosCanal: true },
   });
+
+  // A grade mostrava `preco` cru (preço do marketplace), enquanto a página do
+  // produto aplicava a política do canal: o mesmo item aparecia por R$ 599 na
+  // categoria e R$ 497,17 na PDP.
+  const termo = normalizar(busca.trim());
+  const produtos: Produto[] = brutos
+    .filter((p) => {
+      if (!termo) return true;
+      return [p.nome, p.sku ?? "", p.descricao ?? ""].some((campo) =>
+        normalizar(campo).includes(termo)
+      );
+    })
+    .map((p) => ({
+      id: p.id,
+      nome: p.nome,
+      descricao: p.descricao || "",
+      preco: precoSiteDe(p, politicaPreco),
+      descontoPercent: p.descontoPercent ?? 0,
+      imgUrl: p.imgUrl || "/produtos/placeholder.svg",
+      category: p.categorySlug as Produto["category"],
+      parcelamento: p.parcelamento || 12,
+      veiculos: p.veiculos || [],
+    }));
 
   return { categoria, produtos };
 }
@@ -36,7 +67,9 @@ export async function generateMetadata(props: {
 
   // Texto do painel (/admin/categorias → Conteúdo), com o código como padrão.
   const conteudo = await lerConteudoCategoriaPublico(slug, dados.categoria.nome);
-  const titulo = `${conteudo.titulo} | Car Crew Garage`;
+  // O layout aplica o template `%s | Car Crew Garage`; somar a marca aqui
+  // gerava "Componentes | Car Crew Garage | Car Crew Garage" (#163).
+  const titulo = conteudo.titulo;
   const descricao = conteudo.intro.slice(0, 158);
 
   return {
@@ -52,9 +85,14 @@ export async function generateMetadata(props: {
   };
 }
 
-export default async function CategoriaPage(props: { params: Promise<{ slug: string }> }) {
+export default async function CategoriaPage(props: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ q?: string }>;
+}) {
   const { slug } = await props.params;
-  const dados = await carregarCategoria(slug);
+  const { q } = await props.searchParams;
+  const busca = (q ?? "").trim();
+  const dados = await carregarCategoria(slug, busca);
   if (!dados) notFound();
 
   const { categoria, produtos } = dados;
@@ -92,15 +130,31 @@ export default async function CategoriaPage(props: { params: Promise<{ slug: str
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
 
-      <Header />
+      <Header initialQuery={busca} key={`header-${busca}`} />
 
       <Container maxWidth="lg" sx={{ flex: 1, py: { xs: 3, md: 5 } }}>
-        <Typography variant="caption" sx={{ color: "#888", display: "block", mb: 1 }}>
-          <Box component="a" href="/" sx={{ color: "inherit", textDecoration: "none", "&:hover": { color: "primary.main" } }}>
+        {/* 14 px e #666 (5,7:1) — em 12 px/#888 ficava em 3,5:1, abaixo de AA */}
+        <Box
+          component="nav"
+          aria-label="Você está em"
+          sx={{ display: "flex", gap: 0.75, alignItems: "center", mb: 1 }}
+        >
+          <Box
+            component="a"
+            href="/"
+            sx={{ color: "#666", fontSize: "0.875rem", textDecoration: "none", "&:hover": { color: "primary.main", textDecoration: "underline" } }}
+          >
             Home
-          </Box>{" "}
-          / {categoria.nome}
-        </Typography>
+          </Box>
+          <Typography component="span" sx={{ color: "#bbb", fontSize: "0.875rem" }}>/</Typography>
+          <Typography
+            component="span"
+            aria-current="page"
+            sx={{ color: "#666", fontSize: "0.875rem", fontWeight: 600 }}
+          >
+            {categoria.nome}
+          </Typography>
+        </Box>
 
         <Typography component="h1" variant="h4" sx={{ fontWeight: 800, color: "#1A1A1A", mb: 2 }}>
           {conteudo.titulo}
@@ -120,9 +174,22 @@ export default async function CategoriaPage(props: { params: Promise<{ slug: str
         </Paper>
 
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", mb: 2, gap: 2, flexWrap: "wrap" }}>
-          <Typography component="h2" sx={{ fontWeight: 800, fontSize: "1.25rem", color: "#1A1A1A" }}>
-            {produtos.length} {produtos.length === 1 ? "peça" : "peças"}
-          </Typography>
+          <Box>
+            <Typography component="h2" sx={{ fontWeight: 800, fontSize: "1.25rem", color: "#1A1A1A" }}>
+              {busca
+                ? `${produtos.length} ${produtos.length === 1 ? "resultado" : "resultados"} para “${busca}” em ${categoria.nome}`
+                : `${produtos.length} ${produtos.length === 1 ? "peça" : "peças"}`}
+            </Typography>
+            {busca && (
+              <Box
+                component="a"
+                href={`/busca?q=${encodeURIComponent(busca)}`}
+                sx={{ fontSize: "0.85rem", color: "primary.main", fontWeight: 600, textDecoration: "none" }}
+              >
+                Buscar “{busca}” em todo o site →
+              </Box>
+            )}
+          </Box>
           {conteudo.landing && (
             <Button href={conteudo.landing.href} sx={{ textTransform: "none", color: "primary.main", fontWeight: 600 }}>
               {conteudo.landing.label} →
@@ -132,84 +199,20 @@ export default async function CategoriaPage(props: { params: Promise<{ slug: str
 
         {produtos.length === 0 ? (
           <Typography variant="body2" sx={{ color: "#666", py: 4 }}>
-            Sem peça nesta categoria no momento. Fale com a gente no WhatsApp que buscamos para você.
+            {busca ? (
+              <>
+                Nada encontrado para “{busca}” em {categoria.nome}.{" "}
+                <Box component="a" href={`/busca?q=${encodeURIComponent(busca)}`} sx={{ color: "primary.main", fontWeight: 600 }}>
+                  Buscar em todo o site
+                </Box>
+                .
+              </>
+            ) : (
+              "Sem peça nesta categoria no momento. Fale com a gente no WhatsApp que buscamos para você."
+            )}
           </Typography>
         ) : (
-          <Box
-            sx={{
-              display: "grid",
-              gap: 2.5,
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0,1fr))", md: "repeat(3, minmax(0,1fr))" },
-            }}
-          >
-            {produtos.map((p) => {
-              const semPreco = !p.preco || p.preco <= 0;
-              const precoCat = calcularPreco(p.preco, p.descontoPercent);
-              return (
-                <Paper
-                  key={p.id}
-                  component="a"
-                  href={`/produto/${p.id}`}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    textDecoration: "none",
-                    color: "inherit",
-                    borderRadius: 3,
-                    overflow: "hidden",
-                    border: "1px solid #eee",
-                    transition: "box-shadow .15s ease, border-color .15s ease",
-                    "&:hover": { borderColor: "primary.main", boxShadow: "0 6px 18px rgba(0,0,0,0.06)" },
-                  }}
-                >
-                  {/* Caixa fixa 4:3: a foto do anúncio pode ser vertical (141×500) ou
-                      panorâmica. Sem position/absolute o `height: 100%` cai na
-                      proporção natural do arquivo e o card estica até 1226 px. */}
-                  <Box sx={{ position: "relative", aspectRatio: "4 / 3", backgroundColor: "#f7f7f7", overflow: "hidden" }}>
-                    <Box
-                      component="img"
-                      src={p.imgUrl || "/produtos/placeholder.svg"}
-                      alt={p.nome}
-                      loading="lazy"
-                      sx={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                        p: 2,
-                      }}
-                    />
-                  </Box>
-                  <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 0.5, flex: 1 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#1A1A1A", lineHeight: 1.35 }}>
-                      {p.nome}
-                    </Typography>
-                    <Box sx={{ mt: "auto", pt: 1 }}>
-                      <Divider sx={{ mb: 1 }} />
-                      <Typography variant="subtitle1" sx={{ fontWeight: 800, color: semPreco ? "#8a8a8a" : "#1A1A1A" }}>
-                        {semPreco ? (
-                          "Sob consulta"
-                        ) : precoCat.temDesconto ? (
-                          <Box component="span">
-                            <Box component="span" sx={{ color: "#9a9a9a", textDecoration: "line-through", fontSize: "0.8rem", mr: 0.75 }}>
-                              {formatBRL(precoCat.de)}
-                            </Box>
-                            {formatBRL(precoCat.por)}
-                            <Box component="span" sx={{ backgroundColor: "#0E7A3F", color: "#fff", fontSize: "0.6rem", fontWeight: 700, px: 0.6, py: 0.2, borderRadius: 1, ml: 0.75 }}>
-                              -{precoCat.percentual}%
-                            </Box>
-                          </Box>
-                        ) : (
-                          formatBRL(precoCat.por)
-                        )}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Paper>
-              );
-            })}
-          </Box>
+          <ProdutoGrade produtos={produtos} />
         )}
       </Container>
 
