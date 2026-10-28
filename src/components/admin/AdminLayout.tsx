@@ -57,7 +57,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
       <Box
         sx={{
           flex: 1,
+          // Sem `minWidth: 0` o flex item não encolhe: o conteúdo mantém a
+          // largura mínima (458 px em tela de 390) e o `overflow-x: hidden` do
+          // body corta os campos pela direita — era o menu "mal dá pra ver" no
+          // celular. Com 0 ele respeita o viewport.
+          minWidth: 0,
+          width: "100%",
           ml: { md: "250px" },
+          pt: { xs: "56px", md: 0 }, // espaço da barra fixa do mobile
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",

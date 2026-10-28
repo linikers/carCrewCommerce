@@ -21,6 +21,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Slide,
+  Snackbar,
 } from "@mui/material";
 import {
   Add,
@@ -70,6 +72,10 @@ export default function AdminMenuPage() {
   const [msg, setMsg] = useState("");
   const [erro, setErro] = useState("");
   const [remover, setRemover] = useState<{ grupo: Grupo; id: string } | null>(null);
+  // Feedback de quem está mexendo no menu: sem isso o item novo entra fora da
+  // tela e o dono não sabe se a ação funcionou.
+  const [destaque, setDestaque] = useState<string | null>(null);
+  const [aviso, setAviso] = useState("");
 
   useEffect(() => {
     Promise.all([
@@ -134,6 +140,11 @@ export default function AdminMenuPage() {
     };
     setConfig((atual) => ({ ...atual, [grupo]: [...atual[grupo], novo] }));
     setMsg("");
+    setErro("");
+    setDestaque(novo.id);
+    setAviso(
+      `Item adicionado em “${rotuloGrupo[grupo]}”. Preencha nome e link e clique em Salvar para aparecer no site.`
+    );
   };
 
   const excluir = (grupo: Grupo, id: string) => {
@@ -145,6 +156,7 @@ export default function AdminMenuPage() {
     }));
     setRemover(null);
     setMsg("");
+    setAviso("Item removido. Clique em Salvar para aplicar na loja.");
   };
 
   const alternarCategoria = (slug: string, mostrar: boolean) => {
@@ -185,6 +197,20 @@ export default function AdminMenuPage() {
     }
   };
 
+  // Rola até o item recém-adicionado e coloca o cursor no nome. Antes ele
+  // nascia no fim da lista, fora da tela.
+  useEffect(() => {
+    if (!destaque) return;
+    const el = document.getElementById(`item-${destaque}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      const campo = el.querySelector("input") as HTMLInputElement | null;
+      campo?.focus({ preventScroll: true });
+    }
+    const t = setTimeout(() => setDestaque(null), 4000);
+    return () => clearTimeout(t);
+  }, [destaque]);
+
   const renderGrupo = (grupo: Grupo) => (
     <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
       <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, flexWrap: "wrap" }}>
@@ -196,7 +222,18 @@ export default function AdminMenuPage() {
             {ajudaGrupo[grupo]}
           </Typography>
         </Box>
-        <Button startIcon={<Add />} onClick={() => adicionar(grupo)} variant="outlined" size="small">
+        <Button
+          startIcon={<Add />}
+          onClick={() => adicionar(grupo)}
+          variant="contained"
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#BF360C",
+            "&:hover": { backgroundColor: "#8f2809" },
+            width: { xs: "100%", sm: "auto" },
+            minHeight: 44,
+          }}
+        >
           Adicionar item
         </Button>
       </Box>
@@ -212,11 +249,13 @@ export default function AdminMenuPage() {
           {config[grupo].map((item, indice) => (
             <Box
               key={item.id}
+              id={`item-${item.id}`}
               sx={{
-                border: "1px solid #eee",
+                border: destaque === item.id ? "2px solid #BF360C" : "1px solid #eee",
+                backgroundColor: destaque === item.id ? "#FFF3E0" : item.ativo ? "#fff" : "#fafafa",
                 borderRadius: 2,
                 p: 2,
-                backgroundColor: item.ativo ? "#fff" : "#fafafa",
+                transition: "border-color .2s ease, background-color .2s ease",
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
@@ -311,7 +350,7 @@ export default function AdminMenuPage() {
 
   return (
     <AdminLayout title="Menu da loja">
-      <Container maxWidth="md" sx={{ py: { xs: 2, md: 4 } }}>
+      <Container maxWidth="md" sx={{ pt: { xs: 2, md: 4 }, pb: { xs: 12, md: 4 } }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap", mb: 1 }}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>
             Menu da loja
@@ -374,9 +413,23 @@ export default function AdminMenuPage() {
                   {categorias.map((cat) => {
                     const visivel = !config.categoriasOcultas.includes(cat.slug);
                     return (
-                      <Box key={cat.slug} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                        <Typography sx={{ flex: 1, fontSize: "0.95rem" }}>{cat.nome}</Typography>
-                        <Typography variant="caption" sx={{ color: "#888" }}>
+                      <Box
+                        key={cat.slug}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: { xs: 1, md: 2 },
+                          flexWrap: { xs: "wrap", md: "nowrap" },
+                        }}
+                      >
+                        <Typography sx={{ flex: 1, minWidth: 0, fontSize: "0.95rem" }}>
+                          {cat.nome}
+                        </Typography>
+                        {/* o slug come 120 px no celular e empurra a chave para fora */}
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "#888", display: { xs: "none", sm: "block" } }}
+                        >
                           /categoria/{cat.slug}
                         </Typography>
                         <FormControlLabel
@@ -413,6 +466,49 @@ export default function AdminMenuPage() {
           </>
         )}
       </Container>
+
+      {/* Aviso de cada ação (adicionar, remover). Sem isso o item novo nascia
+          abaixo da dobra e parecia que nada tinha acontecido. */}
+      <Snackbar
+        open={Boolean(aviso)}
+        autoHideDuration={6000}
+        onClose={() => setAviso("")}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        slots={{ transition: Slide }}
+        sx={{ mb: { xs: 9, md: 0 } }}
+      >
+        <Alert severity="info" onClose={() => setAviso("")} sx={{ width: "100%" }}>
+          {aviso}
+        </Alert>
+      </Snackbar>
+
+      {/* No celular o "Salvar" do topo sai da tela na primeira rolagem. */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          p: 1.5,
+          gap: 1,
+          backgroundColor: "#fff",
+          borderTop: "1px solid #eee",
+          boxShadow: "0 -4px 14px rgba(0,0,0,0.06)",
+          zIndex: 1200,
+        }}
+      >
+        <Button
+          fullWidth
+          variant="contained"
+          startIcon={<Save />}
+          onClick={salvar}
+          disabled={salvando || loading}
+          sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, minHeight: 48, textTransform: "none" }}
+        >
+          {salvando ? "Salvando..." : "Salvar menu"}
+        </Button>
+      </Box>
 
       <Dialog open={remover !== null} onClose={() => setRemover(null)}>
         <DialogTitle>Remover item do menu?</DialogTitle>
