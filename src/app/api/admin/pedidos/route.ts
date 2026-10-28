@@ -1,8 +1,12 @@
-import { requireAdmin } from "@/lib/api-auth";
+import { getAdminId, requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { STATUS_PEDIDO, statusValido } from "@/lib/pedido-status";
 import { auditar } from "@/lib/auditoria";
+import {
+  estornarEstoqueDoPedido,
+  retomarEstoqueDoPedido,
+} from "@/modules/estoque/dados/movimentos";
 
 /**
  * Lista de pedidos.
@@ -60,6 +64,13 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // O status anterior decide se mexe em estoque: cancelar devolve, reabrir
+    // baixa de novo. O histórico é a fonte (ver estornarEstoqueDoPedido).
+    const anterior = await prisma.pedido.findUnique({
+      where: { id },
+      select: { status: true },
+    });
+
     // updateMany: se o pedido não existir, count vem 0 — antes o `update`
     // estourava, caía no catch e devolvia { success: true, mock: true }.
     // A tela mostrava "status alterado" sem ter alterado nada.
@@ -72,14 +83,31 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Pedido não encontrado" }, { status: 404 });
     }
 
+    let estoque: { devolvidos?: number; baixados?: number } | null = null;
+
+    try {
+      const adminId = await getAdminId();
+      if (status === "cancelado" && anterior?.status !== "cancelado") {
+        estoque = await estornarEstoqueDoPedido(id, adminId);
+      } else if (anterior?.status === "cancelado" && status !== "cancelado") {
+        estoque = await retomarEstoqueDoPedido(id, adminId);
+      }
+    } catch (erroEstoque) {
+      // O status já mudou: falhar aqui não pode derrubar a resposta e esconder
+      // do operador que o pedido foi cancelado.
+      console.error("[admin/pedidos] falha ao ajustar estoque:", erroEstoque);
+      estoque = null;
+    }
+
     await auditar({
       entidade: "pedido",
       entidadeId: id,
       acao: "alterar",
-      depois: { status },
+      antes: anterior ? { status: anterior.status } : undefined,
+      depois: { status, estoque },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, estoque });
   } catch (error) {
     console.error("[admin/pedidos] falha ao alterar status:", error);
     return NextResponse.json(
