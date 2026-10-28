@@ -1,9 +1,10 @@
 import { requireAdmin } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
+import { normalizarChavePkcs8 } from "@/lib/ga4-chave";
 
 async function getAccessToken(): Promise<string> {
   const email = process.env.GA4_SERVICE_ACCOUNT_EMAIL;
-  const key = process.env.GA4_SERVICE_ACCOUNT_KEY?.replace(/\\n/g, "\n");
+  const key = normalizarChavePkcs8(process.env.GA4_SERVICE_ACCOUNT_KEY);
 
   if (!email || !key) {
     throw new Error("GA4 credentials not configured");
@@ -24,15 +25,6 @@ async function getAccessToken(): Promise<string> {
   const encoder = new TextEncoder();
   const b64 = (s: string) => Buffer.from(s).toString("base64url");
   const sigInput = b64(JSON.stringify(header)) + "." + b64(JSON.stringify(claim));
-
-  // Parse PEM and sign
-  const pemBody = key
-    .replace("-----BEGIN PRIVATE KEY-----", "")
-    .replace("-----END PRIVATE KEY-----", "")
-    .replace(/\n/g, "")
-    .replace(/\s/g, "");
-
-  const binaryKey = Buffer.from(pemBody, "base64");
 
   try {
     // Dynamic import for jose (smaller than full crypto)
@@ -179,6 +171,21 @@ export async function GET() {
     // Detalhe só no log: a mensagem crua do Google devolve nome de variável
     // de ambiente e resposta interna para quem chamar a rota.
     console.error("[admin/ga4] falha:", error);
+
+    const mensagem = error instanceof Error ? error.message : "";
+
+    // Chave do service account é problema de configuração, não instabilidade:
+    // dizer "tente de novo" mandava o dono repetir o que nunca ia funcionar.
+    if (mensagem.includes("GA4_KEY_FORMATO") || mensagem.includes("credentials not configured")) {
+      return NextResponse.json(
+        {
+          error: "Analytics não configurado.",
+          hint: "A chave do service account precisa estar em PKCS#8 (-----BEGIN PRIVATE KEY-----). Copie o campo private_key do JSON baixado no Google Cloud.",
+        },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Não foi possível carregar o Analytics agora.", hint: "Tente de novo em alguns minutos." },
       { status: 502 }
