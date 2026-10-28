@@ -26,6 +26,8 @@ import {
   LocalShipping,
   Cancel,
   History,
+  WhatsApp,
+  Email,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { labelStatus, STATUS_COLOR } from "@/lib/pedido-status";
@@ -168,6 +170,35 @@ export default function PedidoDetalhe() {
   const formatPrice = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+  // Contato com o cliente (#122 — versão barata): abre o WhatsApp ou o e-mail
+  // com uma mensagem pronta do status atual. Não guarda a conversa; histórico
+  // de mensagens depende de decisão de canal (ver #122).
+  const soDigitos = (valor?: string | null) => (valor || "").replace(/\D/g, "");
+
+  const telefoneParaWhatsApp = (valor?: string | null) => {
+    const d = soDigitos(valor);
+    if (!d) return null;
+    return d.length <= 11 ? `55${d}` : d;
+  };
+
+  const mensagemDoStatus = (p: Pedido) => {
+    const numero = p.id.slice(-6).toUpperCase();
+    const nome = (p.clienteNome || p.user?.name || "").split(" ")[0] || "tudo bem";
+    const valor = formatPrice(p.total);
+    const base: Record<string, string> = {
+      pendente: `Olá ${nome}! Recebemos seu pedido #${numero} (${valor}) na Car Crew Garage. Podemos confirmar o pagamento?`,
+      aguardando_pagamento: `Olá ${nome}! Seu pedido #${numero} (${valor}) está aguardando o pagamento. Se precisar de ajuda com o PIX, me chama aqui.`,
+      pago: `Olá ${nome}! Pagamento do pedido #${numero} confirmado. Já estamos separando as peças.`,
+      em_separacao: `Olá ${nome}! Seu pedido #${numero} está sendo separado e sai para envio em breve.`,
+      enviado: `Olá ${nome}! Seu pedido #${numero} foi enviado. Assim que tiver o rastreio, te mando aqui.`,
+      entregue: `Olá ${nome}! Seu pedido #${numero} consta como entregue. Se ficou alguma dúvida na instalação, é só falar.`,
+      cancelado: `Olá ${nome}! Seu pedido #${numero} foi cancelado. Se quiser, refaço o pedido com você por aqui.`,
+    };
+    return base[p.status] || `Olá ${nome}! Falando sobre o seu pedido #${numero} na Car Crew Garage.`;
+  };
+
+  const emailDoCliente = (p: Pedido) => p.user?.email || p.clienteEmail || null;
+
   if (authStatus === "loading") {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
@@ -190,6 +221,21 @@ export default function PedidoDetalhe() {
     };
     return map[pedido.status] || null;
   };
+
+  // Links de contato prontos (#122). Sem telefone/e-mail válido, o botão fica
+  // desabilitado — melhor do que abrir uma conversa sem destino.
+  const numeroCliente = pedido ? telefoneParaWhatsApp(pedido.clienteTelefone) : null;
+  const linkWhatsApp =
+    pedido && numeroCliente
+      ? `https://wa.me/${numeroCliente}?text=${encodeURIComponent(mensagemDoStatus(pedido))}`
+      : null;
+
+  const emailCliente = pedido ? emailDoCliente(pedido) : null;
+  const linkEmail = pedido && emailCliente
+    ? `mailto:${emailCliente}?subject=${encodeURIComponent(
+        `Pedido #${pedido.id.slice(-6).toUpperCase()} — Car Crew Garage`
+      )}&body=${encodeURIComponent(mensagemDoStatus(pedido))}`
+    : null;
 
   return (
     <>
@@ -286,6 +332,49 @@ export default function PedidoDetalhe() {
                         : "—"}
                     </Typography>
                   </Box>
+                </Box>
+              </Paper>
+
+              {/* Contato com o cliente (#122) */}
+              <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: "#1A1A1A" }}>
+                  Falar com o cliente
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#777", mb: 2 }}>
+                  Abre a conversa com a mensagem do status atual já escrita. O histórico da conversa não fica no pedido.
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                  {linkWhatsApp ? (
+                    <Button
+                      variant="contained"
+                      startIcon={<WhatsApp />}
+                      href={linkWhatsApp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ backgroundColor: "#25D366", "&:hover": { backgroundColor: "#1eb257" }, textTransform: "none" }}
+                    >
+                      WhatsApp
+                    </Button>
+                  ) : (
+                    <Button variant="contained" startIcon={<WhatsApp />} disabled sx={{ textTransform: "none" }}>
+                      Sem telefone
+                    </Button>
+                  )}
+
+                  {linkEmail ? (
+                    <Button
+                      variant="outlined"
+                      startIcon={<Email />}
+                      href={linkEmail}
+                      sx={{ textTransform: "none", borderColor: "#BF360C", color: "#BF360C" }}
+                    >
+                      E-mail
+                    </Button>
+                  ) : (
+                    <Button variant="outlined" startIcon={<Email />} disabled sx={{ textTransform: "none" }}>
+                      Sem e-mail
+                    </Button>
+                  )}
                 </Box>
               </Paper>
 
