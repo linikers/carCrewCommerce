@@ -4,6 +4,8 @@ import { Phone, LocationOn, AccessTime, WhatsApp, Build, Star, Groups } from "@m
 import Header from "@/components/Header";
 import { lerContatoEmpresaCache } from "@/lib/empresa";
 import Footer from "@/components/Footer";
+import TextoRico from "@/components/TextoRico";
+import { lerPagina } from "@/lib/paginas-conteudo";
 
 export const metadata: Metadata = {
   title: "Sobre a Car Crew Garage",
@@ -14,74 +16,42 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function SobrePage() {
-  const contato = await lerContatoEmpresaCache();
+  const [contato, pagina] = await Promise.all([
+    lerContatoEmpresaCache(),
+    lerPagina("sobre"),
+  ]);
+
+  // Ícone por posição: o primeiro bloco é a história, o segundo o que fazemos.
+  const icones = [<Build key="hist" sx={{ color: "#E65100", fontSize: 28 }} />, <Star key="faz" sx={{ color: "#E65100", fontSize: 28 }} />];
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
 
       <Container maxWidth="md" sx={{ flex: 1, py: 6 }}>
-        {/* Título */}
         <Typography component="h1" variant="h3" sx={{ fontWeight: 700, mb: 2, textAlign: "center" }}>
-          Sobre a Car Crew Garage
+          {pagina.titulo}
         </Typography>
-        <Typography variant="h6" sx={{ color: "#666", textAlign: "center", mb: 6, fontWeight: 400 }}>
-          Mais de 10 anos transformando veículos em paixão
-        </Typography>
+        {pagina.subtitulo && (
+          <Typography variant="h6" sx={{ color: "#666", textAlign: "center", mb: 6, fontWeight: 400 }}>
+            {pagina.subtitulo}
+          </Typography>
+        )}
 
-        {/* Nossa História */}
-        <Paper sx={{ p: 4, borderRadius: 3, mb: 4 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
-            <Build sx={{ color: "#E65100", fontSize: 28 }} />
-            <Typography variant="h5" sx={{ fontWeight: 600, color: "#E65100" }}>
-              Nossa História
-            </Typography>
-          </Box>
-          <Typography variant="body1" sx={{ lineHeight: 1.9, color: "#444", mb: 2 }}>
-            A <strong>Car Crew Garage</strong> nasceu da paixão por veículos customizados e da
-            vontade de transformar cada projeto em algo único. Com sede em{" "}
-            <strong>Maringá/PR</strong> e <strong>mais de 10 anos de experiência</strong> no
-            mercado de customização automotiva, construímos uma trajetória baseada em
-            qualidade, inovação e dedicação aos apaixonados por carros.
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.9, color: "#444", mb: 2 }}>
-            Somos especialistas em <strong>suspensão a ar</strong>,{" "}
-            <strong>suspensão fixa</strong>, <strong>suspensão rosca (coilover)</strong>,{" "}
-            <strong>kits lift</strong> e projetos de personalização automotiva para quem
-            busca exclusividade, desempenho e um acabamento impecável. Nossa oficina atende
-            clientes de Maringá e região que buscam o melhor em <strong>rebaixados</strong>{" "}
-            e customização — mais do que
-            instalar componentes, desenvolvemos soluções sob medida para que cada veículo
-            reflita a personalidade do seu proprietário.
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.9, color: "#444" }}>
-            Ao longo dos anos, conquistamos a confiança de clientes de diversas regiões do
-            Brasil e hoje somos reconhecidos como <strong>um dos destaques da cena
-            automotiva</strong>, resultado do compromisso com a excelência, da qualidade
-            dos produtos que oferecemos e da atenção aos mínimos detalhes em cada projeto.
-          </Typography>
-        </Paper>
+        {/* Seções editáveis em /admin/paginas */}
+        {pagina.secoes.map((secao, i) => (
+          <Paper key={secao.id} sx={{ p: 4, borderRadius: 3, mb: 4 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
+              {icones[i] ?? <Star sx={{ color: "#E65100", fontSize: 28 }} />}
+              <Typography variant="h5" sx={{ fontWeight: 600, color: "#E65100" }}>
+                {secao.titulo}
+              </Typography>
+            </Box>
+            <TextoRico texto={secao.texto} />
+          </Paper>
+        ))}
 
-        {/* O que fazemos */}
-        <Paper sx={{ p: 4, borderRadius: 3, mb: 4 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
-            <Star sx={{ color: "#E65100", fontSize: 28 }} />
-            <Typography variant="h5" sx={{ fontWeight: 600, color: "#E65100" }}>
-              O que Fazemos
-            </Typography>
-          </Box>
-          <Typography variant="body1" sx={{ lineHeight: 1.9, color: "#444", mb: 2 }}>
-            Seja para um carro rebaixado de alto nível, um kit lift preparado para qualquer
-            desafio ou uma customização completa, nossa missão é entregar um resultado
-            que supere expectativas e faça seu veículo se destacar por onde passar.
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.9, color: "#444" }}>
-            Na <strong>Car Crew Garage</strong>, cada projeto é tratado como único, porque
-            sabemos que um veículo personalizado não é apenas um meio de transporte — é
-            uma paixão, um estilo de vida e uma extensão de quem está ao volante.
-          </Typography>
-        </Paper>
-
-        {/* Diferenciais */}
+        {/* Diferenciais (visual fixo) */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 3, borderRadius: 3, textAlign: "center", height: "100%" }}>
@@ -150,7 +120,6 @@ export default async function SobrePage() {
           </Grid>
         </Grid>
 
-        {/* CTA */}
         <Box sx={{ textAlign: "center", mt: 4 }}>
           <Button
             variant="contained"

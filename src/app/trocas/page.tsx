@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Container, Typography, Box, Paper, Alert } from "@mui/material";
 import Header from "@/components/Header";
-import { lerContatoEmpresaCache } from "@/lib/empresa";
 import Footer from "@/components/Footer";
+import TextoRico from "@/components/TextoRico";
+import { lerPagina } from "@/lib/paginas-conteudo";
+import { lerContatoEmpresaCache } from "@/lib/empresa";
 
 export const metadata: Metadata = {
   title: "Política de Trocas e Devoluções",
@@ -13,91 +15,40 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function TrocasPage() {
-  const contato = await lerContatoEmpresaCache();
+  const [pagina, contato] = await Promise.all([lerPagina("trocas"), lerContatoEmpresaCache()]);
+
+  // {{telefone}} vem do cadastro da empresa — não repetir número no texto.
+  const trocar = (t: string) => t.replaceAll("{{telefone}}", contato.telefoneFormatado);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
 
       <Container maxWidth="md" sx={{ flex: 1, py: 6 }}>
         <Typography component="h1" variant="h3" sx={{ fontWeight: 700, mb: 4, textAlign: "center" }}>
-          Trocas e Devoluções
+          {pagina.titulo}
         </Typography>
 
-        <Alert severity="info" sx={{ mb: 4, borderRadius: 2 }}>
-          {/* CONTEÚDO: Prazo pra trocar */}
-          Você tem até 7 dias após o recebimento para solicitar troca ou devolução.
-        </Alert>
+        {pagina.subtitulo && (
+          <Typography variant="h6" sx={{ color: "#666", textAlign: "center", mb: 4, fontWeight: 400 }}>
+            {pagina.subtitulo}
+          </Typography>
+        )}
 
-        <Paper sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Condições para Troca
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.8, color: "#444" }}>
-            {/* CONTEÚDO: Condições pra troca */}
-            Para que a troca seja aceita, o produto deve estar:
-          </Typography>
-          <Box component="ul" sx={{ ml: 2, mt: 1 }}>
-            <li>Na embalagem original</li>
-            <li>Sem sinais de uso ou instalação</li>
-            <li>Com todos os acessórios inclusos</li>
-            <li>Com nota fiscal</li>
-          </Box>
-        </Paper>
+        {pagina.destaque && (
+          <Alert severity="info" sx={{ mb: 4, borderRadius: 2 }}>
+            {trocar(pagina.destaque)}
+          </Alert>
+        )}
 
-        <Paper sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Como Solicitar
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.8, color: "#444" }}>
-            {/* CONTEÚDO: Passo a passo pra solicitar */}
-          </Typography>
-          <Box component="ol" sx={{ ml: 2, mt: 1 }}>
-            <li>
-              Entre em contato pelo WhatsApp {contato.telefoneFormatado}
-            </li>
-            <li>Informe o número do pedido e o motivo da troca</li>
-            <li>Aguarde instruções para envio do produto</li>
-            <li>Após receber o produto, processaremos a troca em até 5 dias úteis</li>
-          </Box>
-        </Paper>
-
-        <Paper sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Frete de Devolução
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.8, color: "#444" }}>
-            {/* CONTEÚDO: Quem paga o frete de devolução */}
-            O frete de devolução é de responsabilidade do cliente, exceto
-            quando o produto apresentar defeito de fabricação.
-          </Typography>
-        </Paper>
-
-        <Paper sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Itens com Restrição de Troca
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.8, color: "#444" }}>
-            {/* CONTEÚDO: Itens que não podem ser trocados */}
-            Não aceitamos troca para:
-          </Typography>
-          <Box component="ul" sx={{ ml: 2, mt: 1 }}>
-            <li>Produtos personalizados ou sob medida</li>
-            <li>Produtos instalados ou com sinais de uso</li>
-            <li>Acessórios sem embalagem original</li>
-          </Box>
-        </Paper>
-
-        <Paper sx={{ p: 4, borderRadius: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Reembolso
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.8, color: "#444" }}>
-            {/* CONTEÚDO: Prazo de reembolso */}
-            O reembolso será processado em até 10 dias úteis após a
-            confirmação da devolução, na mesma forma de pagamento utilizada
-            na compra.
-          </Typography>
-        </Paper>
+        {pagina.secoes.map((secao) => (
+          <Paper key={secao.id} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+              {secao.titulo}
+            </Typography>
+            <TextoRico texto={trocar(secao.texto)} />
+          </Paper>
+        ))}
       </Container>
 
       <Footer />
