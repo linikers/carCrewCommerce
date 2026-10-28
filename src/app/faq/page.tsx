@@ -11,6 +11,7 @@ import {
 import { ExpandMore, WhatsApp } from "@mui/icons-material";
 import Header from "@/components/Header";
 import { lerContatoEmpresaCache } from "@/lib/empresa";
+import { lerFaqPublico } from "@/lib/faq-conteudo";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -24,54 +25,6 @@ export const metadata: Metadata = {
   },
 };
 
-interface FaqItem {
-  question: string;
-  answer: string;
-}
-
-const faqItems: FaqItem[] = [
-  {
-    question: "Qual a diferença entre suspensão a ar, fixa e rosca?",
-    answer:
-      "A diferença principal é a regulagem de altura. A suspensão a ar e a rosca (coilover) são ajustáveis — no ar você controla a altura em tempo real por um painel (perfeito para qualquer terreno), e na rosca você regula manualmente girando o anel de pré-carga. A suspensão fixa tem altura definida de fábrica; qualquer mudança exige retrabalho mecânico (troca de molas, corte, etc). Resumindo: ar = regulagem dinâmica via controle; rosca = regulagem manual por ajuste mecânico; fixa = sem regulagem, alteração exige retrabalho.",
-  },
-  {
-    question: "Qual suspensão escolher para meu carro?",
-    answer:
-      "Depende do uso que você faz do veículo. Para uso urbano e versatilidade, a suspensão a ar é a mais comum — você ajusta a altura conforme o terreno ou situação (subindo em lombadas, rebaixando para estilo). Para quem anda na cidade e também vai para pista/autódromo, a rosca (coilover) ou a fixa são as mais indicadas, pela precisão em curvas e resposta esportiva. O ar entrega o melhor conforto e comodidade para os mais variados tipos de terreno, mas se o foco é performance pura em pista, rosca ou fixa são superiores. Cada projeto é conversado caso a caso — fale com a gente pelo WhatsApp para uma recomendação personalizada.",
-  },
-  {
-    question: "Vocês entregam para todo o Brasil?",
-    answer:
-      "Sim. Enviamos para todo o território nacional via Correios e transportadoras parceiras. Já temos mais de 500 vendas concluídas para fora do nosso estado, com clientes satisfeitos em todas as regiões. O frete é calculado pelo CEP no checkout e o prazo varia conforme a região.",
-  },
-  {
-    question: "Quanto custa uma suspensão instalada?",
-    answer:
-      "Atualmente, modificar uma suspensão parte de R$ 900. O teto é definido pelo orçamento do cliente, porque trabalhamos com acessórios nacionais e importados das mais variadas faixas de preço. Cada projeto tem suas particularidades — tipo de suspensão, marca dos componentes, modelo do veículo e nível de personalização. Por isso fazemos um orçamento detalhado, sem compromisso, de acordo com o que você quer.",
-  },
-  {
-    question: "A suspensão rebaixada ou lift é legalizada?",
-    answer:
-      "Sim, é possível legalizar suspensão rebaixada e lift, respeitando os limites do CONTRAN. Para carros rebaixados, o limite é de 10 cm em relação à altura original do veículo (Resolução CONTRAN nº 292/2008). Para lift (elevação), não há limite de altura fixado, mas o veículo precisa passar por vistoria técnica e homologação junto ao DETRAN/PR, com laudo de inspeção veicular. A Car Crew Garage orienta todos os clientes sobre a documentação e o processo de regularização.",
-  },
-  {
-    question: "Posso parcelar a instalação?",
-    answer:
-      "Sim, aceitamos parcelamento da instalação. Entre em contato pelo WhatsApp {{telefone}} para combinar as condições de pagamento direto. Para produtos da loja, o pagamento é via PIX.",
-  },
-  {
-    question: "Vocês fazem orçamento sem compromisso?",
-    answer:
-      "Sim, fazemos orçamento sem compromisso. Mande pelo WhatsApp {{telefone}} o modelo e ano do veículo, o tipo de suspensão desejada e (se possível) fotos do projeto. Respondemos com orçamento detalhado em até 24 horas.",
-  },
-  {
-    question: "Quanto tempo leva a instalação?",
-    answer:
-      "Em média, 1 semana para instalar. Dependendo do tipo de suspensão e da complexidade do projeto, o prazo pode ser menor ou maior — uma suspensão fixa costuma ser instalada no mesmo dia, enquanto uma suspensão a ar completa (com compressor, manifolds, chicotes elétricos) pode levar 2 a 3 dias úteis. O agendamento é feito conforme sua disponibilidade.",
-  },
-];
-
 export const dynamic = "force-dynamic";
 
 export default async function FaqPage() {
@@ -79,9 +32,12 @@ export default async function FaqPage() {
 
   // O telefone vem de "Minha empresa": o texto guarda um marcador para não
   // repetir o número em cada resposta.
-  const itens = faqItems.map((f) => ({
-    ...f,
-    answer: f.answer.replaceAll("{{telefone}}", contato.telefoneFormatado),
+  // Conteúdo do painel (/admin/faq); o texto do código é o padrão quando não
+  // existe nada salvo.
+  const publicados = await lerFaqPublico();
+  const itens = publicados.map((f) => ({
+    question: f.pergunta,
+    answer: f.resposta.replaceAll("{{telefone}}", contato.telefoneFormatado),
   }));
 
   const faqSchema = {
