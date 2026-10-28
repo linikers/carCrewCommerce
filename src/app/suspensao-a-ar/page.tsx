@@ -1,30 +1,41 @@
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
-import { Build, CheckCircle, LocalShipping, Star, Air } from "@mui/icons-material";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { Build, CheckCircle, LocalShipping, Star } from "@mui/icons-material";
 import CategoriaLanding, { CategoriaProduto } from "@/components/categorias/CategoriaLanding";
 import { serviceSchema, itemListSchema, breadcrumbSchema } from "@/lib/seo-schemas";
+import { lerConteudoLp } from "@/lib/lp-conteudo";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: "Suspensão a Ar em Maringá | Car Crew Garage",
-  },
-  description:
-    "Sistema de suspensão pneumática em Maringá-PR: bolsas de ar, compressores e controles bluetooth. Rebaixe ou nivele seu carro com conforto. Venda e instalação especializada.",
-  alternates: { canonical: "/suspensao-a-ar" },
-  openGraph: {
-    title: "Suspensão a Ar em Maringá — Car Crew Garage",
-    description: "Bolsas de ar, compressores e controles para suspensão pneumática. Venda e instalação em Maringá-PR.",
-    type: "website",
-    images: ["/og-image.jpg"],
-  },
-};
+const SLUG = "suspensao-a-ar";
 
+// Ícones ficam no código (não são texto); o texto vem do painel.
+const ICONES = [Build, CheckCircle, LocalShipping, Star];
+
+export async function generateMetadata(): Promise<Metadata> {
+  const conteudo = await lerConteudoLp(SLUG);
+
+  return {
+    title: { absolute: conteudo.seoTitulo },
+    description: conteudo.seoDescricao,
+    alternates: { canonical: "/suspensao-a-ar" },
+    openGraph: {
+      title: conteudo.seoTitulo,
+      description: conteudo.seoDescricao,
+      type: "website",
+      images: ["/og-image.jpg"],
+    },
+  };
+}
 const SLUGS = ["bolsas-de-ar", "compressores", "controles"];
 
 export const dynamic = "force-dynamic";
 
 export default async function SuspensaoArPage() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
+  const conteudo = await lerConteudoLp(SLUG);
+  const sessao = await getServerSession(authOptions);
+  const admin = Boolean((sessao?.user as { admin?: boolean } | undefined)?.admin);
   let produtos: CategoriaProduto[] = [];
 
   try {
@@ -68,31 +79,22 @@ export default async function SuspensaoArPage() {
         />
       ))}
       <CategoriaLanding
-        h1="Suspensão a Ar em Maringá"
-        intro={[
-          "A suspensão a ar (ou suspensão pneumática) é a escolha de quem quer rebaixar o carro sem abrir mão do conforto — ou nivelar a altura do veículo em segundos, no controle bluetooth. Na Car Crew Garage você encontra bolsas de ar, compressores e controles das melhores marcas, com instalação especializada em Maringá-PR.",
-          "Trabalhamos com bolsas de ar para os projetos mais baixos, compressores de alta vazão e controles bluetooth que permitem ajustar cada eixo separadamente. Atendemos clientes de Maringá, Sarandi, Marialva, Cianorte e todo o Brasil com envio seguro para qualquer estado.",
-        ]}
+        h1={conteudo.titulo}
+        intro={conteudo.intro}
         produtos={produtos}
-        beneficios={[
-          { icon: <Build sx={{ fontSize: 40, color: "#E65100" }} />, title: "Instalação Especializada", desc: "Equipe experiente em sistema pneumático e projetos super baixos" },
-          { icon: <CheckCircle sx={{ fontSize: 40, color: "#E65100" }} />, title: "Peças de Qualidade", desc: "Bolsas, compressores e válvulas de marcas confiáveis do mercado" },
-          { icon: <LocalShipping sx={{ fontSize: 40, color: "#E65100" }} />, title: "Entrega para todo Brasil", desc: "Enviamos peças para todo território nacional. Instalação em Maringá/PR" },
-          { icon: <Star sx={{ fontSize: 40, color: "#E65100" }} />, title: "Garantia e Suporte", desc: "90 dias de garantia na mão de obra + garantia do fabricante nas peças" },
-        ]}
-        servicos={[
-          "Projetos super baixos (bagged)",
-          "Nivelamento por eixo",
-          "Compressores e reservatórios",
-          "Válvulas e mangueiras",
-          "Controle bluetooth",
-          "Suspensão mista (ar + mola)",
-          "Reparos e manutenção",
-          "Ajuste de altura em segundos",
-        ]}
-        ctaTitle="Quer rebaixar ou nivelar seu carro com suspensão a ar?"
-        ctaDesc="Fale com nossos especialistas e receba o orçamento do seu projeto. Atendemos em Maringá-PR e enviamos para todo o Brasil."
-        whatsMessage="Olá! Quero um orçamento de suspensão a ar para meu carro."
+        beneficios={conteudo.beneficios.map((b, i) => {
+          const Icone = ICONES[i % ICONES.length];
+          return {
+            icon: <Icone sx={{ fontSize: 40, color: "#E65100" }} />,
+            title: b.titulo,
+            desc: b.texto,
+          };
+        })}
+        servicos={conteudo.servicos}
+        ctaTitle={conteudo.ctaTitulo}
+        ctaDesc={conteudo.ctaTexto}
+        whatsMessage={conteudo.whatsMensagem}
+        editarHref={admin ? `/admin/lp/${SLUG}` : undefined}
       />
     </>
   );

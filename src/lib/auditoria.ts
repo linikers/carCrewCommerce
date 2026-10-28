@@ -21,6 +21,7 @@ export type EntidadeAuditada =
   | "frete"
   | "configuracao"
   | "menu_loja"
+  | "lp_conteudo"
   | "empresa";
 
 export async function auditar(params: {

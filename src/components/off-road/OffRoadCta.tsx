@@ -4,7 +4,15 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import { WhatsApp } from "@mui/icons-material";
 import Link from "next/link";
 
-export default function OffRoadCta() {
+export interface OffRoadCtaProps {
+  titulo?: string;
+  texto?: string;
+}
+
+export default function OffRoadCta({
+  titulo = "Pronto pra encarar qualquer terreno?",
+  texto = "Solicite um orçamento personalizado. Atendemos Maringá/PR e enviamos para todo o Brasil.",
+}: OffRoadCtaProps) {
   return (
     <Paper
       sx={{
@@ -17,10 +25,10 @@ export default function OffRoadCta() {
       }}
     >
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 2 }}>
-        Pronto pra encarar qualquer terreno?
+        {titulo}
       </Typography>
       <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.9)", mb: 4, fontSize: "1.1rem" }}>
-        Solicite um orçamento personalizado. Atendemos Maringá/PR e enviamos para todo o Brasil.
+        {texto}
       </Typography>
       <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
         <Button

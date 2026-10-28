@@ -1,30 +1,41 @@
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
-import { Build, CheckCircle, LocalShipping, Star, Straighten } from "@mui/icons-material";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { Build, CheckCircle, LocalShipping, Star } from "@mui/icons-material";
 import CategoriaLanding, { CategoriaProduto } from "@/components/categorias/CategoriaLanding";
 import { serviceSchema, itemListSchema, breadcrumbSchema } from "@/lib/seo-schemas";
+import { lerConteudoLp } from "@/lib/lp-conteudo";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: "Rebaixados em Maringá | Peças e Instalação — Car Crew Garage",
-  },
-  description:
-    "Tudo para carro rebaixado em Maringá-PR: calços antirruído, kits de rebaixamento, bandejas e pontas de eixo. Deixe seu carro na altura ideal com segurança. Venda e instalação.",
-  alternates: { canonical: "/rebaixamento" },
-  openGraph: {
-    title: "Rebaixados em Maringá — Car Crew Garage",
-    description: "Calços antirruído, kits, bandejas e pontas de eixo para rebaixar seu carro com segurança. Venda e instalação em Maringá-PR.",
-    type: "website",
-    images: ["/og-image.jpg"],
-  },
-};
+const SLUG = "rebaixamento";
 
+// Ícones ficam no código (não são texto); o texto vem do painel.
+const ICONES = [Build, CheckCircle, LocalShipping, Star];
+
+export async function generateMetadata(): Promise<Metadata> {
+  const conteudo = await lerConteudoLp(SLUG);
+
+  return {
+    title: { absolute: conteudo.seoTitulo },
+    description: conteudo.seoDescricao,
+    alternates: { canonical: "/rebaixamento" },
+    openGraph: {
+      title: conteudo.seoTitulo,
+      description: conteudo.seoDescricao,
+      type: "website",
+      images: ["/og-image.jpg"],
+    },
+  };
+}
 const SLUGS = ["calcos-antirruido", "kits", "bandejas", "pontas-de-eixo"];
 
 export const dynamic = "force-dynamic";
 
 export default async function RebaixamentoPage() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
+  const conteudo = await lerConteudoLp(SLUG);
+  const sessao = await getServerSession(authOptions);
+  const admin = Boolean((sessao?.user as { admin?: boolean } | undefined)?.admin);
   let produtos: CategoriaProduto[] = [];
 
   try {
@@ -68,31 +79,22 @@ export default async function RebaixamentoPage() {
         />
       ))}
       <CategoriaLanding
-        h1="Rebaixados em Maringá"
-        intro={[
-          "Rebaixar o carro é o primeiro passo pra deixar o visual com a cara do dono — mas precisa ser feito com peças certas e instalação caprichada. Na Car Crew Garage você encontra calços antirruído, kits de rebaixamento, bandejas reforçadas e pontas de eixo para rebaixar com segurança e sem barulho.",
-          "Atendemos os principais modelos do mercado brasileiro: Gol, Voyage, Saveiro, Corsa, Celta, Prisma, Civic, Corolla e muito mais. Seja rebaixamento leve ou projeto mais baixo, nossa equipe em Maringá-PR monta o conjunto ideal pro seu carro — e enviamos peças para todo o Brasil.",
-        ]}
+        h1={conteudo.titulo}
+        intro={conteudo.intro}
         produtos={produtos}
-        beneficios={[
-          { icon: <Build sx={{ fontSize: 40, color: "#E65100" }} />, title: "Instalação Especializada", desc: "Equipe com mais de 10 anos de experiência em rebaixamento" },
-          { icon: <CheckCircle sx={{ fontSize: 40, color: "#E65100" }} />, title: "Peças de Qualidade", desc: "Calços, bandejas e pontas de eixo de marcas confiáveis" },
-          { icon: <LocalShipping sx={{ fontSize: 40, color: "#E65100" }} />, title: "Entrega para todo Brasil", desc: "Enviamos peças para todo território nacional. Instalação em Maringá/PR" },
-          { icon: <Star sx={{ fontSize: 40, color: "#E65100" }} />, title: "Garantia e Suporte", desc: "90 dias de garantia na mão de obra + garantia do fabricante nas peças" },
-        ]}
-        servicos={[
-          "Calços antirruído (coxim)",
-          "Kits completos de rebaixamento",
-          "Bandejas reforçadas",
-          "Pontas de eixo",
-          "Rebaixamento a mola",
-          "Rebaixamento a calço",
-          "Alinhamento e balanceamento",
-          "Projetos super baixos",
-        ]}
-        ctaTitle="Quer rebaixar seu carro com segurança?"
-        ctaDesc="Fale com nossos especialistas e receba o orçamento do seu projeto. Atendemos em Maringá-PR e enviamos para todo o Brasil."
-        whatsMessage="Olá! Quero um orçamento de rebaixamento para meu carro."
+        beneficios={conteudo.beneficios.map((b, i) => {
+          const Icone = ICONES[i % ICONES.length];
+          return {
+            icon: <Icone sx={{ fontSize: 40, color: "#E65100" }} />,
+            title: b.titulo,
+            desc: b.texto,
+          };
+        })}
+        servicos={conteudo.servicos}
+        ctaTitle={conteudo.ctaTitulo}
+        ctaDesc={conteudo.ctaTexto}
+        whatsMessage={conteudo.whatsMensagem}
+        editarHref={admin ? `/admin/lp/${SLUG}` : undefined}
       />
     </>
   );

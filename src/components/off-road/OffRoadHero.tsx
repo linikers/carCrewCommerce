@@ -4,7 +4,25 @@ import { Box, Button, Container, Typography, Chip } from "@mui/material";
 import { WhatsApp } from "@mui/icons-material";
 import Link from "next/link";
 
-export default function OffRoadHero() {
+export interface OffRoadHeroProps {
+  selo?: string;
+  titulo?: string;
+  tituloDestaque?: string;
+  texto?: string;
+  whatsMensagem?: string;
+}
+
+/**
+ * Texto padrão do hero. O painel (/admin/lp/off-road) sobrescreve por prop —
+ * sem prop, a página fica exatamente como sempre foi.
+ */
+export default function OffRoadHero({
+  selo = "MAIS QUE UM CAMINHO, UM ESTILO DE VIDA",
+  titulo = "POR QUE",
+  tituloDestaque = "OFF-ROAD?",
+  texto = "Prepare sua picape para qualquer terreno. Lift kits 4x4, suspensão off-road e acessórios para trilha em Maringá/PR.",
+  whatsMensagem = "Olá! Quero fazer um orçamento para suspensão off-road.",
+}: OffRoadHeroProps) {
   return (
     <Box
       sx={{
@@ -48,7 +66,7 @@ export default function OffRoadHero() {
         />
         <Box sx={{ position: "relative", maxWidth: { xs: "100%", md: "38%" } }}>
           <Chip
-            label="MAIS QUE UM CAMINHO, UM ESTILO DE VIDA"
+            label={selo}
             sx={{
               backgroundColor: "#E65100",
               color: "#fff",
@@ -71,9 +89,9 @@ export default function OffRoadHero() {
               textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.5)",
             }}
           >
-            <Box component="span" sx={{ color: "#fff" }}>POR QUE</Box>
+            <Box component="span" sx={{ color: "#fff" }}>{titulo}</Box>
             <br />
-            <Box component="span" sx={{ color: "#FF7722" }}>OFF-ROAD?</Box>
+            <Box component="span" sx={{ color: "#FF7722" }}>{tituloDestaque}</Box>
           </Typography>
           <Typography
             variant="h6"
@@ -85,13 +103,13 @@ export default function OffRoadHero() {
               textShadow: "0 1px 4px rgba(0,0,0,0.7)",
             }}
           >
-            Prepare sua picape para qualquer terreno. Lift kits 4x4, suspensão off-road e acessórios para trilha em Maringá/PR.
+            {texto}
           </Typography>
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
             <Button
               variant="contained"
               startIcon={<WhatsApp />}
-              href="https://wa.me/5544998133182?text=Olá! Quero fazer um orçamento para suspensão off-road."
+              href={`https://wa.me/5544998133182?text=${encodeURIComponent(whatsMensagem)}`}
               target="_blank"
               sx={{
                 backgroundColor: "#25D366",
