@@ -6,8 +6,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
-  MenuItem,
   Paper,
   TextField,
   Typography,
@@ -27,13 +25,6 @@ interface Empresa {
   razaoSocial: string;
   nomeFantasia: string;
   cnpj: string;
-  ie: string;
-  im: string;
-  cnae: string;
-  crt: string;
-  ambiente: string;
-  serie: string;
-  proximoNumero: string;
   logradouro: string;
   numero: string;
   complemento: string;
@@ -55,13 +46,6 @@ const VAZIA: Empresa = {
   razaoSocial: "Car Crew Garage",
   nomeFantasia: "Car Crew Garage",
   cnpj: "",
-  ie: "",
-  im: "",
-  cnae: "",
-  crt: "1",
-  ambiente: "homologacao",
-  serie: "1",
-  proximoNumero: "1",
   logradouro: "",
   numero: "",
   complemento: "",
@@ -120,6 +104,9 @@ export default function EmpresaAdmin() {
   }
 
   useEffect(() => {
+    // Carregar no mount é o padrão desta tela (o formulário nasce vazio e é
+    // preenchido com o cadastro); o setState acontece depois do fetch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void carregar();
   }, []);
 
@@ -152,15 +139,14 @@ export default function EmpresaAdmin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...resto,
-          crt: Number(resto.crt),
-          serie: Number(resto.serie),
-          proximoNumero: Number(resto.proximoNumero),
           redesSociais: { site, instagram, facebook, tiktok, youtube },
         }),
       });
       const d = await res.json();
       if (!res.ok) throw new Error(d?.error || "Falha ao salvar");
-      setAviso("Dados salvos. O PDF da OS e do orçamento já usam estas informações.");
+      setAviso(
+        "Dados salvos. O site, o PDF da OS e o orçamento já usam estas informações."
+      );
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Falha ao salvar");
     } finally {
@@ -197,9 +183,10 @@ export default function EmpresaAdmin() {
   return (
     <Box sx={{ maxWidth: 920 }}>
       <Alert severity="info" sx={{ mb: 3, fontSize: "0.82rem" }}>
-        Este é o único cadastro da empresa. O PDF da OS, o orçamento e a nota fiscal leem daqui — e
-        a aba <strong>Fiscal</strong> edita exatamente estes mesmos campos. Campo vazio simplesmente
-        não aparece no documento.
+        Aqui ficam a identidade e o contato da loja — o que aparece no site, no
+        PDF da OS e no orçamento. <strong>CNPJ, inscrições, regime, série e
+        numeração da nota são da aba Fiscal</strong>, para as duas telas não
+        sobrescreverem uma à outra.
       </Alert>
 
       <Paper variant="outlined" sx={{ p: 3, mb: 2 }}>
@@ -207,10 +194,6 @@ export default function EmpresaAdmin() {
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
           {campo("razaoSocial", "Razão social")}
           {campo("nomeFantasia", "Nome fantasia")}
-          {campo("cnpj", "CNPJ", { helperText: "Opcional — o fiscal cobra só na emissão" })}
-          {campo("ie", "Inscrição estadual")}
-          {campo("im", "Inscrição municipal")}
-          {campo("cnae", "CNAE")}
         </Box>
       </Paper>
 
@@ -278,38 +261,21 @@ export default function EmpresaAdmin() {
       </Paper>
 
       <Paper variant="outlined" sx={{ p: 3, mb: 2 }}>
-        {titulo("Fiscal", "Os mesmos dados da aba Fiscal — usados na emissão da nota")}
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
-          <TextField
-            select
-            size="small"
-            label="Regime (CRT)"
-            value={empresa.crt}
-            onChange={(e) => setEmpresa({ ...empresa, crt: e.target.value })}
-            fullWidth
-          >
-            <MenuItem value="1">1 — Simples Nacional</MenuItem>
-            <MenuItem value="2">2 — Simples, excesso de sublimite</MenuItem>
-            <MenuItem value="3">3 — Regime Normal</MenuItem>
-          </TextField>
-          <TextField
-            select
-            size="small"
-            label="Ambiente da nota"
-            value={empresa.ambiente}
-            onChange={(e) => setEmpresa({ ...empresa, ambiente: e.target.value })}
-            fullWidth
-          >
-            <MenuItem value="homologacao">Homologação (teste)</MenuItem>
-            <MenuItem value="producao">Produção</MenuItem>
-          </TextField>
-          {campo("serie", "Série da nota", { type: "number" })}
-          {campo("proximoNumero", "Próximo número", { type: "number" })}
-        </Box>
-
-        <Divider sx={{ my: 2 }} />
-        <Typography sx={{ fontSize: "0.78rem", color: "#777" }}>
-          O certificado digital A1 continua na aba Fiscal — é segredo cifrado, não texto.
+        {titulo("Dados fiscais", "CNPJ, inscrições, regime e numeração da nota")}
+        <Typography sx={{ fontSize: "0.85rem", color: "#555", mb: 2 }}>
+          {empresa.cnpj
+            ? `CNPJ cadastrado: ${empresa.cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5")}`
+            : "CNPJ ainda não cadastrado."}
+        </Typography>
+        <Button
+          variant="outlined"
+          href="/admin/fiscal"
+          sx={{ textTransform: "none" }}
+        >
+          Abrir cadastro fiscal
+        </Button>
+        <Typography sx={{ fontSize: "0.78rem", color: "#777", mt: 1.5 }}>
+          O certificado A1 e a política de emissão também ficam lá.
         </Typography>
       </Paper>
 

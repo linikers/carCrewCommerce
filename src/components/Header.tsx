@@ -38,6 +38,7 @@ import { useState, useEffect, useRef } from "react";
 import { Categoria } from "@/types";
 import type { ItemMenu } from "@/lib/menu-loja";
 import CarCrewLogoText from "@/components/CarCrewLogoText";
+import { useEmpresa } from "@/components/EmpresaProvider";
 
 interface HeaderProps {
   cartItemCount?: number;
@@ -68,6 +69,7 @@ export default function Header({
     useState<null | HTMLElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const contato = useEmpresa();
 
   useEffect(() => {
     Promise.all([
@@ -561,7 +563,7 @@ export default function Header({
 
             <ListItemButton
               onClick={() => {
-                window.open("https://wa.me/5544998133182", "_blank");
+                window.open(contato.whatsapp, "_blank");
                 setMobileMenuOpen(false);
               }}
               sx={{ mb: 0.5 }}
@@ -580,7 +582,7 @@ export default function Header({
 
       {/* WhatsApp FAB — sempre visível, canto inferior direito */}
       <IconButton
-        href="https://wa.me/5544998133182"
+        href={contato.whatsapp}
         target="_blank"
         aria-label="Fale no WhatsApp"
         sx={{

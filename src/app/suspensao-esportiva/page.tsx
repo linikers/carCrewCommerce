@@ -6,6 +6,7 @@ import { Build, CheckCircle, LocalShipping, Star } from "@mui/icons-material";
 import CategoriaLanding, { CategoriaProduto } from "@/components/categorias/CategoriaLanding";
 import { serviceSchema, itemListSchema, breadcrumbSchema } from "@/lib/seo-schemas";
 import { lerConteudoLp } from "@/lib/lp-conteudo";
+import { lerContatoEmpresa } from "@/lib/empresa";
 
 const SLUG = "suspensao-esportiva";
 
@@ -34,6 +35,7 @@ export const dynamic = "force-dynamic";
 export default async function SuspensaoEsportivaPage() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
   const conteudo = await lerConteudoLp(SLUG);
+  const contato = await lerContatoEmpresa();
   const sessao = await getServerSession(authOptions);
   const admin = Boolean((sessao?.user as { admin?: boolean } | undefined)?.admin);
   let produtos: CategoriaProduto[] = [];
@@ -61,6 +63,7 @@ export default async function SuspensaoEsportivaPage() {
       description:
         "Amortecedores esportivos e kits de suspensão para mais estabilidade, menos rolagem de carroceria e dirigibilidade esportiva. Venda e instalação em Maringá/PR e região.",
       url: `${siteUrl}/suspensao-esportiva`,
+      empresa: contato,
     }),
     itemListSchema(produtos, siteUrl),
     breadcrumbSchema([

@@ -5,6 +5,8 @@ import localFont from "next/font/local";
 import MuiProvider from "@/lib/MuiProvider";
 import { CartProvider } from "@/lib/CartContext";
 import AuthProvider from "@/lib/AuthProvider";
+import { EmpresaProvider } from "@/components/EmpresaProvider";
+import { lerContatoEmpresa } from "@/lib/empresa";
 import "./globals.css";
 import Script from "next/script";
 
@@ -24,11 +26,18 @@ const orbitron = localFont({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://carcrew.com.br";
-const storeName = "Car Crew Garage";
 const storeDescription =
   "Loja especializada em suspensão automotiva custom e peças. Amortecedores, molas, calços, ponta de eixo, bolsa de ar, nivelamento e muito mais. Entrega para todo Brasil. Car Crew Garage — sua oficina de confiança em Maringá.";
 
-export const metadata: Metadata = {
+/**
+ * Nome, marca e imagem vêm de "Minha empresa": trocar o nome fantasia no
+ * painel muda o título das abas e o resultado do Google, sem deploy.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const contato = await lerContatoEmpresa();
+  const storeName = contato.nome;
+
+  return {
   metadataBase: new URL(siteUrl),
   title: {
     default: `${storeName} - Custom - Suspensões - Peças Automotivas`,
@@ -114,7 +123,8 @@ export const metadata: Metadata = {
       { url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-};
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -122,22 +132,26 @@ export const viewport: Viewport = {
   themeColor: "#E65100",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const contato = await lerContatoEmpresa();
+
   return (
     <html
       lang="pt-BR"
       className={`${GeistSans.variable} ${GeistMono.variable} ${orbitron.variable}`}
     >
       <body>
-        <AuthProvider>
-          <MuiProvider>
-            <CartProvider>{children}</CartProvider>
-          </MuiProvider>
-        </AuthProvider>
+        <EmpresaProvider valor={contato}>
+          <AuthProvider>
+            <MuiProvider>
+              <CartProvider>{children}</CartProvider>
+            </MuiProvider>
+          </AuthProvider>
+        </EmpresaProvider>
 
         {/* Structured Data — LocalBusiness */}
         <script
@@ -146,17 +160,18 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Store",
-              name: storeName,
+              name: contato.nome,
               image: `${siteUrl}/og-image.jpg`,
               "@id": siteUrl,
               url: siteUrl,
-              telephone: "(44) 99813-3182",
+              telephone: contato.telefoneFormatado,
+              ...(contato.cnpj ? { taxID: contato.cnpj } : {}),
               address: {
                 "@type": "PostalAddress",
-                streetAddress: "Av. Dona Sophia Rasgulaeff, 2825 - Jardim Novo Oasis",
-                addressLocality: "Maringá",
-                addressRegion: "PR",
-                postalCode: "87047-300",
+                streetAddress: contato.endereco ?? undefined,
+                addressLocality: contato.cidade,
+                addressRegion: contato.uf,
+                postalCode: contato.cep ?? undefined,
                 addressCountry: "BR",
               },
               openingHoursSpecification: [
@@ -167,11 +182,9 @@ export default function RootLayout({
                 { "@type": "OpeningHoursSpecification", dayOfWeek: "Friday", opens: "08:00", closes: "18:00" },
                 { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "11:00" },
               ],
-              sameAs: [
-                "https://share.google/iPKvtaL8rfQXonZW1",
-                "https://www.instagram.com/carcrewgarage_/",
-                "https://www.facebook.com/CarCrewG",
-              ],
+              sameAs: [contato.instagram, contato.facebook].filter(
+                (link): link is string => Boolean(link)
+              ),
             }),
           }}
         />

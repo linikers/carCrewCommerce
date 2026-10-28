@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
-import { Container, Typography, Box, Grid, Paper, Button } from "@mui/material";
-import { CheckCircle, WhatsApp } from "@mui/icons-material";
+import { Container, Typography, Box, Grid, Paper } from "@mui/material";
+import { CheckCircle } from "@mui/icons-material";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { formatBRL } from "@/lib/format";
 import BotaoEditarPagina from "@/components/BotaoEditarPagina";
+import BotaoWhatsApp from "@/components/BotaoWhatsApp";
 
 export interface CategoriaProduto {
   id: number;
@@ -39,7 +40,6 @@ export default function CategoriaLanding({
   whatsMessage,
   editarHref,
 }: CategoriaLandingProps) {
-  const whatsUrl = `https://wa.me/5544998133182?text=${encodeURIComponent(whatsMessage)}`;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -201,12 +201,10 @@ export default function CategoriaLanding({
           <Typography variant="body1" sx={{ mb: 3, color: "rgba(255,255,255,0.9)", maxWidth: 560, mx: "auto" }}>
             {ctaDesc}
           </Typography>
-          <Button
-            href={whatsUrl}
-            target="_blank"
+          <BotaoWhatsApp
+            mensagem={whatsMessage}
             variant="contained"
             size="large"
-            startIcon={<WhatsApp />}
             sx={{
               backgroundColor: "#25D366",
               color: "#fff",
@@ -218,7 +216,7 @@ export default function CategoriaLanding({
             }}
           >
             Chamar no WhatsApp
-          </Button>
+          </BotaoWhatsApp>
         </Paper>
       </Container>
 

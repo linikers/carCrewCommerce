@@ -19,6 +19,8 @@ import OffRoadNoProducts from "@/components/off-road/OffRoadNoProducts";
 import { formatBRL } from "@/lib/format";
 import { lerConteudoLp } from "@/lib/lp-conteudo";
 import BotaoEditarPagina from "@/components/BotaoEditarPagina";
+import { lerContatoEmpresa } from "@/lib/empresa";
+import type { ContatoEmpresa } from "@/lib/empresa-contato";
 
 const SLUG = "off-road";
 
@@ -48,31 +50,35 @@ interface OffRoadProduct {
   parcelamento: number;
 }
 
-const offRoadSchema = {
+function montarSchema(empresa: ContatoEmpresa) {
+  return {
   "@context": "https://schema.org",
   "@type": "Service",
   name: "Suspensão Off-Road e Lift 4x4",
   serviceType: "Suspensão Automotiva Off-Road",
   provider: {
     "@type": "LocalBusiness",
-    name: "Car Crew Garage",
+    name: empresa.nome,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Av. Dona Sophia Rasgulaeff, 2825",
-      addressLocality: "Maringá",
-      addressRegion: "PR",
-      postalCode: "87047-300",
+      streetAddress: empresa.endereco ?? undefined,
+      addressLocality: empresa.cidade,
+      addressRegion: empresa.uf,
+      postalCode: empresa.cep ?? undefined,
       addressCountry: "BR",
     },
-    telephone: "+55-44-99813-3182",
+    telephone: empresa.telefoneFormatado,
   },
   areaServed: { "@type": "Country", name: "Brasil" },
   description:
     "Instalação de lift kits 4x4, suspensão off-road e preparação de picapes para trilha, lama e aventura. Atendimento em Maringá/PR e região.",
-};
+  };
+}
 
 export default async function OffRoadPage() {
   const conteudo = await lerConteudoLp(SLUG);
+  const contato = await lerContatoEmpresa();
+  const offRoadSchema = montarSchema(contato);
   const sessao = await getServerSession(authOptions);
   const admin = Boolean((sessao?.user as { admin?: boolean } | undefined)?.admin);
 

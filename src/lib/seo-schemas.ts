@@ -1,4 +1,10 @@
 // Helpers de Schema.org (JSON-LD) para landing pages de categoria
+//
+// O `provider` sai do cadastro em "Minha empresa" — antes o endereço e o
+// telefone estavam escritos aqui e divergiam do que a loja mostrava no resto
+// do site.
+
+import { CONTATO_PADRAO, type ContatoEmpresa } from "@/lib/empresa-contato";
 
 export interface SchemaProduto {
   id: number;
@@ -15,7 +21,11 @@ export function serviceSchema(opts: {
   serviceType: string;
   description: string;
   url: string;
+  /** Dados da empresa; sem eles usa o padrão do código. */
+  empresa?: ContatoEmpresa;
 }) {
+  const empresa = opts.empresa ?? CONTATO_PADRAO;
+
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -24,16 +34,16 @@ export function serviceSchema(opts: {
     url: opts.url,
     provider: {
       "@type": "LocalBusiness",
-      name: "Car Crew Garage",
+      name: empresa.nome,
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Av. Dona Sophia Rasgulaeff, 2825",
-        addressLocality: "Maringá",
-        addressRegion: "PR",
-        postalCode: "87047-300",
+        streetAddress: empresa.endereco ?? undefined,
+        addressLocality: empresa.cidade,
+        addressRegion: empresa.uf,
+        postalCode: empresa.cep ?? undefined,
         addressCountry: "BR",
       },
-      telephone: "+55-44-99813-3182",
+      telephone: empresa.telefoneFormatado,
     },
     areaServed: { "@type": "Country", name: "Brasil" },
     description: opts.description,

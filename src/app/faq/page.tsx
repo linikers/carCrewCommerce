@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { ExpandMore, WhatsApp } from "@mui/icons-material";
 import Header from "@/components/Header";
+import { lerContatoEmpresa } from "@/lib/empresa";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -57,12 +58,12 @@ const faqItems: FaqItem[] = [
   {
     question: "Posso parcelar a instalação?",
     answer:
-      "Sim, aceitamos parcelamento da instalação. Entre em contato pelo WhatsApp (44) 99813-3182 para combinar as condições de pagamento direto. Para produtos da loja, o pagamento é via PIX.",
+      "Sim, aceitamos parcelamento da instalação. Entre em contato pelo WhatsApp {{telefone}} para combinar as condições de pagamento direto. Para produtos da loja, o pagamento é via PIX.",
   },
   {
     question: "Vocês fazem orçamento sem compromisso?",
     answer:
-      "Sim, fazemos orçamento sem compromisso. Mande pelo WhatsApp (44) 99813-3182 o modelo e ano do veículo, o tipo de suspensão desejada e (se possível) fotos do projeto. Respondemos com orçamento detalhado em até 24 horas.",
+      "Sim, fazemos orçamento sem compromisso. Mande pelo WhatsApp {{telefone}} o modelo e ano do veículo, o tipo de suspensão desejada e (se possível) fotos do projeto. Respondemos com orçamento detalhado em até 24 horas.",
   },
   {
     question: "Quanto tempo leva a instalação?",
@@ -71,20 +72,31 @@ const faqItems: FaqItem[] = [
   },
 ];
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map((f) => ({
-    "@type": "Question",
-    name: f.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: f.answer,
-    },
-  })),
-};
+export const dynamic = "force-dynamic";
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const contato = await lerContatoEmpresa();
+
+  // O telefone vem de "Minha empresa": o texto guarda um marcador para não
+  // repetir o número em cada resposta.
+  const itens = faqItems.map((f) => ({
+    ...f,
+    answer: f.answer.replaceAll("{{telefone}}", contato.telefoneFormatado),
+  }));
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: itens.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer,
+      },
+    })),
+  };
+
   return (
     <>
       <script
@@ -110,7 +122,7 @@ export default function FaqPage() {
           </Typography>
 
           <Box>
-            {faqItems.map((item, idx) => (
+            {itens.map((item, idx) => (
               <Accordion
                 key={idx}
                 sx={{
@@ -162,7 +174,7 @@ export default function FaqPage() {
             </Typography>
             <Box
               component="a"
-              href="https://wa.me/5544998133182"
+              href={contato.whatsapp}
               target="_blank"
               sx={{
                 display: "inline-flex",

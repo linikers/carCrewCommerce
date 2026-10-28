@@ -1,5 +1,8 @@
 "use client";
 
+import { useEmpresa } from "@/components/EmpresaProvider";
+import { linkWhatsApp } from "@/lib/empresa-contato";
+
 import Link from "next/link";
 import { calcularPreco } from "@/lib/preco";
 import {
@@ -25,6 +28,7 @@ export default function ProductCard({
   produto,
   onAddToCart,
 }: ProductCardProps) {
+  const contato = useEmpresa();
   const parcelas = produto.parcelamento || 12;
   const preco = calcularPreco(produto.preco, produto.descontoPercent);
   const valorParcela = preco.por / parcelas;
@@ -181,9 +185,10 @@ export default function ProductCard({
                 fullWidth
                 variant="contained"
                 startIcon={<WhatsApp />}
-                href={`https://wa.me/5544998133182?text=${encodeURIComponent(
+                href={linkWhatsApp(
+                  contato.telefone,
                   `Olá! Quero um orçamento para: ${produto.nome}`
-                )}`}
+                )}
                 target="_blank"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -232,9 +237,10 @@ export default function ProductCard({
                 fullWidth
                 variant="outlined"
                 startIcon={<WhatsApp />}
-                href={`https://wa.me/5544998133182?text=${encodeURIComponent(
+                href={linkWhatsApp(
+                  contato.telefone,
                   `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(preco.por)})`
-                )}`}
+                )}
                 target="_blank"
                 onClick={(e) => {
                   e.stopPropagation();

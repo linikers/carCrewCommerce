@@ -1,5 +1,8 @@
 "use client";
 
+import { useEmpresa } from "@/components/EmpresaProvider";
+import { linkWhatsApp } from "@/lib/empresa-contato";
+
 import { Box, Button, Container, Typography, Chip } from "@mui/material";
 import { WhatsApp } from "@mui/icons-material";
 import Link from "next/link";
@@ -15,6 +18,9 @@ export interface OffRoadHeroProps {
 /**
  * Texto padrão do hero. O painel (/admin/lp/off-road) sobrescreve por prop —
  * sem prop, a página fica exatamente como sempre foi.
+ *
+ * O WhatsApp usa o telefone de "Minha empresa": o número estava escrito aqui
+ * e mudava de lugar em cada componente.
  */
 export default function OffRoadHero({
   selo = "MAIS QUE UM CAMINHO, UM ESTILO DE VIDA",
@@ -23,6 +29,7 @@ export default function OffRoadHero({
   texto = "Prepare sua picape para qualquer terreno. Lift kits 4x4, suspensão off-road e acessórios para trilha em Maringá/PR.",
   whatsMensagem = "Olá! Quero fazer um orçamento para suspensão off-road.",
 }: OffRoadHeroProps) {
+  const contato = useEmpresa();
   return (
     <Box
       sx={{
@@ -109,7 +116,7 @@ export default function OffRoadHero({
             <Button
               variant="contained"
               startIcon={<WhatsApp />}
-              href={`https://wa.me/5544998133182?text=${encodeURIComponent(whatsMensagem)}`}
+              href={linkWhatsApp(contato.telefone, whatsMensagem)}
               target="_blank"
               sx={{
                 backgroundColor: "#25D366",

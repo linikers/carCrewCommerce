@@ -5,6 +5,8 @@ import { formatBRL, formatData } from "@/lib/format";
 import { STATUS_LABEL, type StatusPedido } from "@/lib/pedido-status";
 import { Box, Chip, Container, Divider, Paper, Typography, Button } from "@mui/material";
 import Header from "@/components/Header";
+import { lerContatoEmpresa } from "@/lib/empresa";
+import { linkWhatsApp } from "@/lib/empresa-contato";
 import Footer from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +25,7 @@ const ETAPAS: { status: StatusPedido; rotulo: string; descricao: string }[] = [
 ];
 
 export default async function PedidoPage(props: { params: Promise<{ id: string }> }) {
+  const contato = await lerContatoEmpresa();
   const { id } = await props.params;
 
   const pedido = await prisma.pedido.findUnique({
@@ -185,9 +188,10 @@ export default async function PedidoPage(props: { params: Promise<{ id: string }
         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
           <Button
             variant="contained"
-            href={`https://wa.me/5544998133182?text=${encodeURIComponent(
+            href={linkWhatsApp(
+              contato.telefone,
               `Olá! Sobre o pedido #${pedido.id.slice(-6).toUpperCase()}`
-            )}`}
+            )}
             target="_blank"
             sx={{ textTransform: "none", fontWeight: 600, backgroundColor: "#0E7A3F", "&:hover": { backgroundColor: "#0a5c2f" } }}
           >

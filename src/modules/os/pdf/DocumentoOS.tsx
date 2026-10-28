@@ -1,3 +1,4 @@
+import { formatarTelefone } from "@/lib/empresa-contato";
 import { Document, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 
 /**
@@ -159,7 +160,7 @@ export function DocumentoOS({ empresa, ordem, itens, incluirCusto }: PropsDocume
     : null;
 
   const contato = [
-    empresa.telefone ? `(${empresa.telefone.slice(0, 2)}) ${empresa.telefone.slice(2)}` : null,
+    empresa.telefone ? formatarTelefone(empresa.telefone) : null,
     empresa.email,
     empresa.redesSociais?.site,
     instagram,

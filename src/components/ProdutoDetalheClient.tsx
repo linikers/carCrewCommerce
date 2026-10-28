@@ -1,5 +1,8 @@
 "use client";
 
+import { useEmpresa } from "@/components/EmpresaProvider";
+import { linkWhatsApp } from "@/lib/empresa-contato";
+
 import { calcularPreco } from "@/lib/preco";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -48,6 +51,7 @@ export default function ProdutoDetalheClient({
   categoria,
   relacionados,
 }: ProdutoDetalheClientProps) {
+  const contato = useEmpresa();
   const router = useRouter();
   const { addToCart, items, removeFromCart, clearCart, totalItens } = useCart();
 
@@ -83,11 +87,12 @@ export default function ProdutoDetalheClient({
 
   const allImages = [produto.imgUrl, ...(produto.galeria || [])];
 
-  const waLink = `https://wa.me/5544998133182?text=${encodeURIComponent(
+  const waLink = linkWhatsApp(
+    contato.telefone,
     sobConsulta
       ? `Olá! Quero um orçamento para: ${produto.nome}`
       : `Olá! Tenho interesse em: ${produto.nome} (${formatBRL(preco.por)})`
-  )}`;
+  );
 
   // 2.5: a página dizia "frete no checkout" e o checkout é que pedia o CEP.
   // Aqui o visitante descobre o frete antes de sair da página do produto.

@@ -32,17 +32,11 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const antes = await lerEmpresa();
 
+    // Identidade da loja. CNPJ, IE, regime, série e numeração da nota são da
+    // aba Fiscal (/api/admin/fiscal) — esta rota não os toca.
     const dados = {
       razaoSocial: String(body.razaoSocial || "").trim() || "Car Crew Garage",
       nomeFantasia: body.nomeFantasia ? String(body.nomeFantasia).trim() : null,
-      cnpj: body.cnpj ? String(body.cnpj).replace(/\D/g, "") || null : null,
-      ie: body.ie ? String(body.ie).trim() : null,
-      im: body.im ? String(body.im).trim() : null,
-      cnae: body.cnae ? String(body.cnae).trim() : null,
-      crt: Number(body.crt) >= 1 && Number(body.crt) <= 3 ? Number(body.crt) : 1,
-      ambiente: body.ambiente === "producao" ? "producao" : "homologacao",
-      serie: Number(body.serie) > 0 ? Number(body.serie) : 1,
-      proximoNumero: Number(body.proximoNumero) > 0 ? Number(body.proximoNumero) : 1,
       cep: body.cep ? String(body.cep).replace(/\D/g, "") || null : null,
       logradouro: body.logradouro ? String(body.logradouro).trim() : null,
       numero: body.numero ? String(body.numero).trim() : null,
