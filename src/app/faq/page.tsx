@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { ExpandMore, WhatsApp } from "@mui/icons-material";
 import Header from "@/components/Header";
-import { lerContatoEmpresa } from "@/lib/empresa";
+import { lerContatoEmpresaCache } from "@/lib/empresa";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -75,7 +75,7 @@ const faqItems: FaqItem[] = [
 export const dynamic = "force-dynamic";
 
 export default async function FaqPage() {
-  const contato = await lerContatoEmpresa();
+  const contato = await lerContatoEmpresaCache();
 
   // O telefone vem de "Minha empresa": o texto guarda um marcador para não
   // repetir o número em cada resposta.

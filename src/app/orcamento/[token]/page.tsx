@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { lerContatoEmpresa } from "@/lib/empresa";
+import { lerContatoEmpresaCache } from "@/lib/empresa";
 import type { Metadata } from "next";
 import { Box, Button, Container, Divider, Paper, Typography } from "@mui/material";
 import { lerOrcamentoPublico } from "@/modules/os/dados/os";
@@ -22,7 +22,7 @@ function data(valor: Date | string) {
 }
 
 export default async function OrcamentoPage(props: { params: Promise<{ token: string }> }) {
-  const contato = await lerContatoEmpresa();
+  const contato = await lerContatoEmpresaCache();
   const { token } = await props.params;
   const orcamento = await lerOrcamentoPublico(token);
 

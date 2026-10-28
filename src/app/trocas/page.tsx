@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container, Typography, Box, Paper, Alert } from "@mui/material";
 import Header from "@/components/Header";
-import { lerContatoEmpresa } from "@/lib/empresa";
+import { lerContatoEmpresaCache } from "@/lib/empresa";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function TrocasPage() {
-  const contato = await lerContatoEmpresa();
+  const contato = await lerContatoEmpresaCache();
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />

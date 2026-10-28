@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { exigirModulo } from "@/modules/guard";
 import { cnpjValido } from "@/modules/fiscal/dominio/fiscal";
+import { invalidarContatoEmpresa } from "@/lib/empresa";
 import {
   lerCertificadoSalvo,
   lerEmpresa,
@@ -103,6 +104,9 @@ export async function PUT(req: NextRequest) {
       certificadoNome: body.certificadoNome,
       certificadoValidade: body.certificadoValidade ? new Date(body.certificadoValidade) : undefined,
     });
+
+    // Razão social, fantasia e endereço aparecem no site — limpa o cache.
+    invalidarContatoEmpresa();
 
     return NextResponse.json({ empresa });
   } catch (error) {

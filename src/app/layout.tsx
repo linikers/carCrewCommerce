@@ -6,7 +6,7 @@ import MuiProvider from "@/lib/MuiProvider";
 import { CartProvider } from "@/lib/CartContext";
 import AuthProvider from "@/lib/AuthProvider";
 import { EmpresaProvider } from "@/components/EmpresaProvider";
-import { lerContatoEmpresa } from "@/lib/empresa";
+import { lerContatoEmpresaCache } from "@/lib/empresa";
 import "./globals.css";
 import Script from "next/script";
 
@@ -34,7 +34,7 @@ const storeDescription =
  * painel muda o título das abas e o resultado do Google, sem deploy.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const contato = await lerContatoEmpresa();
+  const contato = await lerContatoEmpresaCache();
   const storeName = contato.nome;
 
   return {
@@ -137,7 +137,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const contato = await lerContatoEmpresa();
+  const contato = await lerContatoEmpresaCache();
 
   return (
     <html
