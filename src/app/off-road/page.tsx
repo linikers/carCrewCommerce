@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import {
   Container,
   Typography,
@@ -15,22 +17,29 @@ import OffRoadHero from "@/components/off-road/OffRoadHero";
 import OffRoadCta from "@/components/off-road/OffRoadCta";
 import OffRoadNoProducts from "@/components/off-road/OffRoadNoProducts";
 import { formatBRL } from "@/lib/format";
+import { lerConteudoLp } from "@/lib/lp-conteudo";
+import BotaoEditarPagina from "@/components/BotaoEditarPagina";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: "Suspensão Off-Road e Lift 4x4 em Maringá | Car Crew Garage",
-  },
-  description:
-    "Especialistas em suspensão off-road, lift kits e elevação 4x4 em Maringá/PR. Trilha, lama, aventura — prepare sua picape com a Car Crew Garage.",
-  alternates: { canonical: "/off-road" },
-  openGraph: {
-    title: "Suspensão Off-Road e Lift 4x4 — Car Crew Garage",
-    description: "Prepare sua picape para qualquer terreno. Lift 4x4 em Maringá/PR.",
-    type: "website",
-    images: ["/banners/banner-offroad.png"],
-  },
-};
+const SLUG = "off-road";
 
+// Ícones ficam no código (não são texto); o texto vem do painel.
+const ICONES = [Build, CheckCircle, LocalShipping, Star];
+
+export async function generateMetadata(): Promise<Metadata> {
+  const conteudo = await lerConteudoLp(SLUG);
+
+  return {
+    title: { absolute: conteudo.seoTitulo },
+    description: conteudo.seoDescricao,
+    alternates: { canonical: "/off-road" },
+    openGraph: {
+      title: conteudo.seoTitulo,
+      description: conteudo.seoDescricao,
+      type: "website",
+      images: ["/banners/banner-offroad.png"],
+    },
+  };
+}
 interface OffRoadProduct {
   id: number;
   nome: string;
@@ -63,6 +72,10 @@ const offRoadSchema = {
 };
 
 export default async function OffRoadPage() {
+  const conteudo = await lerConteudoLp(SLUG);
+  const sessao = await getServerSession(authOptions);
+  const admin = Boolean((sessao?.user as { admin?: boolean } | undefined)?.admin);
+
   let produtos: OffRoadProduct[] = [];
   try {
     const allProdutos = await prisma.produto.findMany({
@@ -92,23 +105,16 @@ export default async function OffRoadPage() {
       }));
   } catch {}
 
-  const beneficios = [
-    { icon: <Build sx={{ fontSize: 40, color: "#E65100" }} />, title: "Instalação Especializada", desc: "Equipe com mais de 10 anos de experiência em suspensão 4x4 e lift kits" },
-    { icon: <CheckCircle sx={{ fontSize: 40, color: "#E65100" }} />, title: "Peças de Qualidade", desc: "Trabalhamos com as melhores marcas: BDS Suspension, Rough Country, Fabtech, Pro Comp" },
-    { icon: <LocalShipping sx={{ fontSize: 40, color: "#E65100" }} />, title: "Entrega para todo Brasil", desc: "Enviamos peças para todo território nacional. Instalação em Maringá/PR" },
-    { icon: <Star sx={{ fontSize: 40, color: "#E65100" }} />, title: "Garantia e Suporte", desc: "90 dias de garantia na mão de obra + garantia do fabricante nas peças" },
-  ];
+  const beneficios = conteudo.beneficios.map((b, i) => {
+    const Icone = ICONES[i % ICONES.length];
+    return {
+      icon: <Icone sx={{ fontSize: 40, color: "#E65100" }} />,
+      title: b.titulo,
+      desc: b.texto,
+    };
+  });
 
-  const servicos = [
-    "Lift kits 2\", 4\" e 6\"",
-    "Suspensão independente 4x4",
-    "Shocks de longo curso",
-    "Molas de elevação reforçadas",
-    "Braços de suspensão reforçados",
-    "Bloqueios de diferencial",
-    "Snorkel e preparação para lama",
-    "Acessórios off-road (engates, guinchos)",
-  ];
+  const servicos = conteudo.servicos;
 
   return (
     <>
@@ -119,7 +125,13 @@ export default async function OffRoadPage() {
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         <Header />
 
-        <OffRoadHero />
+        <OffRoadHero
+          selo={conteudo.selo}
+          titulo={conteudo.titulo}
+          tituloDestaque={conteudo.tituloDestaque}
+          texto={conteudo.intro[0]}
+          whatsMensagem={conteudo.whatsMensagem}
+        />
 
         <Container maxWidth="lg" sx={{ flex: 1, py: 6 }}>
           <Typography variant="h3" sx={{ fontWeight: 700, mb: 1, color: "#1A1A1A" }}>
@@ -194,11 +206,12 @@ export default async function OffRoadPage() {
 
           </Box>
 
-          <OffRoadCta />
+          <OffRoadCta titulo={conteudo.ctaTitulo} texto={conteudo.ctaTexto} />
         </Container>
 
         <Footer />
       </Box>
+      {admin && <BotaoEditarPagina href={`/admin/lp/${SLUG}`} />}
     </>
   );
 }

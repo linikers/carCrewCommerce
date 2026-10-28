@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { formatBRL } from "@/lib/format";
+import BotaoEditarPagina from "@/components/BotaoEditarPagina";
 
 export interface CategoriaProduto {
   id: number;
@@ -23,6 +24,8 @@ interface CategoriaLandingProps {
   ctaTitle: string;
   ctaDesc: string;
   whatsMessage: string;
+  /** Só para admin logado: atalho para editar o texto desta página. */
+  editarHref?: string;
 }
 
 export default function CategoriaLanding({
@@ -34,6 +37,7 @@ export default function CategoriaLanding({
   ctaTitle,
   ctaDesc,
   whatsMessage,
+  editarHref,
 }: CategoriaLandingProps) {
   const whatsUrl = `https://wa.me/5544998133182?text=${encodeURIComponent(whatsMessage)}`;
 
@@ -219,6 +223,7 @@ export default function CategoriaLanding({
       </Container>
 
       <Footer />
+      {editarHref && <BotaoEditarPagina href={editarHref} />}
     </Box>
   );
 }
