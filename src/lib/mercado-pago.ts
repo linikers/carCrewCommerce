@@ -19,6 +19,21 @@ import { cifrar, decifrar } from "@/modules/_nucleo/cripto";
 
 const CONFIG_KEY = "pagamentos";
 
+/**
+ * Cartão de crédito no Mercado Pago.
+ *
+ * As credenciais são as mesmas do PIX (Public Key no navegador, Access Token no
+ * servidor — ver "Credenciais" na doc do MP). Aqui ficam só as regras da loja:
+ * se aceita cartão, até quantas parcelas e a partir de quando passa a ter juros.
+ */
+export interface CartaoConfig {
+  habilitado: boolean;
+  /** 1 a 12 — o Mercado Pago aceita até 12x. */
+  maxParcelas: number;
+  /** Parcelas sem juros (0 = todas com juros, conforme o MP). */
+  semJurosAte: number;
+}
+
 export interface ConfigMercadoPago {
   habilitado: boolean;
   ambiente: "producao" | "teste";
@@ -26,6 +41,7 @@ export interface ConfigMercadoPago {
   /** Nunca sai do servidor. Na tela vira `temAccessToken`. */
   accessToken: string | null;
   webhookSecret: string | null;
+  cartao: CartaoConfig;
   atualizadoEm: string | null;
 }
 
@@ -36,6 +52,7 @@ export interface ConfigMercadoPagoPublica {
   publicKey: string | null;
   temAccessToken: boolean;
   temWebhookSecret: boolean;
+  cartao: CartaoConfig;
   atualizadoEm: string | null;
   /** URL que precisa ser cadastrada no painel do Mercado Pago. */
   urlWebhook: string;
@@ -47,7 +64,21 @@ interface MercadoPagoSalvo {
   publicKey?: string | null;
   accessTokenCifrado?: string | null;
   webhookSecretCifrado?: string | null;
+  cartao?: { habilitado?: boolean; maxParcelas?: number; semJurosAte?: number };
   atualizadoEm?: string | null;
+}
+
+const CARTAO_PADRAO: CartaoConfig = { habilitado: false, maxParcelas: 12, semJurosAte: 0 };
+
+function lerCartao(salvo?: MercadoPagoSalvo["cartao"]): CartaoConfig {
+  const max = Number(salvo?.maxParcelas);
+  const semJuros = Number(salvo?.semJurosAte);
+  const maxParcelas = Number.isFinite(max) ? Math.min(12, Math.max(1, Math.trunc(max))) : 12;
+  return {
+    habilitado: salvo?.habilitado === true,
+    maxParcelas,
+    semJurosAte: Number.isFinite(semJuros) ? Math.min(maxParcelas, Math.max(0, Math.trunc(semJuros))) : 0,
+  };
 }
 
 async function lerConfigBruta(): Promise<Record<string, unknown>> {
@@ -82,6 +113,7 @@ export async function lerConfigMercadoPago(): Promise<ConfigMercadoPago> {
     publicKey: mp.publicKey ?? null,
     accessToken: decifrarSeguro(mp.accessTokenCifrado),
     webhookSecret: decifrarSeguro(mp.webhookSecretCifrado),
+    cartao: lerCartao(mp.cartao),
     atualizadoEm: mp.atualizadoEm ?? null,
   };
 }
@@ -96,6 +128,7 @@ export function configPublica(
     publicKey: config.publicKey,
     temAccessToken: Boolean(config.accessToken),
     temWebhookSecret: Boolean(config.webhookSecret),
+    cartao: config.cartao ?? CARTAO_PADRAO,
     atualizadoEm: config.atualizadoEm,
     urlWebhook: `${baseUrl}/api/webhooks/mercadopago`,
   };
@@ -109,6 +142,7 @@ export interface EntradaConfigMercadoPago {
   accessToken?: string | null;
   /** Vazio = manter o segredo atual. */
   webhookSecret?: string | null;
+  cartao?: { habilitado?: boolean; maxParcelas?: number; semJurosAte?: number };
 }
 
 export async function salvarConfigMercadoPago(
@@ -136,6 +170,9 @@ export async function salvarConfigMercadoPago(
     webhookSecretCifrado: segredoNovo
       ? cifrar(segredoNovo)
       : atual.webhookSecretCifrado ?? null,
+    cartao: entrada.cartao
+      ? lerCartao({ ...atual.cartao, ...entrada.cartao })
+      : lerCartao(atual.cartao),
     atualizadoEm: new Date().toISOString(),
   };
 
@@ -148,6 +185,11 @@ export async function salvarConfigMercadoPago(
       publicKey: mp.publicKey ?? null,
       accessTokenCifrado: mp.accessTokenCifrado ?? null,
       webhookSecretCifrado: mp.webhookSecretCifrado ?? null,
+      cartao: {
+        habilitado: mp.cartao?.habilitado === true,
+        maxParcelas: mp.cartao?.maxParcelas ?? CARTAO_PADRAO.maxParcelas,
+        semJurosAte: mp.cartao?.semJurosAte ?? CARTAO_PADRAO.semJurosAte,
+      },
       atualizadoEm: mp.atualizadoEm ?? null,
     },
   };
