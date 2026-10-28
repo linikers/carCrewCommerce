@@ -1,10 +1,14 @@
 "use client";
 
+import { useEmpresa } from "@/components/EmpresaProvider";
+import { linkWhatsApp } from "@/lib/empresa-contato";
+
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { WhatsApp } from "@mui/icons-material";
 import Link from "next/link";
 
 export default function OffRoadNoProducts() {
+  const contato = useEmpresa();
   return (
     <Paper
       sx={{
@@ -24,7 +28,10 @@ export default function OffRoadNoProducts() {
       <Button
         variant="contained"
         startIcon={<WhatsApp />}
-        href="https://wa.me/5544998133182?text=Olá! Quero ver produtos off-road da Car Crew Garage."
+        href={linkWhatsApp(
+          contato.telefone,
+          `Olá! Quero ver produtos off-road da ${contato.nome}.`
+        )}
         target="_blank"
         sx={{
           backgroundColor: "#25D366",

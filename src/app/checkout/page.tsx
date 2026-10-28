@@ -33,6 +33,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PixPayment from "@/components/PixPayment";
 import { useCart } from "@/lib/CartContext";
+import { useEmpresa } from "@/components/EmpresaProvider";
+import { linkWhatsApp } from "@/lib/empresa-contato";
 import {
   UFS,
   documentoValido,
@@ -95,6 +97,7 @@ const initialForm: FormData = {
 };
 
 export default function CheckoutPage() {
+  const contato = useEmpresa();
   const router = useRouter();
   const { items, total, clearCart } = useCart();
   const [form, setForm] = useState<FormData>(initialForm);
@@ -281,11 +284,9 @@ export default function CheckoutPage() {
     form.uf;
 
   const whatsappMsg = orderId
-    ? encodeURIComponent(
-        `Olá! Acabei de fazer o pedido #${orderId.slice(-6).toUpperCase()} na Car Crew Garage. Valor: ${formatBRL(
-          total + (selectedFreight?.valor || 0)
-        )} — acompanhar: ${typeof window !== "undefined" ? window.location.origin : "https://carcrew.com.br"}/pedido/${orderId}`
-      )
+    ? `Olá! Acabei de fazer o pedido #${orderId.slice(-6).toUpperCase()} na ${contato.nome}. Valor: ${formatBRL(
+        total + (selectedFreight?.valor || 0)
+      )} — acompanhar: ${typeof window !== "undefined" ? window.location.origin : "https://carcrew.com.br"}/pedido/${orderId}`
     : "";
 
   // Estado vazio
@@ -366,7 +367,7 @@ export default function CheckoutPage() {
             </Button>
             {orderId && (
               <Button variant="outlined" target="_blank"
-                href={`https://wa.me/5544998133182?text=${whatsappMsg}`}
+                href={linkWhatsApp(contato.telefone, whatsappMsg)}
                 sx={{ borderColor: "#25D366", color: "#25D366", textTransform: "none", px: 4,
                   "&:hover": { borderColor: "#1da851", backgroundColor: "#f0faf3" } }}>
                 💬 Avisar no WhatsApp
@@ -503,10 +504,10 @@ export default function CheckoutPage() {
                 <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>Forma de Pagamento</Typography>
                 <Grid container spacing={2}>
                   {([
-                    { key: "pix", label: "PIX", icon: <Pix />, desc: "Pagamento instantâneo" },
+                    { key: "pix", label: "PIX", icon: <Pix />, desc: "Pagamento instantâneo", disabled: false },
                     { key: "card", label: "Cartão", icon: <CreditCard />, desc: "Em breve — indisponível", disabled: true },
                     { key: "boleto", label: "Boleto", icon: <AccountBalance />, desc: "Em breve — indisponível", disabled: true },
-                  ] as const).map((opt: any) => (
+                  ] as const).map((opt) => (
                     <Grid size={{ xs: 12, sm: 4 }} key={opt.key}>
                       <Paper onClick={() => { if (opt.disabled) return; setPaymentMethod(opt.key); }}
                         sx={{ p: 2, textAlign: "center", cursor: opt.disabled ? "not-allowed" : "pointer",

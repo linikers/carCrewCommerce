@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import type { Prisma } from "@/generated/prisma/client";
+import { montarContato, type ContatoEmpresa } from "@/lib/empresa-contato";
 
 /**
  * Dados da empresa em um lugar só (#os-pdf).
@@ -61,12 +62,28 @@ export async function lerEmpresa(): Promise<DadosEmpresa | null> {
   }
 }
 
-/** Grava os dados da empresa (fonte única). */
+/** Grava a identidade da empresa (nome, endereço, contato, logo, redes). */
 export async function salvarEmpresa(dados: Partial<DadosEmpresa> & { razaoSocial: string }) {
   const antes = await prisma.empresaFiscal.findUnique({ where: { id: "unica" } });
 
-  // o Json do Prisma exige um tipo próprio; os campos opcionais vão como undefined
-  const { redesSociais, ...campos } = dados;
+  // Só os campos de identidade — CNPJ, IE, regime, série e numeração são da
+  // aba Fiscal e não podem ser zerados por esta tela.
+  const campos = {
+    razaoSocial: dados.razaoSocial,
+    nomeFantasia: dados.nomeFantasia,
+    logradouro: dados.logradouro,
+    numero: dados.numero,
+    complemento: dados.complemento,
+    bairro: dados.bairro,
+    cidade: dados.cidade,
+    uf: dados.uf,
+    cep: dados.cep,
+    telefone: dados.telefone,
+    email: dados.email,
+    logo: dados.logo,
+  };
+
+  const { redesSociais } = dados;
 
   const registro = await prisma.empresaFiscal.upsert({
     where: { id: "unica" },
@@ -86,4 +103,12 @@ export async function salvarEmpresa(dados: Partial<DadosEmpresa> & { razaoSocial
   });
 
   return { antes, registro };
+}
+
+/**
+ * Dados de contato já formatados para o site (telefone, WhatsApp, endereço).
+ * Cai no padrão do código quando o cadastro ainda está vazio.
+ */
+export async function lerContatoEmpresa(): Promise<ContatoEmpresa> {
+  return montarContato(await lerEmpresa());
 }

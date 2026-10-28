@@ -18,8 +18,11 @@ import {
   AccessTime,
 } from "@mui/icons-material";
 import NextLink from "next/link";
+import { useEmpresa } from "@/components/EmpresaProvider";
 
 export default function Footer() {
+  const contato = useEmpresa();
+
   return (
     <Box
       component="footer"
@@ -47,7 +50,7 @@ export default function Footer() {
                 mb: 1,
               }}
             >
-              Car Crew Garage
+              {contato.nome}
             </Typography>
             <Typography variant="body2" sx={{ color: "#aaaaaa", mb: 2 }}>
               Especialistas em peças para suspensão automotiva.
@@ -55,26 +58,33 @@ export default function Footer() {
             </Typography>
             <Box sx={{ display: "flex", gap: 0.5 }}>
               <IconButton
-                href="https://wa.me/5544998133182"
+                href={contato.whatsapp}
                 target="_blank"
+                aria-label="WhatsApp"
                 sx={{ color: "#25D366" }}
               >
                 <WhatsApp />
               </IconButton>
-              <IconButton
-                href="https://www.instagram.com/carcrewgarage_/"
-                target="_blank"
-                sx={{ color: "#ffffff" }}
-              >
-                <Instagram />
-              </IconButton>
-              <IconButton
-                href="https://www.facebook.com/CarCrewG"
-                target="_blank"
-                sx={{ color: "#ffffff" }}
-              >
-                <Facebook />
-              </IconButton>
+              {contato.instagram && (
+                <IconButton
+                  href={contato.instagram}
+                  target="_blank"
+                  aria-label="Instagram"
+                  sx={{ color: "#ffffff" }}
+                >
+                  <Instagram />
+                </IconButton>
+              )}
+              {contato.facebook && (
+                <IconButton
+                  href={contato.facebook}
+                  target="_blank"
+                  aria-label="Facebook"
+                  sx={{ color: "#ffffff" }}
+                >
+                  <Facebook />
+                </IconButton>
+              )}
             </Box>
           </Box>
 
@@ -137,7 +147,7 @@ export default function Footer() {
               { label: "Suspensão Off-Road", href: "/off-road" },
               { label: "Política de Privacidade", href: "/privacidade" },
               { label: "Trocas e Devoluções", href: "/trocas" },
-              { label: "Fale Conosco", href: "https://wa.me/5544998133182" },
+              { label: "Fale Conosco", href: contato.whatsapp },
             ].map((item) => (
               <Typography
                 key={item.label}
@@ -170,13 +180,13 @@ export default function Footer() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
               <Phone sx={{ fontSize: 16, color: "#888" }} />
               <Typography variant="body2" sx={{ color: "#aaaaaa" }}>
-                (44) 99813-3182
+                {contato.telefoneFormatado}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
               <Email sx={{ fontSize: 16, color: "#888" }} />
               <Typography variant="body2" sx={{ color: "#aaaaaa" }}>
-                carcrewgarage@gmail.com
+                {contato.email}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
@@ -217,7 +227,7 @@ export default function Footer() {
 
       <Box sx={{ py: 3, textAlign: "center" }}>
         <Typography variant="body2" sx={{ color: "#777777" }}>
-          © {new Date().getFullYear()} Car Crew Garage. Todos os direitos
+          © {new Date().getFullYear()} {contato.nome}. Todos os direitos
           reservados.
         </Typography>
       </Box>

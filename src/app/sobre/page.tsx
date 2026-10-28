@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container, Typography, Box, Paper, Grid, Button } from "@mui/material";
 import { Phone, LocationOn, AccessTime, WhatsApp, Build, Star, Groups } from "@mui/icons-material";
 import Header from "@/components/Header";
+import { lerContatoEmpresa } from "@/lib/empresa";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -10,7 +11,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/sobre" },
 };
 
-export default function SobrePage() {
+export const dynamic = "force-dynamic";
+
+export default async function SobrePage() {
+  const contato = await lerContatoEmpresa();
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
@@ -121,7 +125,8 @@ export default function SobrePage() {
               <LocationOn sx={{ fontSize: 40, color: "#E65100", mb: 1 }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Endereço</Typography>
               <Typography variant="body2" sx={{ color: "#666" }}>
-                Maringá/PR
+                {contato.endereco ? `${contato.endereco} — ` : ""}
+                {contato.cidade}/{contato.uf}
               </Typography>
             </Paper>
           </Grid>
@@ -130,7 +135,7 @@ export default function SobrePage() {
               <Phone sx={{ fontSize: 40, color: "#E65100", mb: 1 }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Contato</Typography>
               <Typography variant="body2" sx={{ color: "#666" }}>
-                (44) 99813-3182
+                {contato.telefoneFormatado}
               </Typography>
             </Paper>
           </Grid>
@@ -150,7 +155,7 @@ export default function SobrePage() {
           <Button
             variant="contained"
             startIcon={<WhatsApp />}
-            href="https://wa.me/5544998133182"
+            href={contato.whatsapp}
             target="_blank"
             sx={{
               backgroundColor: "#25D366",

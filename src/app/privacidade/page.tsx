@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container, Typography, Box, Paper } from "@mui/material";
 import Header from "@/components/Header";
+import { lerContatoEmpresa } from "@/lib/empresa";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacidade" },
 };
 
-export default function PrivacidadePage() {
+export const dynamic = "force-dynamic";
+
+export default async function PrivacidadePage() {
+  const contato = await lerContatoEmpresa();
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
@@ -108,8 +112,9 @@ export default function PrivacidadePage() {
             política, entre em contato:
           </Typography>
           <Typography variant="body2" sx={{ mt: 1, color: "#666" }}>
-            WhatsApp: (44) 99813-3182<br />
-            E-mail: contato@carcrew.com.br
+            WhatsApp: {contato.telefoneFormatado}
+            <br />
+            E-mail: {contato.email}
           </Typography>
         </Paper>
       </Container>

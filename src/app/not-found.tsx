@@ -5,6 +5,8 @@ import { Container, Typography, Button, Box, Stack } from "@mui/material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useEmpresa } from "@/components/EmpresaProvider";
+import { linkWhatsApp } from "@/lib/empresa-contato";
 
 const atalhos = [
   { label: "Suspensão a ar", href: "/suspensao-a-ar" },
@@ -20,6 +22,7 @@ const atalhos = [
  * removido simplesmente saía do site.
  */
 export default function NotFound() {
+  const contato = useEmpresa();
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
@@ -69,7 +72,10 @@ export default function NotFound() {
             Voltar para a home
           </Button>
           <Button
-            href="https://wa.me/5544998133182?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20encontrar%20uma%20pe%C3%A7a"
+            href={linkWhatsApp(
+              contato.telefone,
+              "Olá! Preciso de ajuda para encontrar uma peça"
+            )}
             target="_blank"
             variant="outlined"
             startIcon={<WhatsAppIcon />}

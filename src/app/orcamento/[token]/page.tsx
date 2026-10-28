@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { lerContatoEmpresa } from "@/lib/empresa";
 import type { Metadata } from "next";
 import { Box, Button, Container, Divider, Paper, Typography } from "@mui/material";
 import { lerOrcamentoPublico } from "@/modules/os/dados/os";
@@ -21,6 +22,7 @@ function data(valor: Date | string) {
 }
 
 export default async function OrcamentoPage(props: { params: Promise<{ token: string }> }) {
+  const contato = await lerContatoEmpresa();
   const { token } = await props.params;
   const orcamento = await lerOrcamentoPublico(token);
 
@@ -31,7 +33,7 @@ export default async function OrcamentoPage(props: { params: Promise<{ token: st
   return (
     <Container maxWidth="sm" sx={{ py: { xs: 4, sm: 8 } }}>
       <Typography sx={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#BF360C", fontWeight: 700 }}>
-        Car Crew Garage · Maringá
+        {contato.nome} · {contato.cidade}
       </Typography>
       <Typography variant="h5" sx={{ fontWeight: 800, mt: 0.5 }}>
         Orçamento para {orcamento.veiculo}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEmpresa } from "@/components/EmpresaProvider";
+
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { WhatsApp } from "@mui/icons-material";
 import Link from "next/link";
@@ -13,6 +15,7 @@ export default function OffRoadCta({
   titulo = "Pronto pra encarar qualquer terreno?",
   texto = "Solicite um orçamento personalizado. Atendemos Maringá/PR e enviamos para todo o Brasil.",
 }: OffRoadCtaProps) {
+  const contato = useEmpresa();
   return (
     <Paper
       sx={{
@@ -34,7 +37,7 @@ export default function OffRoadCta({
         <Button
           variant="contained"
           startIcon={<WhatsApp />}
-          href="https://wa.me/5544998133182"
+          href={contato.whatsapp}
           target="_blank"
           sx={{
             backgroundColor: "#fff",

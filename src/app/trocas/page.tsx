@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container, Typography, Box, Paper, Alert } from "@mui/material";
 import Header from "@/components/Header";
+import { lerContatoEmpresa } from "@/lib/empresa";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/trocas" },
 };
 
-export default function TrocasPage() {
+export const dynamic = "force-dynamic";
+
+export default async function TrocasPage() {
+  const contato = await lerContatoEmpresa();
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
@@ -48,7 +52,9 @@ export default function TrocasPage() {
             {/* CONTEÚDO: Passo a passo pra solicitar */}
           </Typography>
           <Box component="ol" sx={{ ml: 2, mt: 1 }}>
-            <li>Entre em contato pelo WhatsApp (44) 99813-3182</li>
+            <li>
+              Entre em contato pelo WhatsApp {contato.telefoneFormatado}
+            </li>
             <li>Informe o número do pedido e o motivo da troca</li>
             <li>Aguarde instruções para envio do produto</li>
             <li>Após receber o produto, processaremos a troca em até 5 dias úteis</li>
