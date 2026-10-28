@@ -35,6 +35,7 @@ import {
   Extension,
   Menu as MenuIcon,
   Article,
+  HelpOutlined,
 } from "@mui/icons-material";
 import { MODULOS } from "@/modules/registro";
 
@@ -55,6 +56,7 @@ const ICONE_POR_ROTA: Record<string, React.ReactNode> = {
   "/admin/banners": <ViewCarousel />,
   "/admin/menu": <MenuIcon />,
   "/admin/lp": <Article />,
+  "/admin/faq": <HelpOutlined />,
   "/admin/pedidos": <ShoppingBag />,
   "/admin/clientes": <People />,
   "/admin/leads": <MarkEmailRead />,
@@ -117,7 +119,6 @@ const moduloDaRota: Record<string, string> = MODULOS.reduce(
 );
 
 const pageLinks: MenuItem[] = [
-  { label: "Página FAQ", icon: <Category />, path: "/faq" },
   { label: "Página Off-Road", icon: <Category />, path: "/off-road" },
 ];
 
