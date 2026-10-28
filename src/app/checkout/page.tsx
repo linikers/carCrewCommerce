@@ -76,6 +76,7 @@ interface FreightResult {
 }
 
 interface PixData {
+  provedor?: string;
   qrCode: string;
   payload: string;
   chave: string;
@@ -202,7 +203,7 @@ export default function CheckoutPage() {
     handleCalculateFreight(cepLimpo);
   };
 
-  const handlePixPayment = useCallback(async () => {
+  const handlePixPayment = useCallback(async (pedidoId?: string) => {
     setPixLoading(true);
     setPixError("");
     setPixOpen(true);
@@ -215,6 +216,10 @@ export default function CheckoutPage() {
           amount: total + (selectedFreight?.valor || 0),
           nome: form.nome || "CarCrew Cliente",
           cidade: form.cidade || "SaoPaulo",
+          email: form.email || undefined,
+          documento: form.documento || undefined,
+          // Com Mercado Pago ligado, é por este id que o webhook acha o pedido.
+          pedidoId,
         }),
       });
 
@@ -227,7 +232,7 @@ export default function CheckoutPage() {
     } finally {
       setPixLoading(false);
     }
-  }, [total, form.nome, form.cidade, selectedFreight]);
+  }, [total, form.nome, form.cidade, form.email, form.documento, selectedFreight]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,7 +258,7 @@ export default function CheckoutPage() {
       setOrderId(orderData.pedidoId);
 
       if (paymentMethod === "pix") {
-        await handlePixPayment();
+        await handlePixPayment(orderData.pedidoId);
         // Limpa carrinho após gerar PIX
         clearCart();
       } else {

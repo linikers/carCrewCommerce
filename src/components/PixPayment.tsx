@@ -10,6 +10,7 @@ import {
   Button,
   Divider,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import {
   Close as CloseIcon,
@@ -23,6 +24,8 @@ interface PixData {
   qrCode: string;
   payload: string;
   chave: string;
+  /** "mercadopago" = confirmação automática; "chave_estatica" = manual. */
+  provedor?: string;
   amount: number;
   expiration: string;
 }
@@ -104,6 +107,15 @@ export default function PixPayment({
             <Typography variant="body2" sx={{ color: "#666", mb: 3 }}>
               Escaneie o QR Code ou copie o código PIX para pagar
             </Typography>
+
+            <Alert
+              severity={pixData.provedor === "mercadopago" ? "success" : "info"}
+              sx={{ mb: 3, textAlign: "left" }}
+            >
+              {pixData.provedor === "mercadopago"
+                ? "Confirmação automática: assim que o PIX cair, o pedido muda para Pago sem você fazer nada."
+                : "Confirmação manual: envie o comprovante no WhatsApp para o pedido ser liberado."}
+            </Alert>
 
             {/* Valor */}
             <Typography

@@ -42,6 +42,16 @@ interface PixKey {
   ordem: number;
 }
 
+interface MercadoPagoConfig {
+  habilitado: boolean;
+  ambiente: "producao" | "teste";
+  publicKey: string | null;
+  temAccessToken: boolean;
+  temWebhookSecret: boolean;
+  atualizadoEm: string | null;
+  urlWebhook: string;
+}
+
 interface PagamentoConfig {
   pix: {
     habilitado: boolean;
@@ -85,6 +95,24 @@ export default function AdminPagamentos() {
   const [error, setError] = useState("");
   const [showChaves, setShowChaves] = useState<Record<string, boolean>>({});
 
+  // Mercado Pago: token e segredo nunca voltam do servidor; campo vazio mantém.
+  const [mp, setMp] = useState<MercadoPagoConfig>({
+    habilitado: false,
+    ambiente: "producao",
+    publicKey: "",
+    temAccessToken: false,
+    temWebhookSecret: false,
+    atualizadoEm: null,
+    urlWebhook: "/api/webhooks/mercadopago",
+  });
+  const [mpToken, setMpToken] = useState("");
+  const [mpSegredo, setMpSegredo] = useState("");
+  const [mpSalvando, setMpSalvando] = useState(false);
+  const [mpTestando, setMpTestando] = useState(false);
+  const [mpAviso, setMpAviso] = useState("");
+  const [mpErro, setMpErro] = useState("");
+  const [mpConta, setMpConta] = useState("");
+
   const [config, setConfig] = useState<PagamentoConfig>({
     pix: { habilitado: true, chaves: [] },
     boleto: { habilitado: false },
@@ -92,10 +120,23 @@ export default function AdminPagamentos() {
   });
 
   useEffect(() => {
-    fetch("/api/admin/pagamentos")
-      .then((r) => r.json())
-      .then((data) => {
+    Promise.all([
+      fetch("/api/admin/pagamentos").then((r) => r.json()),
+      fetch("/api/admin/pagamentos/mercadopago").then((r) => (r.ok ? r.json() : null)),
+    ])
+      .then(([data, mercadoPago]) => {
         setConfig(data);
+        if (mercadoPago) {
+          setMp({
+            habilitado: mercadoPago.habilitado === true,
+            ambiente: mercadoPago.ambiente === "teste" ? "teste" : "producao",
+            publicKey: mercadoPago.publicKey ?? "",
+            temAccessToken: mercadoPago.temAccessToken === true,
+            temWebhookSecret: mercadoPago.temWebhookSecret === true,
+            atualizadoEm: mercadoPago.atualizadoEm ?? null,
+            urlWebhook: mercadoPago.urlWebhook ?? "/api/webhooks/mercadopago",
+          });
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -120,7 +161,11 @@ export default function AdminPagamentos() {
     });
   };
 
-  const updateChave = (id: string, field: keyof PixKey, value: any) => {
+  const updateChave = (
+    id: string,
+    field: keyof PixKey,
+    value: PixKey[keyof PixKey]
+  ) => {
     setConfig({
       ...config,
       pix: {
@@ -165,6 +210,65 @@ export default function AdminPagamentos() {
       setError("Erro ao salvar configurações");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const salvarMercadoPago = async () => {
+    setMpSalvando(true);
+    setMpErro("");
+    setMpAviso("");
+    try {
+      const res = await fetch("/api/admin/pagamentos/mercadopago", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          habilitado: mp.habilitado,
+          ambiente: mp.ambiente,
+          publicKey: mp.publicKey,
+          accessToken: mpToken,
+          webhookSecret: mpSegredo,
+        }),
+      });
+      const dados = await res.json();
+      if (!res.ok) throw new Error(dados?.error || "Falha ao salvar");
+
+      setMp({
+        habilitado: dados.habilitado === true,
+        ambiente: dados.ambiente === "teste" ? "teste" : "producao",
+        publicKey: dados.publicKey ?? "",
+        temAccessToken: dados.temAccessToken === true,
+        temWebhookSecret: dados.temWebhookSecret === true,
+        atualizadoEm: dados.atualizadoEm ?? null,
+        urlWebhook: dados.urlWebhook ?? mp.urlWebhook,
+      });
+      setMpToken("");
+      setMpSegredo("");
+      setMpAviso("Conta salva. Token e segredo ficam cifrados no banco.");
+    } catch (e) {
+      setMpErro(e instanceof Error ? e.message : "Falha ao salvar");
+    } finally {
+      setMpSalvando(false);
+    }
+  };
+
+  const testarMercadoPago = async () => {
+    setMpTestando(true);
+    setMpErro("");
+    setMpAviso("");
+    setMpConta("");
+    try {
+      const res = await fetch("/api/admin/pagamentos/mercadopago", { method: "POST" });
+      const dados = await res.json();
+      if (!res.ok || !dados.ok) throw new Error(dados?.error || "Falha ao testar");
+      const conta = dados.conta ?? {};
+      setMpConta(
+        `${conta.apelido || conta.email || "conta"} · id ${conta.id}` +
+          (dados.ambiente ? ` · ${dados.ambiente}` : "")
+      );
+    } catch (e) {
+      setMpErro(e instanceof Error ? e.message : "Falha ao testar");
+    } finally {
+      setMpTestando(false);
     }
   };
 
@@ -384,6 +488,138 @@ export default function AdminPagamentos() {
               </Paper>
             </Grid>
 
+            {/* MERCADO PAGO */}
+            <Grid size={{ xs: 12 }}>
+              <Paper sx={{ p: 3, borderRadius: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Mercado Pago — PIX com confirmação
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "#666" }}>
+                      A cobrança nasce na sua conta e o pedido é marcado como pago pelo webhook
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Chip
+                      size="small"
+                      label={mp.habilitado ? "Ligado" : "Desligado"}
+                      color={mp.habilitado ? "success" : "default"}
+                      variant="outlined"
+                    />
+                    <Switch
+                      checked={mp.habilitado}
+                      onChange={(e) => setMp({ ...mp, habilitado: e.target.checked })}
+                    />
+                  </Box>
+                </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      select
+                      fullWidth
+                      size="small"
+                      label="Ambiente"
+                      value={mp.ambiente}
+                      onChange={(e) =>
+                        setMp({ ...mp, ambiente: e.target.value as "producao" | "teste" })
+                      }
+                      helperText="Use teste até validar; produção cobra de verdade"
+                    >
+                      <MenuItem value="producao">Produção</MenuItem>
+                      <MenuItem value="teste">Teste</MenuItem>
+                    </TextField>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Public Key"
+                      value={mp.publicKey ?? ""}
+                      onChange={(e) => setMp({ ...mp, publicKey: e.target.value })}
+                      placeholder="APP_USR-..."
+                      helperText="Opcional — só para o checkout transparente no navegador"
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      type="password"
+                      label="Access Token"
+                      value={mpToken}
+                      onChange={(e) => setMpToken(e.target.value)}
+                      placeholder={mp.temAccessToken ? "•••••••• (salvo)" : "APP_USR-..."}
+                      helperText={
+                        mp.temAccessToken
+                          ? "Já existe um token salvo. Deixe vazio para manter."
+                          : "Painel do Mercado Pago → Suas integrações → Credenciais"
+                      }
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      type="password"
+                      label="Segredo do webhook"
+                      value={mpSegredo}
+                      onChange={(e) => setMpSegredo(e.target.value)}
+                      placeholder={mp.temWebhookSecret ? "•••••••• (salvo)" : "chave secreta"}
+                      helperText={
+                        mp.temWebhookSecret
+                          ? "Já existe um segredo salvo. Deixe vazio para manter."
+                          : "Sem ele o webhook recusa o evento — é o que impede alguém de marcar pedido como pago"
+                      }
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="URL do webhook (cadastre no Mercado Pago)"
+                      value={mp.urlWebhook}
+                      slotProps={{ htmlInput: { readOnly: true } }}
+                      helperText="Mercado Pago → Suas integrações → Webhooks → evento 'Pagamentos'"
+                    />
+                  </Grid>
+                </Grid>
+
+                {mpErro && <Alert severity="error" sx={{ mt: 2 }}>{mpErro}</Alert>}
+                {mpAviso && <Alert severity="success" sx={{ mt: 2 }}>{mpAviso}</Alert>}
+                {mpConta && <Alert severity="info" sx={{ mt: 2 }}>Conectado: {mpConta}</Alert>}
+                {mp.habilitado && !mp.temAccessToken && (
+                  <Alert severity="warning" sx={{ mt: 2 }}>
+                    Ligado sem Access Token: o checkout continua no PIX de chave
+                    estática até salvar a credencial.
+                  </Alert>
+                )}
+
+                <Box sx={{ display: "flex", gap: 1, mt: 2, flexWrap: "wrap" }}>
+                  <Button
+                    variant="contained"
+                    startIcon={<Save />}
+                    onClick={salvarMercadoPago}
+                    disabled={mpSalvando}
+                    sx={{ backgroundColor: "#BF360C", textTransform: "none", "&:hover": { backgroundColor: "#8f2809" } }}
+                  >
+                    {mpSalvando ? "Salvando…" : "Salvar conta"}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={testarMercadoPago}
+                    disabled={mpTestando || !mp.temAccessToken}
+                    sx={{ textTransform: "none" }}
+                  >
+                    {mpTestando ? "Testando…" : "Testar conexão"}
+                  </Button>
+                </Box>
+              </Paper>
+            </Grid>
+
             {/* BOLETO */}
             <Grid size={{ xs: 12 }}>
               <Paper sx={{ p: 3, borderRadius: 3, opacity: 0.6 }}>
@@ -391,7 +627,7 @@ export default function AdminPagamentos() {
                   <Box>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>Boleto Bancário</Typography>
                     <Typography variant="caption" sx={{ color: "#666" }}>
-                      Em breve — aguardando definição de gateway
+                      Em breve — depende da mesma conta do Mercado Pago
                     </Typography>
                   </Box>
                   <FormControlLabel
