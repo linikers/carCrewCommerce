@@ -42,12 +42,19 @@ interface PixKey {
   ordem: number;
 }
 
+interface CartaoConfig {
+  habilitado: boolean;
+  maxParcelas: number;
+  semJurosAte: number;
+}
+
 interface MercadoPagoConfig {
   habilitado: boolean;
   ambiente: "producao" | "teste";
   publicKey: string | null;
   temAccessToken: boolean;
   temWebhookSecret: boolean;
+  cartao: CartaoConfig;
   atualizadoEm: string | null;
   urlWebhook: string;
 }
@@ -102,6 +109,7 @@ export default function AdminPagamentos() {
     publicKey: "",
     temAccessToken: false,
     temWebhookSecret: false,
+    cartao: { habilitado: false, maxParcelas: 12, semJurosAte: 0 },
     atualizadoEm: null,
     urlWebhook: "/api/webhooks/mercadopago",
   });
@@ -133,6 +141,11 @@ export default function AdminPagamentos() {
             publicKey: mercadoPago.publicKey ?? "",
             temAccessToken: mercadoPago.temAccessToken === true,
             temWebhookSecret: mercadoPago.temWebhookSecret === true,
+            cartao: {
+              habilitado: mercadoPago.cartao?.habilitado === true,
+              maxParcelas: Number(mercadoPago.cartao?.maxParcelas ?? 12),
+              semJurosAte: Number(mercadoPago.cartao?.semJurosAte ?? 0),
+            },
             atualizadoEm: mercadoPago.atualizadoEm ?? null,
             urlWebhook: mercadoPago.urlWebhook ?? "/api/webhooks/mercadopago",
           });
@@ -227,6 +240,7 @@ export default function AdminPagamentos() {
           publicKey: mp.publicKey,
           accessToken: mpToken,
           webhookSecret: mpSegredo,
+          cartao: mp.cartao,
         }),
       });
       const dados = await res.json();
@@ -238,6 +252,11 @@ export default function AdminPagamentos() {
         publicKey: dados.publicKey ?? "",
         temAccessToken: dados.temAccessToken === true,
         temWebhookSecret: dados.temWebhookSecret === true,
+        cartao: {
+          habilitado: dados.cartao?.habilitado === true,
+          maxParcelas: Number(dados.cartao?.maxParcelas ?? 12),
+          semJurosAte: Number(dados.cartao?.semJurosAte ?? 0),
+        },
         atualizadoEm: dados.atualizadoEm ?? null,
         urlWebhook: dados.urlWebhook ?? mp.urlWebhook,
       });
@@ -638,21 +657,94 @@ export default function AdminPagamentos() {
               </Paper>
             </Grid>
 
-            {/* CARTÃO */}
+            {/* CARTÃO — usa as mesmas credenciais do Mercado Pago acima */}
             <Grid size={{ xs: 12 }}>
-              <Paper sx={{ p: 3, borderRadius: 3, opacity: 0.6 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Paper sx={{ p: 3, borderRadius: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1 }}>
                   <Box>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>Cartão de Crédito</Typography>
                     <Typography variant="caption" sx={{ color: "#666" }}>
-                      Em breve — aguardando definição de gateway
+                      Cobrança pelo Mercado Pago, na mesma conta do PIX
                     </Typography>
                   </Box>
-                  <FormControlLabel
-                    control={<Switch disabled />}
-                    label="Em breve"
-                  />
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Chip
+                      size="small"
+                      label={mp.cartao.habilitado ? "Aceitando" : "Desligado"}
+                      color={mp.cartao.habilitado ? "success" : "default"}
+                      variant="outlined"
+                    />
+                    <Switch
+                      checked={mp.cartao.habilitado}
+                      onChange={(e) => setMp({ ...mp, cartao: { ...mp.cartao, habilitado: e.target.checked } })}
+                    />
+                  </Box>
                 </Box>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      select
+                      fullWidth
+                      size="small"
+                      label="Parcelas máximas"
+                      value={mp.cartao.maxParcelas}
+                      onChange={(e) => {
+                        const maxParcelas = Number(e.target.value);
+                        setMp({
+                          ...mp,
+                          cartao: {
+                            ...mp.cartao,
+                            maxParcelas,
+                            semJurosAte: Math.min(mp.cartao.semJurosAte, maxParcelas),
+                          },
+                        });
+                      }}
+                      helperText="O Mercado Pago aceita até 12x"
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
+                        <MenuItem key={n} value={n}>
+                          {n}x
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      select
+                      fullWidth
+                      size="small"
+                      label="Sem juros até"
+                      value={mp.cartao.semJurosAte}
+                      onChange={(e) =>
+                        setMp({ ...mp, cartao: { ...mp.cartao, semJurosAte: Number(e.target.value) } })
+                      }
+                      helperText="0 = todas as parcelas com juros do Mercado Pago"
+                    >
+                      {Array.from({ length: mp.cartao.maxParcelas + 1 }, (_, n) => n).map((n) => (
+                        <MenuItem key={n} value={n}>
+                          {n === 0 ? "Nenhuma" : `${n}x`}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <Alert severity="info" sx={{ borderRadius: 2 }}>
+                      Para receber no cartão, a conta acima precisa de <strong>Public Key</strong> e{" "}
+                      <strong>Access Token</strong> salvos, e a URL do webhook cadastrada em
+                      Mercado Pago → Suas integrações → Webhooks (evento <em>Pagamentos</em>).
+                      Sem esses três, o cartão aparece no checkout e falha na hora de cobrar.
+                    </Alert>
+                  </Grid>
+                </Grid>
+
+                {mp.cartao.habilitado && !mp.temAccessToken && (
+                  <Alert severity="warning" sx={{ mt: 2 }}>
+                    Cartão ligado sem Access Token: o checkout não vai conseguir cobrar.
+                  </Alert>
+                )}
               </Paper>
             </Grid>
           </Grid>

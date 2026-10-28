@@ -46,6 +46,17 @@ export async function PUT(req: NextRequest) {
         body.accessToken === undefined ? undefined : String(body.accessToken ?? ""),
       webhookSecret:
         body.webhookSecret === undefined ? undefined : String(body.webhookSecret ?? ""),
+      cartao:
+        body.cartao && typeof body.cartao === "object"
+          ? {
+              habilitado:
+                typeof (body.cartao as Record<string, unknown>).habilitado === "boolean"
+                  ? ((body.cartao as Record<string, unknown>).habilitado as boolean)
+                  : undefined,
+              maxParcelas: Number((body.cartao as Record<string, unknown>).maxParcelas),
+              semJurosAte: Number((body.cartao as Record<string, unknown>).semJurosAte),
+            }
+          : undefined,
     });
 
     return NextResponse.json(configPublica(config, baseUrl(req)));
