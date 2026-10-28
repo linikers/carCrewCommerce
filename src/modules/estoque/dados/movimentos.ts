@@ -82,6 +82,105 @@ export async function baixarEstoqueDoPedido(
   }
 }
 
+/**
+ * Situação do estoque de um pedido, lida do próprio histórico (#121).
+ *
+ * `baixado` = quanto saiu no checkout e ainda não voltou. É a única fonte
+ * confiável: o status do pedido pode ser editado à mão e não diz se o estoque
+ * chegou a ser descontado (com o módulo de estoque desligado, não é).
+ */
+async function situacaoDoPedido(tx: Tx, pedidoId: string) {
+  const movimentos = await tx.estoqueMovimento.findMany({
+    where: { pedidoId, origem: { in: ["pedido", "estorno"] } },
+    select: { produtoId: true, tipo: true, quantidade: true },
+  });
+
+  const mapa = new Map<number, { saidas: number; estornos: number }>();
+  for (const m of movimentos) {
+    const atual = mapa.get(m.produtoId) ?? { saidas: 0, estornos: 0 };
+    if (m.tipo === "estorno") atual.estornos += Math.abs(m.quantidade);
+    else atual.saidas += Math.abs(m.quantidade);
+    mapa.set(m.produtoId, atual);
+  }
+  return mapa;
+}
+
+/**
+ * Devolve ao estoque o que o pedido cancelado havia baixado (#121).
+ *
+ * Só age sobre o que saiu e não voltou: cancelar duas vezes não devolve duas
+ * vezes. Pedido que nunca teve baixa (checkout com módulo de estoque desligado)
+ * não mexe em nada — devolver sem ter baixado inflaria o saldo.
+ */
+export async function estornarEstoqueDoPedido(
+  pedidoId: string,
+  usuarioId?: string | null
+): Promise<{ devolvidos: number }> {
+  return prisma.$transaction(async (tx) => {
+    const situacao = await situacaoDoPedido(tx, pedidoId);
+    const numero = pedidoId.slice(-6).toUpperCase();
+    let devolvidos = 0;
+
+    for (const [produtoId, { saidas, estornos }] of situacao) {
+      const pendente = saidas - estornos;
+      if (pendente <= 0) continue; // nada baixado, ou já devolvido
+
+      await registrarMovimento(
+        {
+          produtoId,
+          tipo: "estorno",
+          quantidade: pendente,
+          motivo: `Cancelamento — pedido ${numero}`,
+          origem: "estorno",
+          pedidoId,
+          usuarioId: usuarioId ?? null,
+        },
+        tx
+      );
+      devolvidos += pendente;
+    }
+
+    return { devolvidos };
+  });
+}
+
+/**
+ * Caminho inverso: o pedido cancelado voltou a valer (#121).
+ *
+ * Rebaixa de novo o que já havia sido devolvido. Só age quando a conta está
+ * zerada (tudo saiu e tudo voltou) — reabrir duas vezes não baixa duas vezes.
+ */
+export async function retomarEstoqueDoPedido(
+  pedidoId: string,
+  usuarioId?: string | null
+): Promise<{ baixados: number }> {
+  return prisma.$transaction(async (tx) => {
+    const situacao = await situacaoDoPedido(tx, pedidoId);
+    const numero = pedidoId.slice(-6).toUpperCase();
+    let baixados = 0;
+
+    for (const [produtoId, { saidas, estornos }] of situacao) {
+      if (saidas === 0 || saidas !== estornos) continue; // não está devolvido
+
+      await registrarMovimento(
+        {
+          produtoId,
+          tipo: "saida",
+          quantidade: saidas,
+          motivo: `Reabertura — pedido ${numero}`,
+          origem: "pedido",
+          pedidoId,
+          usuarioId: usuarioId ?? null,
+        },
+        tx
+      );
+      baixados += saidas;
+    }
+
+    return { baixados };
+  });
+}
+
 /** Saldo de todas as peças (para a tela de estoque). */
 export async function listarSaldos() {
   return prisma.produto.findMany({
