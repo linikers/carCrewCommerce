@@ -326,6 +326,16 @@ export default function AdminMenuPage() {
           >
             Ver o site
           </Button>
+          <Button
+            size="small"
+            variant="contained"
+            startIcon={<Save fontSize="small" />}
+            onClick={salvar}
+            disabled={salvando || loading}
+            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" } }}
+          >
+            Salvar
+          </Button>
         </Box>
         <Typography variant="body2" sx={{ color: "#666", mb: 3 }}>
           Aqui você monta o menu que aparece no topo do site: renomeia, explica
@@ -377,7 +387,7 @@ export default function AdminMenuPage() {
                               onChange={(e) => alternarCategoria(cat.slug, e.target.checked)}
                             />
                           }
-                          label={visivel ? "No menu" : "Oculta"}
+                          label={visivel ? "Aparecer no menu" : "Oculta no menu"}
                         />
                       </Box>
                     );
