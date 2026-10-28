@@ -20,6 +20,7 @@ export type EntidadeAuditada =
   | "pagamento"
   | "frete"
   | "configuracao"
+  | "menu_loja"
   | "empresa";
 
 export async function auditar(params: {

@@ -33,6 +33,7 @@ import {
   Payment,
   MarkEmailRead,
   Extension,
+  Menu as MenuIcon,
 } from "@mui/icons-material";
 import { MODULOS } from "@/modules/registro";
 
@@ -51,6 +52,7 @@ const ICONE_POR_ROTA: Record<string, React.ReactNode> = {
   "/admin/produtos": <Inventory2 />,
   "/admin/categorias": <Category />,
   "/admin/banners": <ViewCarousel />,
+  "/admin/menu": <MenuIcon />,
   "/admin/pedidos": <ShoppingBag />,
   "/admin/clientes": <People />,
   "/admin/leads": <MarkEmailRead />,
