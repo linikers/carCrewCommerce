@@ -81,7 +81,7 @@ export default async function ProdutoPage(props: {
     preco: precoSiteDe(dbProduto, politicaPreco),
     descontoPercent: dbProduto.descontoPercent ?? 0,
     imgUrl: dbProduto.imgUrl || "/produtos/placeholder.svg",
-    category: dbProduto.categorySlug as any,
+    category: dbProduto.categorySlug as Produto["category"],
     parcelamento: dbProduto.parcelamento || 12,
     veiculos: dbProduto.veiculos || [],
     // 2.7: a galeria já existia no client e nunca recebia as imagens extras —
@@ -96,7 +96,7 @@ export default async function ProdutoPage(props: {
   // Buscar categoria
   const categoria: Categoria | undefined = dbProduto.categoria
     ? {
-        slug: dbProduto.categoria.slug as any,
+        slug: dbProduto.categoria.slug as Categoria["slug"],
         nome: dbProduto.categoria.nome,
         icone: dbProduto.categoria.icone,
       }
@@ -118,7 +118,7 @@ export default async function ProdutoPage(props: {
     descricao: p.descricao || "",
     preco: p.preco,
     imgUrl: p.imgUrl || "/produtos/placeholder.svg",
-    category: p.categorySlug as any,
+    category: p.categorySlug as Produto["category"],
     parcelamento: p.parcelamento || 12,
     veiculos: p.veiculos || [],
   }));
@@ -191,6 +191,7 @@ export default async function ProdutoPage(props: {
               "@type": "ListItem",
               position: 2,
               name: categoria.nome,
+              item: `${siteUrl}/categoria/${categoria.slug}`,
             },
           ]
         : []),
