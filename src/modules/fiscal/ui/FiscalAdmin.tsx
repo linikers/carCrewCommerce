@@ -188,7 +188,9 @@ export default function FiscalAdmin() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
           {status.podeEmitir ? <VerifiedUser sx={{ color: "#0E7A3F" }} /> : <WarningAmber sx={{ color: "#B26A00" }} />}
           <Typography sx={{ fontWeight: 700 }}>
-            {status.podeEmitir ? "Pronto para emitir" : "Ainda não é possível emitir"}
+            {status.podeEmitir
+              ? "Dados prontos para emitir"
+              : "Ainda não é possível emitir"}
           </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>

@@ -2,7 +2,13 @@ import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { exigirModulo } from "@/modules/guard";
 import { cnpjValido } from "@/modules/fiscal/dominio/fiscal";
-import { lerEmpresa, lerPolitica, listarPendencias, salvarEmpresa } from "@/modules/fiscal/dados/cadastro";
+import {
+  lerCertificadoSalvo,
+  lerEmpresa,
+  lerPolitica,
+  listarPendencias,
+  salvarEmpresa,
+} from "@/modules/fiscal/dados/cadastro";
 
 /**
  * Cadastro fiscal da empresa + situação para emitir.
@@ -16,10 +22,11 @@ export async function GET() {
   const bloqueio = await exigirModulo("fiscal");
   if (bloqueio) return bloqueio;
 
-  const [empresa, politica, pendencias] = await Promise.all([
+  const [empresa, politica, pendencias, certificado] = await Promise.all([
     lerEmpresa(),
     lerPolitica(),
     listarPendencias(),
+    lerCertificadoSalvo(),
   ]);
 
   const cadastroCompleto = Boolean(
@@ -30,8 +37,13 @@ export async function GET() {
       empresa.uf
   );
 
+  // A validade vem do certificado REAL (tabela `certificado_digital`).
+  //
+  // Antes lia `empresa_fiscal.certificado_validade`, uma coluna que o upload
+  // nunca preencheu: o certificado estava válido no box e a tela anunciava
+  // "Sem certificado A1" na mesma página, bloqueando "pode emitir".
   const certificadoValido = Boolean(
-    empresa?.certificadoValidade && new Date(empresa.certificadoValidade) > new Date()
+    certificado?.validoAte && new Date(certificado.validoAte) > new Date()
   );
 
   return NextResponse.json({
