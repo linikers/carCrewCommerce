@@ -82,6 +82,7 @@ export const MODULOS: Modulo[] = [
       { rota: "/admin/banners", rotulo: "Banners", grupo: "Catálogo" },
       { rota: "/admin/menu", rotulo: "Menu da loja", grupo: "Configuração" },
       { rota: "/admin/faq", rotulo: "FAQ", grupo: "Configuração" },
+      { rota: "/admin/paginas", rotulo: "Textos do site", grupo: "Configuração" },
       { rota: "/admin/lp", rotulo: "Páginas de solução", grupo: "Catálogo" },
     ],
     tabelas: ["produtos", "categorias", "banners"],
