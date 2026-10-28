@@ -19,7 +19,7 @@ import OffRoadNoProducts from "@/components/off-road/OffRoadNoProducts";
 import { formatBRL } from "@/lib/format";
 import { lerConteudoLp } from "@/lib/lp-conteudo";
 import BotaoEditarPagina from "@/components/BotaoEditarPagina";
-import { lerContatoEmpresa } from "@/lib/empresa";
+import { lerContatoEmpresaCache } from "@/lib/empresa";
 import type { ContatoEmpresa } from "@/lib/empresa-contato";
 
 const SLUG = "off-road";
@@ -77,7 +77,7 @@ function montarSchema(empresa: ContatoEmpresa) {
 
 export default async function OffRoadPage() {
   const conteudo = await lerConteudoLp(SLUG);
-  const contato = await lerContatoEmpresa();
+  const contato = await lerContatoEmpresaCache();
   const offRoadSchema = montarSchema(contato);
   const sessao = await getServerSession(authOptions);
   const admin = Boolean((sessao?.user as { admin?: boolean } | undefined)?.admin);

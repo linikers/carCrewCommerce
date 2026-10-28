@@ -1,3 +1,4 @@
+import { revalidateTag, unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 import { montarContato, type ContatoEmpresa } from "@/lib/empresa-contato";
@@ -111,4 +112,28 @@ export async function salvarEmpresa(dados: Partial<DadosEmpresa> & { razaoSocial
  */
 export async function lerContatoEmpresa(): Promise<ContatoEmpresa> {
   return montarContato(await lerEmpresa());
+}
+
+/**
+ * Versão cacheada dos dados de contato.
+ *
+ * O layout raiz usa estes dados em TODA página (rodapé, cabeçalho, JSON-LD).
+ * Sem cache, cada visita faria uma consulta ao banco só para repetir o mesmo
+ * telefone. Com a tag, o valor fica em memória até alguém salvar "Minha
+ * empresa" ou a aba Fiscal — aí `revalidateTag` limpa e a próxima visita lê o
+ * novo. Não existe janela de "esperar X minutos": salvar já vale.
+ */
+export const TAG_EMPRESA = "empresa";
+
+export const lerContatoEmpresaCache = unstable_cache(
+  async (): Promise<ContatoEmpresa> => montarContato(await lerEmpresa()),
+  ["empresa-contato"],
+  { tags: [TAG_EMPRESA], revalidate: 60 * 60 * 24 }
+);
+
+/** Chame depois de gravar nome, endereço, telefone, e-mail, logo ou redes. */
+export function invalidarContatoEmpresa(): void {
+  // Route Handler: `expire: 0` descarta a entrada na hora (o próximo request
+  // já lê do banco). A forma de um argumento está deprecada no Next 16.
+  revalidateTag(TAG_EMPRESA, { expire: 0 });
 }

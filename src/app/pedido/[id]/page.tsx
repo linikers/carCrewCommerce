@@ -5,7 +5,7 @@ import { formatBRL, formatData } from "@/lib/format";
 import { STATUS_LABEL, type StatusPedido } from "@/lib/pedido-status";
 import { Box, Chip, Container, Divider, Paper, Typography, Button } from "@mui/material";
 import Header from "@/components/Header";
-import { lerContatoEmpresa } from "@/lib/empresa";
+import { lerContatoEmpresaCache } from "@/lib/empresa";
 import { linkWhatsApp } from "@/lib/empresa-contato";
 import Footer from "@/components/Footer";
 
@@ -25,7 +25,7 @@ const ETAPAS: { status: StatusPedido; rotulo: string; descricao: string }[] = [
 ];
 
 export default async function PedidoPage(props: { params: Promise<{ id: string }> }) {
-  const contato = await lerContatoEmpresa();
+  const contato = await lerContatoEmpresaCache();
   const { id } = await props.params;
 
   const pedido = await prisma.pedido.findUnique({

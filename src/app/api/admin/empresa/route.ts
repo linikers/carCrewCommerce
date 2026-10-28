@@ -1,7 +1,12 @@
 import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { auditar } from "@/lib/auditoria";
-import { lerEmpresa, salvarEmpresa, type DadosEmpresa } from "@/lib/empresa";
+import {
+  invalidarContatoEmpresa,
+  lerEmpresa,
+  salvarEmpresa,
+  type DadosEmpresa,
+} from "@/lib/empresa";
 
 /**
  * Dados da empresa (#os-pdf).
@@ -61,6 +66,9 @@ export async function PUT(req: NextRequest) {
     const { registro: empresa } = await salvarEmpresa(
       dados as Partial<DadosEmpresa> & { razaoSocial: string }
     );
+
+    // O site inteiro lê estes dados do cache: salvar tem que valer na hora.
+    invalidarContatoEmpresa();
 
     await auditar({
       entidade: "empresa",
