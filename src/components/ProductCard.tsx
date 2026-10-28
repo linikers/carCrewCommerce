@@ -54,12 +54,11 @@ export default function ProductCard({
         },
       }}
     >
-      {/* Imagem */}
-      <Box sx={{ position: "relative", aspectRatio: "1/1" }}>
+      {/* Imagem — caixa quadrada fixa. O `height` do CardMedia em pixels fica no
+          CSS (e não em atributo) para a foto vertical não esticar o card. */}
+      <Box sx={{ position: "relative", aspectRatio: "1/1", overflow: "hidden" }}>
         <CardMedia
           component="img"
-          height="200"
-          width="200"
           loading="lazy"
           image={
             isCloudinaryUrl(produto.imgUrl)
@@ -68,6 +67,10 @@ export default function ProductCard({
           }
           alt={produto.nome}
           sx={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
             objectFit: "contain",
             backgroundColor: "#ffffff",
             p: 1.5,
