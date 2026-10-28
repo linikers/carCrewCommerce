@@ -36,6 +36,7 @@ import {
 } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { Categoria } from "@/types";
+import type { ItemMenu } from "@/lib/menu-loja";
 import CarCrewLogoText from "@/components/CarCrewLogoText";
 
 interface HeaderProps {
@@ -56,6 +57,12 @@ export default function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  // Menu vem do painel (/admin/menu): item desligado não aparece na barra.
+  const [menu, setMenu] = useState<{
+    barra: ItemMenu[];
+    solucoes: ItemMenu[];
+    categoriasOcultas: string[];
+  }>({ barra: [], solucoes: [], categoriasOcultas: [] });
   const [searchValue, setSearchValue] = useState("");
   const [categoriesMenuAnchor, setCategoriesMenuAnchor] =
     useState<null | HTMLElement>(null);
@@ -63,11 +70,27 @@ export default function Header({
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/categorias")
-      .then((r) => r.json())
-      .then(setCategorias)
+    Promise.all([
+      fetch("/api/categorias").then((r) => r.json()),
+      fetch("/api/menu").then((r) => r.json()),
+    ])
+      .then(([cats, cfg]) => {
+        setCategorias(cats);
+        setMenu({
+          barra: Array.isArray(cfg?.barra) ? cfg.barra : [],
+          solucoes: Array.isArray(cfg?.solucoes) ? cfg.solucoes : [],
+          categoriasOcultas: Array.isArray(cfg?.categoriasOcultas)
+            ? cfg.categoriasOcultas
+            : [],
+        });
+      })
       .catch(() => {});
   }, []);
+
+  // Categoria escondida no painel continua com página no ar — só sai do menu.
+  const categoriasVisiveis = categorias.filter(
+    (c) => !menu.categoriasOcultas.includes(c.slug)
+  );
 
   const fireSearch = (term: string) => {
     setSearchValue(term);
@@ -276,7 +299,7 @@ export default function Header({
                   flexWrap: "nowrap",
                 }}
               >
-                {categorias.map((cat) => (
+                {categoriasVisiveis.map((cat) => (
                   <Button
                     key={cat.slug}
                     onClick={() => {
@@ -316,7 +339,8 @@ export default function Header({
                   </Button>
                 ))}
 
-                {/* Dropdown "+ Categorias" */}
+                {/* Dropdown "Soluções" — os itens vêm do painel (/admin/menu) */}
+                {menu.solucoes.length > 0 && (
                 <Button
                   onClick={(e) => setCategoriesMenuAnchor(e.currentTarget)}
                   endIcon={
@@ -355,26 +379,29 @@ export default function Header({
                 >
                   Soluções
                 </Button>
+                )}
 
-                {/* Blog também no menu: é a porta de entrada de busca
-                    informacional (6.6) */}
-                <Button
-                  onClick={() => router.push("/blog")}
-                  sx={{
-                    color: "#ffffff",
-                    textTransform: "none",
-                    fontSize: "0.85rem",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
-                    px: { lg: 1.25, xl: 2 },
-                    py: 1.25,
-                    minHeight: 44,
-                    borderRadius: 0,
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)", color: "primary.main" },
-                  }}
-                >
-                  Blog
-                </Button>
+                {/* Itens diretos da barra (Blog por padrão) — painel /admin/menu */}
+                {menu.barra.map((item) => (
+                  <Button
+                    key={item.id}
+                    onClick={() => router.push(item.href)}
+                    sx={{
+                      color: "#ffffff",
+                      textTransform: "none",
+                      fontSize: "0.85rem",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                      px: { lg: 1.25, xl: 2 },
+                      py: 1.25,
+                      minHeight: 44,
+                      borderRadius: 0,
+                      "&:hover": { backgroundColor: "rgba(255,255,255,0.08)", color: "primary.main" },
+                    }}
+                  >
+                    {item.rotulo}
+                  </Button>
+                ))}
 
                 <Menu
                   anchorEl={categoriesMenuAnchor}
@@ -388,26 +415,28 @@ export default function Header({
                         mt: 0.5,
                         borderRadius: 1.5,
                         boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                        minWidth: 200,
+                        minWidth: 240,
                         maxHeight: 360,
                       },
                     },
                   }}
                 >
-                  {[
-                    { href: "/suspensao-a-ar", label: "Suspensão a ar" },
-                    { href: "/rebaixamento", label: "Rebaixados" },
-                    { href: "/suspensao-esportiva", label: "Suspensão esportiva" },
-                    { href: "/off-road", label: "Off-road 4x4" },
-                  ].map((l) => (
+                  {menu.solucoes.map((item) => (
                     <MenuItem
-                      key={l.href}
+                      key={item.id}
                       component={Link}
-                      href={l.href}
+                      href={item.href}
                       onClick={() => setCategoriesMenuAnchor(null)}
-                      sx={{ py: 1.25, px: 2.5, fontSize: "0.9rem" }}
+                      sx={{ py: 1.25, px: 2.5, display: "block" }}
                     >
-                      {l.label}
+                      <Typography sx={{ fontSize: "0.9rem", lineHeight: 1.3, color: "#1A1A1A" }}>
+                        {item.rotulo}
+                      </Typography>
+                      {item.descricao && (
+                        <Typography sx={{ fontSize: "0.72rem", lineHeight: 1.35, color: "#666", mt: 0.25 }}>
+                          {item.descricao}
+                        </Typography>
+                      )}
                     </MenuItem>
                   ))}
                 </Menu>
@@ -450,7 +479,7 @@ export default function Header({
             </ListItemButton>
             <Collapse in={categoriesOpen}>
               <List disablePadding>
-                {categorias.map((cat) => (
+                {categoriasVisiveis.map((cat) => (
                   <ListItemButton
                     key={cat.slug}
                     sx={{ pl: 4 }}
@@ -476,36 +505,41 @@ export default function Header({
               </List>
             </Collapse>
 
-            {/* 3.3 — as páginas que mais convertem também no mobile */}
-            <ListItemButton
-              onClick={() => {
-                router.push("/blog");
-                setMobileMenuOpen(false);
-              }}
-            >
-              <ListItemIcon>
-                <ExpandMore sx={{ transform: "rotate(-90deg)", fontSize: 20 }} />
-              </ListItemIcon>
-              <ListItemText primary="Blog" />
-            </ListItemButton>
-            <Divider sx={{ my: 1 }} />
-            {[
-              { href: "/suspensao-a-ar", label: "Suspensão a ar" },
-              { href: "/rebaixamento", label: "Rebaixados" },
-              { href: "/suspensao-esportiva", label: "Suspensão esportiva" },
-              { href: "/off-road", label: "Off-road 4x4" },
-            ].map((l) => (
+            {/* 3.3 — as páginas que mais convertem também no mobile
+                (itens vêm do painel /admin/menu, com a descrição de cada um) */}
+            {menu.barra.map((item) => (
               <ListItemButton
-                key={l.href}
+                key={item.id}
                 onClick={() => {
-                  router.push(l.href);
+                  router.push(item.href);
                   setMobileMenuOpen(false);
                 }}
               >
                 <ListItemIcon>
                   <ExpandMore sx={{ transform: "rotate(-90deg)", fontSize: 20 }} />
                 </ListItemIcon>
-                <ListItemText primary={l.label} />
+                <ListItemText
+                  primary={item.rotulo}
+                  secondary={item.descricao || undefined}
+                />
+              </ListItemButton>
+            ))}
+            <Divider sx={{ my: 1 }} />
+            {menu.solucoes.map((item) => (
+              <ListItemButton
+                key={item.id}
+                onClick={() => {
+                  router.push(item.href);
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <ListItemIcon>
+                  <ExpandMore sx={{ transform: "rotate(-90deg)", fontSize: 20 }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.rotulo}
+                  secondary={item.descricao || undefined}
+                />
               </ListItemButton>
             ))}
             <Divider sx={{ my: 1 }} />
