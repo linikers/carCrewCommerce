@@ -161,13 +161,23 @@ export default async function CategoriaPage(props: { params: Promise<{ slug: str
                     "&:hover": { borderColor: "primary.main", boxShadow: "0 6px 18px rgba(0,0,0,0.06)" },
                   }}
                 >
-                  <Box sx={{ aspectRatio: "4 / 3", backgroundColor: "#f7f7f7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {/* Caixa fixa 4:3: a foto do anúncio pode ser vertical (141×500) ou
+                      panorâmica. Sem position/absolute o `height: 100%` cai na
+                      proporção natural do arquivo e o card estica até 1226 px. */}
+                  <Box sx={{ position: "relative", aspectRatio: "4 / 3", backgroundColor: "#f7f7f7", overflow: "hidden" }}>
                     <Box
                       component="img"
                       src={p.imgUrl || "/produtos/placeholder.svg"}
                       alt={p.nome}
                       loading="lazy"
-                      sx={{ width: "100%", height: "100%", objectFit: "contain", p: 2 }}
+                      sx={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                        p: 2,
+                      }}
                     />
                   </Box>
                   <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 0.5, flex: 1 }}>
