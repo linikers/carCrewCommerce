@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 import { Container, Box, Typography, Paper, Button, Divider } from "@mui/material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { conteudoDaCategoria } from "@/lib/categorias-conteudo";
+import { lerConteudoCategoriaPublico } from "@/lib/categorias-conteudo-admin";
 import { formatBRL } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -34,7 +34,8 @@ export async function generateMetadata(props: {
   const dados = await carregarCategoria(slug);
   if (!dados) return {};
 
-  const conteudo = conteudoDaCategoria(slug, dados.categoria.nome);
+  // Texto do painel (/admin/categorias → Conteúdo), com o código como padrão.
+  const conteudo = await lerConteudoCategoriaPublico(slug, dados.categoria.nome);
   const titulo = `${conteudo.titulo} | Car Crew Garage`;
   const descricao = conteudo.intro.slice(0, 158);
 
@@ -57,7 +58,7 @@ export default async function CategoriaPage(props: { params: Promise<{ slug: str
   if (!dados) notFound();
 
   const { categoria, produtos } = dados;
-  const conteudo = conteudoDaCategoria(slug, categoria.nome);
+  const conteudo = await lerConteudoCategoriaPublico(slug, categoria.nome);
 
   const breadcrumb = {
     "@context": "https://schema.org",
