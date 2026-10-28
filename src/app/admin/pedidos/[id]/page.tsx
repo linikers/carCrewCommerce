@@ -25,6 +25,7 @@ import {
   CheckCircle,
   LocalShipping,
   Cancel,
+  History,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { labelStatus, STATUS_COLOR } from "@/lib/pedido-status";
@@ -69,6 +70,13 @@ interface Pedido {
     cidade?: string | null;
   } | null;
   user?: { id: string; name: string | null; email: string | null };
+  historico?: {
+    em: string;
+    acao: string;
+    de: string | null;
+    para: string | null;
+    usuario: string;
+  }[];
 }
 
 const MAPA_STATUS: Record<string, string> = {
@@ -369,6 +377,70 @@ export default function PedidoDetalhe() {
                   <Typography variant="h6" sx={{ fontWeight: 700, color: "#BF360C" }}>
                     Total: {formatBRL(pedido.total)}
                   </Typography>
+                </Box>
+              </Paper>
+
+              {/* Linha do tempo (#123) — vem da auditoria, com autor e horário */}
+              <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+                  <History sx={{ fontSize: 18, color: "#BF360C" }} />
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: "#1A1A1A" }}>
+                    Histórico
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  <Box sx={{ display: "flex", gap: 1.5, alignItems: "baseline", flexWrap: "wrap" }}>
+                    <Typography sx={{ fontSize: "0.75rem", color: "#888", minWidth: 118 }}>
+                      {formatDate(pedido.createdAt)}
+                    </Typography>
+                    <Typography sx={{ fontSize: "0.85rem", color: "#444" }}>
+                      Pedido criado
+                    </Typography>
+                  </Box>
+
+                  {(pedido.historico ?? []).length === 0 && (
+                    <Typography sx={{ fontSize: "0.8rem", color: "#999" }}>
+                      Nenhuma mudança de status registrada ainda.
+                    </Typography>
+                  )}
+
+                  {(pedido.historico ?? []).map((h, i) => (
+                    <Box
+                      key={`${h.em}-${i}`}
+                      sx={{ display: "flex", gap: 1.5, alignItems: "baseline", flexWrap: "wrap" }}
+                    >
+                      <Typography sx={{ fontSize: "0.75rem", color: "#888", minWidth: 118 }}>
+                        {formatDate(h.em)}
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.85rem", color: "#444" }}>
+                        {h.de ? (
+                          <>
+                            <Box component="span" sx={{ fontWeight: 600 }}>
+                              {labelStatus(h.de)}
+                            </Box>
+                            {" → "}
+                            <Box component="span" sx={{ fontWeight: 600 }}>
+                              {labelStatus(h.para ?? h.de)}
+                            </Box>
+                          </>
+                        ) : h.para ? (
+                          <>
+                            Status alterado para{" "}
+                            <Box component="span" sx={{ fontWeight: 600 }}>
+                              {labelStatus(h.para)}
+                            </Box>
+                          </>
+                        ) : (
+                          "Pedido atualizado"
+                        )}
+                        <Box component="span" sx={{ color: "#999" }}>
+                          {" "}
+                          por {h.usuario}
+                        </Box>
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
               </Paper>
 

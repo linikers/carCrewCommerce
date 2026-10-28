@@ -29,7 +29,50 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(pedido);
+    // Linha do tempo (#123): quem mudou, quando e de quê para quê. Sai da
+    // auditoria (#120) — tabela própria duplicaria o mesmo dado. Pedido antigo
+    // pode ter só a criação, porque a auditoria de pedido é posterior.
+    const registros = await prisma.auditoria.findMany({
+      where: { entidade: "pedido", entidadeId: id },
+      orderBy: { criadoEm: "asc" },
+    });
+
+    const idsUsuarios = [
+      ...new Set(registros.map((r) => r.userId).filter((v): v is string => Boolean(v))),
+    ];
+    const usuarios = idsUsuarios.length
+      ? await prisma.user.findMany({
+          where: { id: { in: idsUsuarios } },
+          select: { id: true, name: true, email: true },
+        })
+      : [];
+
+    const nomeDe = (userId: string | null) => {
+      if (!userId) return "sistema";
+      const u = usuarios.find((x) => x.id === userId);
+      return u?.name || u?.email || "admin";
+    };
+
+    // `de` vem do registro anterior quando a auditoria não gravou o "antes"
+    // (o PATCH antigo só salvava o status novo). Sem isso a linha do tempo
+    // mostraria "Pedido atualizado" em vez de "pendente → pago".
+    let ultimoStatus: string | null = null;
+    const historico = registros.map((r) => {
+      const antes = (r.antes ?? {}) as { status?: string };
+      const depois = (r.depois ?? {}) as { status?: string };
+      const de = antes.status ?? ultimoStatus;
+      const para = depois.status ?? null;
+      ultimoStatus = para ?? ultimoStatus;
+      return {
+        em: r.criadoEm,
+        acao: r.acao,
+        de,
+        para,
+        usuario: nomeDe(r.userId),
+      };
+    });
+
+    return NextResponse.json({ ...pedido, historico });
   } catch (error) {
     console.error("[admin/pedidos/id] falha ao buscar:", error);
     return NextResponse.json(
