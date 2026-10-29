@@ -36,7 +36,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
         }}
       >
         <Toolbar variant="dense" sx={{ gap: 1, minHeight: 56 }}>
-          <IconButton edge="start" onClick={() => setSidebarOpen(true)} sx={{ color: "#1A1A1A" }}>
+          <IconButton aria-label="Abrir menu" edge="start" onClick={() => setSidebarOpen(true)} sx={{ width: 44, height: 44, color: "#1A1A1A" }}>
             <MenuIcon />
           </IconButton>
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }} noWrap>

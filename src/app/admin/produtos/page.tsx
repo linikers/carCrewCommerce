@@ -88,14 +88,19 @@ export default function AdminProdutos() {
     }
   };
 
+  // Carregar no mount é o padrão desta tela (o setState acontece depois do fetch).
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { carregar(); }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const filtro = params.get("filtro");
-    if (filtro === "sem-preco" || filtro === "estoque-baixo" || filtro === "esgotado")
+    if (filtro === "sem-preco" || filtro === "estoque-baixo" || filtro === "esgotado") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFiltroRapido(filtro);
+    }
     const termo = params.get("q");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (termo) setSearch(termo);
   }, []);
 
@@ -371,7 +376,7 @@ export default function AdminProdutos() {
                       />
                     </TableCell>
                     <TableCell>
-                      <IconButton size="small" onClick={() => router.push(`/produto/${p.id}`)}>
+                      <IconButton sx={{ width: 44, height: 44 }} aria-label="Ver detalhes" size="small" onClick={() => router.push(`/produto/${p.id}`)}>
                         <Visibility fontSize="small" />
                       </IconButton>
                       <IconButton
@@ -381,10 +386,10 @@ export default function AdminProdutos() {
                       >
                         {p.ativo ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                       </IconButton>
-                      <IconButton size="small" onClick={() => router.push(`/admin/produtos/${p.id}/edit`)}>
+                      <IconButton sx={{ width: 44, height: 44 }} aria-label="Editar" size="small" onClick={() => router.push(`/admin/produtos/${p.id}/edit`)}>
                         <Edit fontSize="small" />
                       </IconButton>
-                      <IconButton size="small" onClick={() => setDeleteId(p.id)} sx={{ color: "#d32f2f" }}>
+                      <IconButton aria-label="Remover" size="small" onClick={() => setDeleteId(p.id)} sx={{ width: 44, height: 44, color: "#d32f2f" }}>
                         <Delete fontSize="small" />
                       </IconButton>
                     </TableCell>

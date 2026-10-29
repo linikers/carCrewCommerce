@@ -32,6 +32,7 @@ import {
   Save,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { serializar, useAlteracoesNaoSalvas } from "@/lib/useAlteracoesNaoSalvas";
 import type { PaginaInstitucional, SlugInstitucional } from "@/lib/paginas-conteudo";
 
 /**
@@ -57,11 +58,17 @@ export default function AdminPaginasPage() {
   const [aviso, setAviso] = useState("");
   const [destaque, setDestaque] = useState<string | null>(null);
   const [remover, setRemover] = useState<{ slug: SlugInstitucional; id: string } | null>(null);
+  /** JSON do que veio do banco: base do aviso de alteração não salva (#183). */
+  const [snapshot, setSnapshot] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/paginas")
       .then((r) => r.json())
-      .then((d) => setPaginas(Array.isArray(d?.paginas) ? d.paginas : []))
+      .then((d) => {
+        const lista = Array.isArray(d?.paginas) ? d.paginas : [];
+        setPaginas(lista);
+        setSnapshot(serializar(lista));
+      })
       .catch(() => setErro("Não foi possível carregar as páginas."))
       .finally(() => setLoading(false));
   }, []);
@@ -78,6 +85,9 @@ export default function AdminPaginasPage() {
   }, [destaque]);
 
   const pagina = paginas[aba];
+
+  // Avisa antes de sair com alteração pendente (#183).
+  useAlteracoesNaoSalvas(snapshot !== "" && serializar(paginas) !== snapshot);
 
   const alterar = (campo: "titulo" | "subtitulo" | "destaque", valor: string) => {
     setPaginas((atual) => atual.map((p, i) => (i === aba ? { ...p, [campo]: valor } : p)));
@@ -145,7 +155,9 @@ export default function AdminPaginasPage() {
       });
       const dados = await res.json();
       if (!res.ok) throw new Error(dados?.error || "Não foi possível salvar.");
-      setPaginas((atual) => atual.map((p, i) => (i === aba ? dados.pagina : p)));
+      const atualizadas = paginas.map((p, i) => (i === aba ? dados.pagina : p));
+      setPaginas(atualizadas);
+      setSnapshot(serializar(atualizadas));
       setMsg(`Página “${ROTULOS[pagina.slug]}” salva. O site já está usando.`);
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Não foi possível salvar.");
@@ -179,7 +191,7 @@ export default function AdminPaginasPage() {
             startIcon={<Save fontSize="small" />}
             onClick={salvar}
             disabled={salvando || loading}
-            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
+            sx={{ minHeight: 44, backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
           >
             Salvar
           </Button>
@@ -259,7 +271,7 @@ export default function AdminPaginasPage() {
                           aria-label="Subir seção"
                           disabled={indice === 0}
                           onClick={() => moverSecao(indice, -1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowUpward fontSize="small" />
                         </IconButton>
@@ -272,7 +284,7 @@ export default function AdminPaginasPage() {
                           aria-label="Descer seção"
                           disabled={indice === pagina.secoes.length - 1}
                           onClick={() => moverSecao(indice, 1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowDownward fontSize="small" />
                         </IconButton>
@@ -284,7 +296,7 @@ export default function AdminPaginasPage() {
                         color="error"
                         aria-label="Remover seção"
                         onClick={() => setRemover({ slug: pagina.slug, id: secao.id })}
-                        sx={{ width: 40, height: 40 }}
+                        sx={{ width: 44, height: 44 }}
                       >
                         <Delete fontSize="small" />
                       </IconButton>

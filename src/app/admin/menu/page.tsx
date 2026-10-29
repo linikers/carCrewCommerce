@@ -33,6 +33,7 @@ import {
   Save,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { serializar, useAlteracoesNaoSalvas } from "@/lib/useAlteracoesNaoSalvas";
 import type { ItemMenu } from "@/lib/menu-loja";
 
 type Grupo = "barra" | "solucoes";
@@ -76,6 +77,8 @@ export default function AdminMenuPage() {
   // tela e o dono não sabe se a ação funcionou.
   const [destaque, setDestaque] = useState<string | null>(null);
   const [aviso, setAviso] = useState("");
+  /** JSON do que veio do banco: base para saber se há alteração não salva. */
+  const [snapshot, setSnapshot] = useState("");
 
   useEffect(() => {
     Promise.all([
@@ -83,13 +86,15 @@ export default function AdminMenuPage() {
       fetch("/api/categorias").then((r) => r.json()),
     ])
       .then(([cfg, cats]) => {
-        setConfig({
+        const carregado: ConfigTela = {
           barra: Array.isArray(cfg?.barra) ? cfg.barra : [],
           solucoes: Array.isArray(cfg?.solucoes) ? cfg.solucoes : [],
           categoriasOcultas: Array.isArray(cfg?.categoriasOcultas)
             ? cfg.categoriasOcultas
             : [],
-        });
+        };
+        setConfig(carregado);
+        setSnapshot(serializar(carregado));
         setCategorias(Array.isArray(cats) ? cats : []);
       })
       .catch(() => setErro("Não foi possível carregar o menu."))
@@ -184,11 +189,13 @@ export default function AdminMenuPage() {
         setErro(dados?.error || "Não foi possível salvar.");
         return;
       }
-      setConfig({
+      const salvo: ConfigTela = {
         barra: dados.barra ?? [],
         solucoes: dados.solucoes ?? [],
         categoriasOcultas: dados.categoriasOcultas ?? [],
-      });
+      };
+      setConfig(salvo);
+      setSnapshot(serializar(salvo));
       setMsg("Menu salvo. A loja já está usando esta configuração.");
     } catch {
       setErro("Não foi possível salvar.");
@@ -210,6 +217,9 @@ export default function AdminMenuPage() {
     const t = setTimeout(() => setDestaque(null), 4000);
     return () => clearTimeout(t);
   }, [destaque]);
+
+  // Avisa antes de sair com alteração pendente (#183).
+  useAlteracoesNaoSalvas(snapshot !== "" && serializar(config) !== snapshot);
 
   const renderGrupo = (grupo: Grupo) => (
     <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
@@ -271,14 +281,14 @@ export default function AdminMenuPage() {
                 <Box sx={{ flex: 1 }} />
                 <Tooltip title="Subir">
                   <span>
-                    <IconButton size="small" disabled={indice === 0} onClick={() => mover(grupo, indice, -1)}>
+                    <IconButton sx={{ width: 44, height: 44 }} aria-label="Mover para cima" size="small" disabled={indice === 0} onClick={() => mover(grupo, indice, -1)}>
                       <ArrowUpward fontSize="small" />
                     </IconButton>
                   </span>
                 </Tooltip>
                 <Tooltip title="Descer">
                   <span>
-                    <IconButton
+                    <IconButton sx={{ width: 44, height: 44 }} aria-label="Mover para baixo"
                       size="small"
                       disabled={indice === config[grupo].length - 1}
                       onClick={() => mover(grupo, indice, 1)}
@@ -288,7 +298,7 @@ export default function AdminMenuPage() {
                   </span>
                 </Tooltip>
                 <Tooltip title="Remover item">
-                  <IconButton
+                  <IconButton sx={{ width: 44, height: 44 }} aria-label="Remover"
                     size="small"
                     color="error"
                     onClick={() => setRemover({ grupo, id: item.id })}
@@ -371,7 +381,7 @@ export default function AdminMenuPage() {
             startIcon={<Save fontSize="small" />}
             onClick={salvar}
             disabled={salvando || loading}
-            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" } }}
+            sx={{ minHeight: 44, backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" } }}
           >
             Salvar
           </Button>

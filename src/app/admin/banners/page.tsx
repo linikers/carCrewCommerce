@@ -35,6 +35,8 @@ export default function AdminBanners() {
     setBanners(data);
     setLoading(false);
   };
+  // Carregar no mount é o padrão desta tela (o setState acontece depois do fetch).
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { carregar(); }, []);
 
   const resetForm = () => ({
@@ -141,8 +143,8 @@ export default function AdminBanners() {
                     <TableCell sx={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#666" }}>{b.link || "—"}</TableCell>
                     <TableCell><Chip label={b.ativo ? "Sim" : "Não"} size="small" color={b.ativo ? "success" : "default"} /></TableCell>
                     <TableCell>
-                      <IconButton size="small" onClick={() => abrirEditar(b)}><Edit fontSize="small" /></IconButton>
-                      <IconButton size="small" onClick={() => setDeleteId(b.id)} sx={{ color: "#d32f2f" }}><Delete fontSize="small" /></IconButton>
+                      <IconButton sx={{ width: 44, height: 44 }} aria-label="Editar" size="small" onClick={() => abrirEditar(b)}><Edit fontSize="small" /></IconButton>
+                      <IconButton aria-label="Remover" size="small" onClick={() => setDeleteId(b.id)} sx={{ width: 44, height: 44, color: "#d32f2f" }}><Delete fontSize="small" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

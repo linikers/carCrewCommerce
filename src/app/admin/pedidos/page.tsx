@@ -64,6 +64,8 @@ export default function AdminPedidos() {
   // busca que vem da barra global (?q=)
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("q");
+    // ?q= da barra global: sincronizar no mount é proposital.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (q) setBusca(q);
   }, []);
   const [alterando, setAlterando] = useState<string | null>(null);
@@ -314,10 +316,10 @@ export default function AdminPedidos() {
                       </TableCell>
                       <TableCell>
                         <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
-                          <IconButton
+                          <IconButton aria-label="Ver detalhes"
                             size="small"
                             onClick={() => router.push(`/admin/pedidos/${pedido.id}`)}
-                            sx={{ color: "#BF360C" }}
+                            sx={{ width: 44, height: 44, color: "#BF360C" }}
                           >
                             <Visibility fontSize="small" />
                           </IconButton>
@@ -374,11 +376,11 @@ export default function AdminPedidos() {
                             </Button>
                           )}
                           {(pedido.status === "pendente" || pedido.status === "aguardando_pagamento" || pedido.status === "pago" || pedido.status === "em_separacao") && (
-                            <IconButton
+                            <IconButton aria-label="Cancelar pedido"
                               size="small"
                               disabled={alterando === pedido.id}
                               onClick={() => alterarStatus(pedido.id, "cancelado")}
-                              sx={{ color: "#e57373" }}
+                              sx={{ width: 44, height: 44, color: "#e57373" }}
                             >
                               <Cancel fontSize="small" />
                             </IconButton>
