@@ -425,7 +425,7 @@ export default function AdminPagamentos() {
                               />
                               <Box>
                                 <Tooltip title={key.ativo ? "Desativar" : "Ativar"}>
-                                  <IconButton
+                                  <IconButton sx={{ width: 44, height: 44 }} aria-label="Ver detalhes"
                                     size="small"
                                     onClick={() => updateChave(key.id, "ativo", !key.ativo)}
                                   >
@@ -433,10 +433,10 @@ export default function AdminPagamentos() {
                                   </IconButton>
                                 </Tooltip>
                                 <Tooltip title="Remover">
-                                  <IconButton
+                                  <IconButton aria-label="Remover"
                                     size="small"
                                     onClick={() => removeChave(key.id)}
-                                    sx={{ color: "#e57373" }}
+                                    sx={{ width: 44, height: 44, color: "#e57373" }}
                                   >
                                     <Delete fontSize="small" />
                                   </IconButton>

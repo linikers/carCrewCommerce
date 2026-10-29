@@ -108,6 +108,10 @@ model Produto {
   precoBase    Float?    @map("preco_base")
   /// Preço de venda NO SITE, já com a política do canal aplicada.
   preco        Float
+  /// Custo unitário da peça (quanto o dono pagou). Nulo = desconhecido — nunca
+  /// zero, porque zero finge margem de 100%. Vira snapshot em
+  /// `PedidoItem.custoUnitario` no fechamento da venda.
+  custo        Float?
   imgUrl       String?
   imagens      String[]  @default([])
   categorySlug String    @map("category_slug")
@@ -461,6 +465,9 @@ model PedidoItem {
   quantidade Int
   /// preco * quantidade, calculado na gravação
   total      Float
+  /// Custo da peça no momento da venda (foto de `Produto.custo`). Mudar o
+  /// custo no cadastro depois não reescreve o resultado de venda antiga.
+  custoUnitario Float? @map("custo_unitario")
 
   criadoEm DateTime @default(now()) @map("criado_em")
 

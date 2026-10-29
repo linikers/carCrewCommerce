@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -28,10 +28,12 @@ import {
   ArrowDownward,
   ArrowUpward,
   Delete,
+  DragIndicator,
   OpenInNew,
   Save,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { serializar, useAlteracoesNaoSalvas } from "@/lib/useAlteracoesNaoSalvas";
 import type { PaginaInstitucional, SlugInstitucional } from "@/lib/paginas-conteudo";
 
 /**
@@ -57,11 +59,17 @@ export default function AdminPaginasPage() {
   const [aviso, setAviso] = useState("");
   const [destaque, setDestaque] = useState<string | null>(null);
   const [remover, setRemover] = useState<{ slug: SlugInstitucional; id: string } | null>(null);
+  /** JSON do que veio do banco: base do aviso de alteração não salva (#183). */
+  const [snapshot, setSnapshot] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/paginas")
       .then((r) => r.json())
-      .then((d) => setPaginas(Array.isArray(d?.paginas) ? d.paginas : []))
+      .then((d) => {
+        const lista = Array.isArray(d?.paginas) ? d.paginas : [];
+        setPaginas(lista);
+        setSnapshot(serializar(lista));
+      })
       .catch(() => setErro("Não foi possível carregar as páginas."))
       .finally(() => setLoading(false));
   }, []);
@@ -78,6 +86,9 @@ export default function AdminPaginasPage() {
   }, [destaque]);
 
   const pagina = paginas[aba];
+
+  // Avisa antes de sair com alteração pendente (#183).
+  useAlteracoesNaoSalvas(snapshot !== "" && serializar(paginas) !== snapshot);
 
   const alterar = (campo: "titulo" | "subtitulo" | "destaque", valor: string) => {
     setPaginas((atual) => atual.map((p, i) => (i === aba ? { ...p, [campo]: valor } : p)));
@@ -103,6 +114,26 @@ export default function AdminPaginasPage() {
         const destino = indice + direcao;
         if (destino < 0 || destino >= lista.length) return p;
         [lista[indice], lista[destino]] = [lista[destino], lista[indice]];
+        return { ...p, secoes: lista };
+      })
+    );
+    setMsg("");
+  };
+
+  // Reordenar arrastando (#183 parte 2); as setas continuam.
+  const [arrastando, setArrastando] = useState<number | null>(null);
+  const [sobre, setSobre] = useState<number | null>(null);
+  // Ref: o drop pode chegar antes do state commitar.
+  const origemArrasto = useRef<number | null>(null);
+
+  const reordenarSecao = (de: number, para: number) => {
+    if (de === para) return;
+    setPaginas((atual) =>
+      atual.map((p, i) => {
+        if (i !== aba) return p;
+        const lista = [...p.secoes];
+        const [secao] = lista.splice(de, 1);
+        lista.splice(para, 0, secao);
         return { ...p, secoes: lista };
       })
     );
@@ -145,7 +176,9 @@ export default function AdminPaginasPage() {
       });
       const dados = await res.json();
       if (!res.ok) throw new Error(dados?.error || "Não foi possível salvar.");
-      setPaginas((atual) => atual.map((p, i) => (i === aba ? dados.pagina : p)));
+      const atualizadas = paginas.map((p, i) => (i === aba ? dados.pagina : p));
+      setPaginas(atualizadas);
+      setSnapshot(serializar(atualizadas));
       setMsg(`Página “${ROTULOS[pagina.slug]}” salva. O site já está usando.`);
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Não foi possível salvar.");
@@ -179,7 +212,7 @@ export default function AdminPaginasPage() {
             startIcon={<Save fontSize="small" />}
             onClick={salvar}
             disabled={salvando || loading}
-            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
+            sx={{ minHeight: 44, backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
           >
             Salvar
           </Button>
@@ -235,6 +268,12 @@ export default function AdminPaginasPage() {
             </Paper>
 
             <Stack spacing={2}>
+            <Typography
+              variant="caption"
+              sx={{ display: { xs: "block", md: "none" }, color: "#777", mb: 1 }}
+            >
+              No celular, use as setas ↑ ↓ para mudar a ordem.
+            </Typography>
               {pagina.secoes.map((secao, indice) => (
                 <Paper
                   key={secao.id}
@@ -247,7 +286,48 @@ export default function AdminPaginasPage() {
                     transition: "border-color .2s ease, background-color .2s ease",
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5 }}>
+                  <Box
+                    draggable
+                    onDragStart={(e) => {
+                      origemArrasto.current = indice;
+                      setArrastando(indice);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                    }}
+                    onDragEnter={() => setSobre(indice)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (origemArrasto.current !== null) {
+                        reordenarSecao(origemArrasto.current, indice);
+                      }
+                      origemArrasto.current = null;
+                      setArrastando(null);
+                      setSobre(null);
+                    }}
+                    onDragEnd={() => {
+                      origemArrasto.current = null;
+                      setArrastando(null);
+                      setSobre(null);
+                    }}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                      mb: 1.5,
+                      cursor: "grab",
+                      opacity: arrastando === indice ? 0.5 : 1,
+                      borderTop: sobre === indice && arrastando !== null ? "2px dashed #BF360C" : "2px solid transparent",
+                      pt: 0.5,
+                    }}
+                  >
+                    <Tooltip title="Arraste para reordenar (no computador)">
+                      <DragIndicator
+                        sx={{ display: { xs: "none", md: "block" }, fontSize: 20, color: "#8d8d8d" }}
+                      />
+                    </Tooltip>
                     <Typography variant="caption" sx={{ color: "#888" }}>
                       Seção {indice + 1}
                     </Typography>
@@ -259,7 +339,7 @@ export default function AdminPaginasPage() {
                           aria-label="Subir seção"
                           disabled={indice === 0}
                           onClick={() => moverSecao(indice, -1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowUpward fontSize="small" />
                         </IconButton>
@@ -272,7 +352,7 @@ export default function AdminPaginasPage() {
                           aria-label="Descer seção"
                           disabled={indice === pagina.secoes.length - 1}
                           onClick={() => moverSecao(indice, 1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowDownward fontSize="small" />
                         </IconButton>
@@ -284,7 +364,7 @@ export default function AdminPaginasPage() {
                         color="error"
                         aria-label="Remover seção"
                         onClick={() => setRemover({ slug: pagina.slug, id: secao.id })}
-                        sx={{ width: 40, height: 40 }}
+                        sx={{ width: 44, height: 44 }}
                       >
                         <Delete fontSize="small" />
                       </IconButton>

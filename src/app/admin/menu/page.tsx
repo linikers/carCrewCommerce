@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Container,
   Typography,
@@ -29,10 +29,12 @@ import {
   Delete,
   ArrowUpward,
   ArrowDownward,
+  DragIndicator,
   OpenInNew,
   Save,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { serializar, useAlteracoesNaoSalvas } from "@/lib/useAlteracoesNaoSalvas";
 import type { ItemMenu } from "@/lib/menu-loja";
 
 type Grupo = "barra" | "solucoes";
@@ -76,6 +78,8 @@ export default function AdminMenuPage() {
   // tela e o dono não sabe se a ação funcionou.
   const [destaque, setDestaque] = useState<string | null>(null);
   const [aviso, setAviso] = useState("");
+  /** JSON do que veio do banco: base para saber se há alteração não salva. */
+  const [snapshot, setSnapshot] = useState("");
 
   useEffect(() => {
     Promise.all([
@@ -83,13 +87,15 @@ export default function AdminMenuPage() {
       fetch("/api/categorias").then((r) => r.json()),
     ])
       .then(([cfg, cats]) => {
-        setConfig({
+        const carregado: ConfigTela = {
           barra: Array.isArray(cfg?.barra) ? cfg.barra : [],
           solucoes: Array.isArray(cfg?.solucoes) ? cfg.solucoes : [],
           categoriasOcultas: Array.isArray(cfg?.categoriasOcultas)
             ? cfg.categoriasOcultas
             : [],
-        });
+        };
+        setConfig(carregado);
+        setSnapshot(serializar(carregado));
         setCategorias(Array.isArray(cats) ? cats : []);
       })
       .catch(() => setErro("Não foi possível carregar o menu."))
@@ -108,6 +114,23 @@ export default function AdminMenuPage() {
         item.id === id ? { ...item, [campo]: valor } : item
       ),
     }));
+    setMsg("");
+  };
+
+  // Reordenar arrastando (#183 parte 2); as setas continuam.
+  const [arrastando, setArrastando] = useState<{ grupo: Grupo; indice: number } | null>(null);
+  const [sobre, setSobre] = useState<{ grupo: Grupo; indice: number } | null>(null);
+  // Ref: o drop pode chegar antes do state commitar.
+  const origemArrasto = useRef<{ grupo: Grupo; indice: number } | null>(null);
+
+  const reordenar = (grupo: Grupo, de: number, para: number) => {
+    if (de === para) return;
+    setConfig((atual) => {
+      const lista = [...atual[grupo]];
+      const [item] = lista.splice(de, 1);
+      lista.splice(para, 0, item);
+      return { ...atual, [grupo]: lista.map((i, n) => ({ ...i, ordem: n })) };
+    });
     setMsg("");
   };
 
@@ -184,11 +207,13 @@ export default function AdminMenuPage() {
         setErro(dados?.error || "Não foi possível salvar.");
         return;
       }
-      setConfig({
+      const salvo: ConfigTela = {
         barra: dados.barra ?? [],
         solucoes: dados.solucoes ?? [],
         categoriasOcultas: dados.categoriasOcultas ?? [],
-      });
+      };
+      setConfig(salvo);
+      setSnapshot(serializar(salvo));
       setMsg("Menu salvo. A loja já está usando esta configuração.");
     } catch {
       setErro("Não foi possível salvar.");
@@ -210,6 +235,9 @@ export default function AdminMenuPage() {
     const t = setTimeout(() => setDestaque(null), 4000);
     return () => clearTimeout(t);
   }, [destaque]);
+
+  // Avisa antes de sair com alteração pendente (#183).
+  useAlteracoesNaoSalvas(snapshot !== "" && serializar(config) !== snapshot);
 
   const renderGrupo = (grupo: Grupo) => (
     <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
@@ -240,6 +268,13 @@ export default function AdminMenuPage() {
 
       <Divider sx={{ my: 2 }} />
 
+      <Typography
+        variant="caption"
+        sx={{ display: { xs: "block", md: "none" }, color: "#777", mb: 1 }}
+      >
+        No celular, use as setas ↑ ↓ para mudar a ordem.
+      </Typography>
+
       {config[grupo].length === 0 ? (
         <Typography variant="body2" sx={{ color: "#666" }}>
           Nenhum item nesta parte do menu.
@@ -258,7 +293,52 @@ export default function AdminMenuPage() {
                 transition: "border-color .2s ease, background-color .2s ease",
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+              <Box
+                draggable
+                onDragStart={(e) => {
+                  origemArrasto.current = { grupo, indice };
+                  setArrastando({ grupo, indice });
+                  e.dataTransfer.effectAllowed = "move";
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                }}
+                onDragEnter={() => setSobre({ grupo, indice })}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const origem = origemArrasto.current;
+                  if (origem && origem.grupo === grupo) {
+                    reordenar(grupo, origem.indice, indice);
+                  }
+                  origemArrasto.current = null;
+                  setArrastando(null);
+                  setSobre(null);
+                }}
+                onDragEnd={() => {
+                  origemArrasto.current = null;
+                  setArrastando(null);
+                  setSobre(null);
+                }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  mb: 1.5,
+                  cursor: "grab",
+                  opacity: arrastando?.grupo === grupo && arrastando.indice === indice ? 0.5 : 1,
+                  borderTop:
+                    sobre?.grupo === grupo && sobre.indice === indice && arrastando
+                      ? "2px dashed #BF360C"
+                      : "2px solid transparent",
+                  pt: 0.5,
+                }}
+              >
+                <Tooltip title="Arraste para reordenar (no computador)">
+                      <DragIndicator
+                        sx={{ display: { xs: "none", md: "block" }, fontSize: 20, color: "#8d8d8d" }}
+                      />
+                    </Tooltip>
                 <Chip
                   size="small"
                   label={item.ativo ? "no menu" : "desligado"}
@@ -271,14 +351,14 @@ export default function AdminMenuPage() {
                 <Box sx={{ flex: 1 }} />
                 <Tooltip title="Subir">
                   <span>
-                    <IconButton size="small" disabled={indice === 0} onClick={() => mover(grupo, indice, -1)}>
+                    <IconButton sx={{ width: 44, height: 44 }} aria-label="Mover para cima" size="small" disabled={indice === 0} onClick={() => mover(grupo, indice, -1)}>
                       <ArrowUpward fontSize="small" />
                     </IconButton>
                   </span>
                 </Tooltip>
                 <Tooltip title="Descer">
                   <span>
-                    <IconButton
+                    <IconButton sx={{ width: 44, height: 44 }} aria-label="Mover para baixo"
                       size="small"
                       disabled={indice === config[grupo].length - 1}
                       onClick={() => mover(grupo, indice, 1)}
@@ -288,7 +368,7 @@ export default function AdminMenuPage() {
                   </span>
                 </Tooltip>
                 <Tooltip title="Remover item">
-                  <IconButton
+                  <IconButton sx={{ width: 44, height: 44 }} aria-label="Remover"
                     size="small"
                     color="error"
                     onClick={() => setRemover({ grupo, id: item.id })}
@@ -371,7 +451,7 @@ export default function AdminMenuPage() {
             startIcon={<Save fontSize="small" />}
             onClick={salvar}
             disabled={salvando || loading}
-            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" } }}
+            sx={{ minHeight: 44, backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" } }}
           >
             Salvar
           </Button>

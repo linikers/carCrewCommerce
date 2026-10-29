@@ -22,6 +22,7 @@ import { ArrowBack, Save } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
 import CloudinaryUpload from "@/components/CloudinaryUpload";
 import GalleryUpload from "@/components/GalleryUpload";
+import { formatBRL } from "@/lib/format";
 
 const categorias = [
   { value: "compressores", label: "Compressores" },
@@ -45,6 +46,7 @@ export default function EditarProduto() {
     nome: "",
     descricao: "",
     preco: "",
+    custo: "",
     imgUrl: "",
     galeria: [] as string[],
     galeriaPrincipal: 0,
@@ -71,6 +73,17 @@ export default function EditarProduto() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  // Prévia da margem bruta (preço − custo). Só aparece com custo informado:
+  // custo vazio é "não informado", não custo zero.
+  const margemBruta = (() => {
+    if (String(form.custo).trim() === "") return null;
+    const preco = Number(form.preco);
+    const custo = Number(form.custo);
+    if (!Number.isFinite(preco) || preco <= 0 || !Number.isFinite(custo) || custo < 0) return null;
+    const valor = preco - custo;
+    return `Margem bruta ${((valor / preco) * 100).toFixed(1)}% (${formatBRL(valor)})`;
+  })();
+
   useEffect(() => {
     fetch(`/api/admin/produtos/${id}`)
       .then((r) => r.json())
@@ -83,6 +96,7 @@ export default function EditarProduto() {
           nome: data.nome,
           descricao: data.descricao,
           preco: String(data.preco),
+          custo: data.custo != null ? String(data.custo) : "",
           imgUrl: data.imgUrl,
           galeria: Array.isArray(data.imagens) ? data.imagens : (data.galeria || []),
           galeriaPrincipal: 0,
@@ -121,6 +135,8 @@ export default function EditarProduto() {
         body: JSON.stringify({
           ...form,
           preco: parseFloat(form.preco),
+          // vazio = limpar o custo (não é zero)
+          custo: String(form.custo).trim() === "" ? null : Number(form.custo),
           parcelamento: parseInt(form.parcelamento),
           estoque: parseInt(form.estoque),
           galeria: form.galeria,
@@ -215,15 +231,23 @@ export default function EditarProduto() {
                   <TextField fullWidth label="Descrição" multiline rows={3} value={form.descricao}
                     onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <TextField fullWidth label="Preço (R$)" required type="number" value={form.preco}
                     onChange={(e) => setForm({ ...form, preco: e.target.value })} />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
+                {/* Custo da peça (#191): sem ele não existe resultado por venda.
+                    Vazio = "não informado" — zero finge margem de 100%. */}
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <TextField fullWidth label="Custo da peça (R$)" type="number" value={form.custo}
+                    helperText={margemBruta ?? "Vazio = custo não informado"}
+                    slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                    onChange={(e) => setForm({ ...form, custo: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <TextField fullWidth label="Parcelamento" type="number" value={form.parcelamento}
                     onChange={(e) => setForm({ ...form, parcelamento: e.target.value })} />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <TextField fullWidth label="Estoque" type="number" value={form.estoque}
                     onChange={(e) => setForm({ ...form, estoque: e.target.value })} />
                 </Grid>

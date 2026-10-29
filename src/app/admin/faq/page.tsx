@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -29,10 +29,12 @@ import {
   ArrowDownward,
   ArrowUpward,
   Delete,
+  DragIndicator,
   OpenInNew,
   Save,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { serializar, useAlteracoesNaoSalvas } from "@/lib/useAlteracoesNaoSalvas";
 import type { FaqItem } from "@/lib/faq-conteudo";
 
 /**
@@ -51,11 +53,17 @@ export default function AdminFaqPage() {
   const [aviso, setAviso] = useState("");
   const [destaque, setDestaque] = useState<string | null>(null);
   const [remover, setRemover] = useState<string | null>(null);
+  /** JSON do que veio do banco: base do aviso de alteração não salva (#183). */
+  const [snapshot, setSnapshot] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/faq")
       .then((r) => r.json())
-      .then((d) => setItens(Array.isArray(d?.itens) ? d.itens : []))
+      .then((d) => {
+        const lista = Array.isArray(d?.itens) ? d.itens : [];
+        setItens(lista);
+        setSnapshot(serializar(lista));
+      })
       .catch(() => setErro("Não foi possível carregar o FAQ."))
       .finally(() => setLoading(false));
   }, []);
@@ -84,6 +92,25 @@ export default function AdminFaqPage() {
       const destino = indice + direcao;
       if (destino < 0 || destino >= lista.length) return atual;
       [lista[indice], lista[destino]] = [lista[destino], lista[indice]];
+      return lista.map((i, n) => ({ ...i, ordem: n }));
+    });
+    setMsg("");
+  };
+
+  // Reordenar arrastando (#183 parte 2). As setas continuam para quem prefere
+  // clique — arrastar é atalho, não substituto.
+  const [arrastando, setArrastando] = useState<number | null>(null);
+  const [sobre, setSobre] = useState<number | null>(null);
+  // A origem fica em ref: eventos de arrasto podem cair no mesmo tick e o
+  // state ainda não teria commitado quando o drop chega.
+  const origemArrasto = useRef<number | null>(null);
+
+  const reordenar = (de: number, para: number) => {
+    if (de === para) return;
+    setItens((atual) => {
+      const lista = [...atual];
+      const [item] = lista.splice(de, 1);
+      lista.splice(para, 0, item);
       return lista.map((i, n) => ({ ...i, ordem: n }));
     });
     setMsg("");
@@ -120,6 +147,7 @@ export default function AdminFaqPage() {
       const dados = await res.json();
       if (!res.ok) throw new Error(dados?.error || "Não foi possível salvar.");
       setItens(dados.itens ?? itens);
+      setSnapshot(serializar(dados.itens ?? itens));
       setMsg("FAQ salvo. A página /faq já está usando este conteúdo.");
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Não foi possível salvar.");
@@ -127,6 +155,9 @@ export default function AdminFaqPage() {
       setSalvando(false);
     }
   };
+
+  // Avisa antes de sair com alteração pendente (#183).
+  useAlteracoesNaoSalvas(snapshot !== "" && serializar(itens) !== snapshot);
 
   const ativos = itens.filter((i) => i.ativo).length;
 
@@ -154,7 +185,7 @@ export default function AdminFaqPage() {
             startIcon={<Save fontSize="small" />}
             onClick={salvar}
             disabled={salvando || loading}
-            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
+            sx={{ minHeight: 44, backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
           >
             Salvar
           </Button>
@@ -177,6 +208,12 @@ export default function AdminFaqPage() {
         ) : (
           <>
             <Stack spacing={2}>
+            <Typography
+              variant="caption"
+              sx={{ display: { xs: "block", md: "none" }, color: "#777", mb: 1 }}
+            >
+              No celular, use as setas ↑ ↓ para mudar a ordem.
+            </Typography>
               {itens.map((item, indice) => (
                 <Paper
                   key={item.id}
@@ -189,7 +226,48 @@ export default function AdminFaqPage() {
                     transition: "border-color .2s ease, background-color .2s ease",
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5 }}>
+                  <Box
+                  draggable
+                  onDragStart={(e) => {
+                    origemArrasto.current = indice;
+                    setArrastando(indice);
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  }}
+                  onDragEnter={() => setSobre(indice)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (origemArrasto.current !== null) {
+                      reordenar(origemArrasto.current, indice);
+                    }
+                    origemArrasto.current = null;
+                    setArrastando(null);
+                    setSobre(null);
+                  }}
+                  onDragEnd={() => {
+                    origemArrasto.current = null;
+                    setArrastando(null);
+                    setSobre(null);
+                  }}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    mb: 1.5,
+                    cursor: "grab",
+                    opacity: arrastando === indice ? 0.5 : 1,
+                    borderTop: sobre === indice && arrastando !== null ? "2px dashed #BF360C" : "2px solid transparent",
+                    pt: 0.5,
+                  }}
+                >
+                    <Tooltip title="Arraste para reordenar (no computador)">
+                      <DragIndicator
+                        sx={{ display: { xs: "none", md: "block" }, fontSize: 20, color: "#8d8d8d" }}
+                      />
+                    </Tooltip>
                     <Chip
                       size="small"
                       label={item.ativo ? "no ar" : "desligada"}
@@ -207,7 +285,7 @@ export default function AdminFaqPage() {
                           aria-label="Subir pergunta"
                           disabled={indice === 0}
                           onClick={() => mover(indice, -1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowUpward fontSize="small" />
                         </IconButton>
@@ -220,7 +298,7 @@ export default function AdminFaqPage() {
                           aria-label="Descer pergunta"
                           disabled={indice === itens.length - 1}
                           onClick={() => mover(indice, 1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowDownward fontSize="small" />
                         </IconButton>
@@ -232,7 +310,7 @@ export default function AdminFaqPage() {
                         color="error"
                         aria-label="Remover pergunta"
                         onClick={() => setRemover(item.id)}
-                        sx={{ width: 40, height: 40 }}
+                        sx={{ width: 44, height: 44 }}
                       >
                         <Delete fontSize="small" />
                       </IconButton>

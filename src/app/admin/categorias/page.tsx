@@ -245,18 +245,18 @@ export default function AdminCategorias() {
                       {cat.descricao}
                     </TableCell>
                     <TableCell>
-                      <IconButton size="small" onClick={() => abrirEditar(cat)} title="Editar categoria">
+                      <IconButton sx={{ width: 44, height: 44 }} aria-label="Editar" size="small" onClick={() => abrirEditar(cat)} title="Editar categoria">
                         <Edit fontSize="small" />
                       </IconButton>
-                      <IconButton
+                      <IconButton aria-label="Editar texto da página"
                         size="small"
                         onClick={() => abrirConteudo(cat)}
                         title="Editar texto da página"
-                        sx={{ color: conteudos[cat.slug]?.personalizado ? "#BF360C" : "#555" }}
+                        sx={{ width: 44, height: 44, color: conteudos[cat.slug]?.personalizado ? "#BF360C" : "#555" }}
                       >
                         <Article fontSize="small" />
                       </IconButton>
-                      <IconButton size="small" onClick={() => setDeleteId(cat.id)} sx={{ color: "#d32f2f" }}>
+                      <IconButton aria-label="Remover" size="small" onClick={() => setDeleteId(cat.id)} sx={{ width: 44, height: 44, color: "#d32f2f" }}>
                         <Delete fontSize="small" />
                       </IconButton>
                     </TableCell>

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { nome, sku, ncm, cest, cfop, origem, cstIcms, unidade, descricao, preco, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria, destaque, ordem } = body;
+    const { nome, sku, ncm, cest, cfop, origem, cstIcms, unidade, descricao, preco, custo, imgUrl, category, parcelamento, estoque, peso, altura, largura, profundidade, veiculos, galeria, destaque, ordem } = body;
 
     if (!nome || !preco) {
       return NextResponse.json(
@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
       sku: sku ? String(sku).trim().toUpperCase() : null,
       descricao: descricao || "",
       preco: Number(preco),
+      // custo da peça (#191): vazio = não informado
+      custo: custo !== undefined && custo !== "" && custo !== null ? Math.max(0, Number(custo)) : null,
       imgUrl: imgUrl || "/produtos/placeholder.svg",
       category: category || "amortecedores",
       parcelamento: Number(parcelamento) || 12,
