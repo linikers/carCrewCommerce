@@ -24,7 +24,7 @@ import {
   Typography,
 } from "@mui/material";
 import { calcularResultado, comissaoDe, impostoDe, type CanalVenda } from "@/modules/pedidos/dominio/resultado";
-import { formatBRL } from "@/lib/format";
+import { formatBRL, formatPercent } from "@/lib/format";
 
 /**
  * Custos e mídia (#191) — onde o cliente cadastra o que a plataforma cobra.
@@ -382,7 +382,7 @@ export default function EconomiaAdmin() {
                 </Typography>
                 <Chip
                   size="small"
-                  label={`${resultado.margemPercent.toFixed(1)}%`}
+                  label={formatPercent(resultado.margemPercent)}
                   sx={{
                     height: 20,
                     fontSize: "0.68rem",
@@ -395,7 +395,7 @@ export default function EconomiaAdmin() {
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "#666", mt: 0.5 }}>
               <Box component="span">Margem de contribuição (antes do ads)</Box>
-              <Box component="span">{formatBRL(resultado.margemContribuicao)} · {resultado.mcPercent.toFixed(1)}%</Box>
+              <Box component="span">{formatBRL(resultado.margemContribuicao)} · {formatPercent(resultado.mcPercent)}</Box>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "#666" }}>
               <Box component="span">Teto de ads nesta venda</Box>

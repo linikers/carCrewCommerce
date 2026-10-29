@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { STATUS_PEDIDO, statusValido } from "@/lib/pedido-status";
 import { auditar } from "@/lib/auditoria";
+import { recalcularVenda } from "@/lib/custos-venda";
+import { numero } from "@/lib/venda-import";
 import {
   estornarEstoqueDoPedido,
   retomarEstoqueDoPedido,
@@ -48,7 +50,55 @@ export async function PATCH(request: NextRequest) {
   if (denied) return denied;
 
   try {
-    const { id, status } = await request.json();
+    const corpo = await request.json();
+    const { id, status, custos } = corpo;
+
+    // Edição dos custos da venda (#191): recalcula e audita antes/depois.
+    if (id && !status && custos) {
+      const antes = await prisma.pedido.findUnique({
+        where: { id },
+        select: {
+          comissao: true, freteVendedor: true, imposto: true,
+          embalagem: true, ads: true, resultado: true,
+        },
+      });
+      if (!antes) {
+        return NextResponse.json({ error: "Pedido não encontrado" }, { status: 404 });
+      }
+
+      const extras = {
+        comissao: numero(String(custos.comissao ?? "")) ?? 0,
+        freteVendedor: numero(String(custos.freteVendedor ?? "")) ?? 0,
+        imposto: numero(String(custos.imposto ?? "")) ?? 0,
+        impostoPercent: numero(String(custos.impostoPercent ?? "")),
+        embalagem: numero(String(custos.embalagem ?? "")) ?? 0,
+        ads: numero(String(custos.ads ?? "")) ?? 0,
+        custosOrigem: "manual",
+      };
+
+      const recalculo = await recalcularVenda(id, extras);
+
+      await auditar({
+        entidade: "pedido",
+        entidadeId: id,
+        acao: "alterar",
+        antes: { ...antes },
+        depois: {
+          comissao: extras.comissao,
+          freteVendedor: extras.freteVendedor,
+          imposto: extras.imposto,
+          embalagem: extras.embalagem,
+          ads: extras.ads,
+          resultado: recalculo.resultado?.resultado ?? null,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        resultado: recalculo.resultado,
+        itensSemCusto: recalculo.itensSemCusto,
+      });
+    }
 
     if (!id || !status) {
       return NextResponse.json(

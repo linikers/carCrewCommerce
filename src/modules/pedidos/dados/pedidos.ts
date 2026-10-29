@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { calcularPreco } from "@/lib/preco";
+import { custosPadraoDoCanal, recalcularVenda } from "@/lib/custos-venda";
 import { lerPoliticaPreco, precoSiteDe } from "@/lib/politica-preco";
 import type { JsonArray, TransactionClient } from "@/generated/prisma/internal/prismaNamespace";
 import {
@@ -145,7 +146,132 @@ export async function criarPedido({
     }
 
     return pedido;
+  }).then(async (pedido) => {
+    // custo da venda (#191): comissão do canal, imposto e embalagem saem da
+    // configuração; o resultado só é gravado quando todo item tem custo.
+    const custos = await custosPadraoDoCanal("site", pedido.total);
+    await prisma.pedido.update({
+      where: { id: pedido.id },
+      data: {
+        comissao: custos.comissao,
+        comissaoPercent: custos.comissaoPercent,
+        imposto: custos.imposto,
+        impostoPercent: custos.impostoPercent,
+        embalagem: custos.embalagem,
+        freteVendedor: 0,
+        custosOrigem: "calculado",
+        vendaEm: new Date(),
+      },
+    });
+    await recalcularVenda(pedido.id);
+    return pedido;
   });
+}
+
+export interface ItemVendaManual {
+  produtoId?: number | null;
+  sku?: string | null;
+  nome?: string | null;
+  quantidade: number;
+  preco: number;
+  /** custo da peça nesta venda; ausente = usa o custo do cadastro */
+  custoUnitario?: number | null;
+}
+
+export interface VendaManualArgs {
+  canal: string;
+  vendaEm?: Date | null;
+  itens: ItemVendaManual[];
+  freteVendedor?: number;
+  comissao?: number | null;
+  impostoPercent?: number | null;
+  embalagem?: number | null;
+  ads?: number | null;
+  clienteNome?: string | null;
+  clienteTelefone?: string | null;
+  clienteEmail?: string | null;
+  canalPedidoId?: string | null;
+  status?: string;
+  /** de onde vieram os custos: manual | importado */
+  custosOrigem?: string;
+}
+
+/**
+ * Venda lançada no painel (balcão, marketplace, histórico em planilha).
+ *
+ * Não baixa estoque: venda de marketplace já saiu do estoque físico e o
+ * histórico importado é passado — mexer no saldo aqui inventaria movimento.
+ */
+export async function criarVendaManual(args: VendaManualArgs): Promise<{ id: string; total: number }> {
+  if (!args.itens || args.itens.length === 0) {
+    throw new ErroPedido("Venda sem itens", "SEM_ITENS");
+  }
+
+  const produtos = await prisma.produto.findMany({
+    where: {
+      OR: [
+        { id: { in: args.itens.map((i) => i.produtoId).filter((n): n is number => typeof n === "number") } },
+        { sku: { in: args.itens.map((i) => String(i.sku ?? "").trim().toUpperCase()).filter(Boolean) } },
+      ],
+    },
+    select: { id: true, nome: true, sku: true, custo: true },
+  });
+  const porId = new Map(produtos.map((p) => [p.id, p]));
+  const porSku = new Map(produtos.map((p) => [String(p.sku ?? "").toUpperCase(), p]));
+
+  const itens = args.itens.map((item) => {
+    const produto =
+      (typeof item.produtoId === "number" ? porId.get(item.produtoId) : undefined) ??
+      porSku.get(String(item.sku ?? "").trim().toUpperCase());
+
+    const quantidade = Math.max(1, Math.trunc(Number(item.quantidade) || 1));
+    const preco = Number(item.preco);
+    if (!Number.isFinite(preco) || preco < 0) {
+      throw new ErroPedido("Preço inválido em item da venda");
+    }
+
+    return {
+      produtoId: produto?.id ?? null,
+      nome: item.nome || produto?.nome || item.sku || "Item",
+      sku: produto?.sku ?? (item.sku ? String(item.sku).trim().toUpperCase() : null),
+      preco,
+      quantidade,
+      total: Number((preco * quantidade).toFixed(2)),
+      // custo informado na planilha manda; senão usa o do cadastro
+      custoUnitario:
+        item.custoUnitario !== undefined && item.custoUnitario !== null
+          ? Number(item.custoUnitario)
+          : produto?.custo ?? null,
+    };
+  });
+
+  const total = Number(itens.reduce((soma, i) => soma + i.total, 0).toFixed(2));
+
+  const pedido = await prisma.pedido.create({
+    data: {
+      total,
+      status: args.status || "pago",
+      canal: args.canal,
+      canalPedidoId: args.canalPedidoId ?? null,
+      vendaEm: args.vendaEm ?? new Date(),
+      freteVendedor: Number(args.freteVendedor ?? 0),
+      comissao: args.comissao ?? null,
+      imposto: null,
+      impostoPercent: args.impostoPercent ?? null,
+      embalagem: args.embalagem ?? null,
+      ads: Number(args.ads ?? 0),
+      adsOrigem: args.ads ? "manual" : "manual",
+      custosOrigem: args.custosOrigem || "manual",
+      clienteNome: args.clienteNome ?? null,
+      clienteTelefone: args.clienteTelefone ?? null,
+      clienteEmail: args.clienteEmail ?? null,
+      itens: { create: itens },
+    },
+    select: { id: true, total: true, canal: true },
+  });
+
+  await recalcularVenda(pedido.id);
+  return { id: pedido.id, total: pedido.total };
 }
 
 /** Itens de um pedido, com fallback para o JSON dos pedidos antigos. */

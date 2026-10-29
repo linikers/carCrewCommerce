@@ -29,6 +29,7 @@ import {
   Cancel,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import VendasFerramentas from "@/components/admin/VendasFerramentas";
 import { STATUS_PEDIDO, STATUS_COLOR, labelStatus } from "@/lib/pedido-status";
 
 interface PedidoItem {
@@ -202,14 +203,17 @@ export default function AdminPedidos() {
                 {pedidos.length} pedido(s) · {formatPrice(somaFiltrada)} no filtro atual
               </Typography>
             </Box>
-            <Button
-              variant="outlined"
-              onClick={exportarCSV}
-              disabled={filtrados.length === 0}
-              sx={{ textTransform: "none" }}
-            >
-              Exportar CSV
-            </Button>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              <Button
+                variant="outlined"
+                onClick={exportarCSV}
+                disabled={filtrados.length === 0}
+                sx={{ textTransform: "none" }}
+              >
+                Exportar CSV
+              </Button>
+              <VendasFerramentas />
+            </Box>
           </Box>
 
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2, alignItems: "center" }}>

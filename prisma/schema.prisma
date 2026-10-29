@@ -393,6 +393,35 @@ model Pedido {
   // 5.5: sem CPF/CNPJ o pedido não vira nota fiscal depois (6.12).
   clienteDocumento String? @map("cliente_documento")
 
+  // ── Custo da venda (#191) ─────────────────────────────────────────────
+  // Guarda as ENTRADAS; `resultado` é materializado por `recalcularVenda`
+  // (mesma fórmula do domínio), senão o relatório teria uma conta e a tela
+  // outra.
+  /// comissão da plataforma em R$ (marketplace: sale_fee real do pedido)
+  comissao          Float?
+  /// % aplicado, para auditar o cálculo depois
+  comissaoPercent   Float?   @map("comissao_percent")
+  /// frete que o VENDEDOR pagou (diferente de `frete`, que é o cobrado)
+  freteVendedor     Float?   @map("frete_vendedor")
+  imposto           Float?
+  impostoPercent    Float?   @map("imposto_percent")
+  embalagem         Float?
+  /// publicidade atribuída a esta venda
+  ads               Float    @default(0)
+  /// manual | rateio | api — rateio não sobrescreve manual
+  adsOrigem         String   @default("manual") @map("ads_origem")
+  /// manual | calculado | importado — de onde vieram os custos
+  custosOrigem      String   @default("manual") @map("custos_origem")
+  /// data da venda no canal (histórico importado pode diferir de createdAt)
+  vendaEm           DateTime? @map("venda_em")
+  /// id do pedido no marketplace — chave de deduplicação da importação
+  canalPedidoId     String?  @map("canal_pedido_id")
+  /// resultado materializado = receita − custos − ads
+  resultado         Float?
+  margemPercent     Float?   @map("margem_percent")
+
+  @@unique([canal, canalPedidoId])
+
   user User? @relation(fields: [userId], references: [id])
 
   @@map("pedidos")
