@@ -204,7 +204,7 @@ export const MODULOS: Modulo[] = [
     padraoAtivo: false,
     dependeDe: ["pedidos"],
     telas: [
-      { rota: "/admin/relatorios", rotulo: "Relatórios", grupo: "Operação", emBreve: true },
+      { rota: "/admin/relatorios", rotulo: "Relatórios", grupo: "Operação" },
       // custo de vender (#191): comissão por plataforma, imposto, embalagem e
       // simulador. Tela viva mesmo antes do relatório existir, porque é aqui que
       // o cliente cadastra o que ele paga por venda.
