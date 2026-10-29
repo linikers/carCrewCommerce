@@ -78,11 +78,22 @@ export default function OffRoadHero({
               backgroundColor: "#E65100",
               color: "#fff",
               fontWeight: 700,
-              fontSize: "0.85rem",
               mb: 3,
               py: 2.5,
               px: 1,
               letterSpacing: "0.05em",
+              // A tarja estourava a caixa (342 px) e cortava "ESTILO DE V…":
+              // agora quebra em duas linhas quando não couber.
+              maxWidth: "100%",
+              height: "auto",
+              "& .MuiChip-label": {
+                display: "block",
+                whiteSpace: "normal",
+                fontSize: { xs: "0.72rem", sm: "0.8rem", md: "0.85rem" },
+                lineHeight: 1.4,
+                textAlign: "center",
+                py: 0.25,
+              },
             }}
           />
           <Typography
@@ -90,7 +101,7 @@ export default function OffRoadHero({
             variant="h2"
             sx={{
               fontWeight: 900,
-              fontSize: { xs: "2.5rem", md: "4rem" },
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3.4rem" },
               lineHeight: 1.1,
               mb: 2,
               textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.5)",

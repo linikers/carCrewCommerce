@@ -203,8 +203,10 @@ export const CONTEUDO_PADRAO: Record<string, ConteudoLp> = {
   },
 
   "off-road": {
-    titulo: "POR QUE",
-    tituloDestaque: "OFF-ROAD?",
+    // H1 segue o padrão das outras LPs ("X em Maringá") e casa com o <title>
+    // da página — antes era "POR QUE OFF-ROAD?", sem cidade e sem termo de busca.
+    titulo: "Suspensão Off-Road e Lift 4x4",
+    tituloDestaque: "em Maringá",
     selo: "MAIS QUE UM CAMINHO, UM ESTILO DE VIDA",
     intro: [
       "Prepare sua picape para qualquer terreno. Lift kits 4x4, suspensão off-road e acessórios para trilha em Maringá/PR.",
