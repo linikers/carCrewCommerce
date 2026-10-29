@@ -507,3 +507,28 @@ model PedidoItem {
   @@index([produtoId])
   @@map("pedido_itens")
 }
+
+/// Custo que chega por PERÍODO, não por venda (#191, PR-4).
+///
+/// É assim que o Mercado Livre Full cobra: a fatura de fulfillment e a de
+/// armazenagem são mensais, sem valor por pedido. Também serve para o gasto de
+/// Ads, que é por campanha/dia.
+///
+/// Rateio: `ads` cai em `Pedido.ads` e `fulfillment` em `Pedido.freteVendedor`,
+/// proporcional à receita do canal no período. `armazenagem` e `outros` NÃO são
+/// rateados por venda — são custo do período, e distorcem a margem da peça.
+model CustoPeriodo {
+  id         String    @id @default(cuid())
+  /// ads | fulfillment | armazenagem | outros
+  tipo       String
+  canal      String
+  inicio     DateTime  @db.Date
+  fim        DateTime  @db.Date
+  valor      Float
+  observacao String?
+  rateadoEm  DateTime? @map("rateado_em")
+  criadoEm   DateTime  @default(now()) @map("criado_em")
+
+  @@index([canal, inicio, fim])
+  @@map("custos_periodo")
+}

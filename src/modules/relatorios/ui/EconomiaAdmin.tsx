@@ -53,6 +53,23 @@ interface Dados {
 
 type Textos = Record<string, { percentual: string; fixo: string }>;
 
+interface Lancamento {
+  id: string;
+  tipo: string;
+  canal: string;
+  inicio: string;
+  fim: string;
+  valor: number;
+  observacao: string | null;
+  rateadoEm: string | null;
+}
+
+interface TipoCusto {
+  id: string;
+  rotulo: string;
+  rateia: boolean;
+}
+
 export default function EconomiaAdmin() {
   const [dados, setDados] = useState<Dados | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -65,6 +82,19 @@ export default function EconomiaAdmin() {
   const [embalagem, setEmbalagem] = useState("0");
   const [taxaGateway, setTaxaGateway] = useState("0");
   const [textos, setTextos] = useState<Textos>({});
+
+  // custos por período (#191 PR-4): ads e fatura do Full
+  const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
+  const [tiposCusto, setTiposCusto] = useState<TipoCusto[]>([]);
+  const [novo, setNovo] = useState({
+    tipo: "ads",
+    canal: "mercado_livre",
+    inicio: new Date().toISOString().slice(0, 10),
+    fim: new Date().toISOString().slice(0, 10),
+    valor: "",
+    observacao: "",
+  });
+  const [aviso, setAviso] = useState("");
 
   // simulador: parte de uma peça real do catálogo
   const [venda, setVenda] = useState("799");
@@ -102,12 +132,84 @@ export default function EconomiaAdmin() {
           setCusto(d.exemplo.custo != null ? String(d.exemplo.custo) : "");
         }
         setCarregando(false);
+        // lista de custos por período (carregada aqui para não depender de
+        // função declarada depois do efeito)
+        fetch("/api/admin/economia/periodo")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((periodo) => {
+            if (!periodo) return;
+            setLancamentos(Array.isArray(periodo.lancamentos) ? periodo.lancamentos : []);
+            setTiposCusto(Array.isArray(periodo.tipos) ? periodo.tipos : []);
+          })
+          .catch(() => {});
       })
       .catch(() => {
         setErro("Erro de conexão");
         setCarregando(false);
       });
   }, []);
+
+  const carregarPeriodo = async () => {
+    try {
+      const r = await fetch("/api/admin/economia/periodo");
+      if (!r.ok) return;
+      const d = await r.json();
+      setLancamentos(Array.isArray(d.lancamentos) ? d.lancamentos : []);
+      setTiposCusto(Array.isArray(d.tipos) ? d.tipos : []);
+    } catch {
+      /* lista vazia não quebra a tela */
+    }
+  };
+
+  const lancarCusto = async () => {
+    setErro("");
+    setOk("");
+    try {
+      const res = await fetch("/api/admin/economia/periodo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novo),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Não foi possível lançar");
+      setNovo({ ...novo, valor: "", observacao: "" });
+      setOk("Custo do período lançado. Agora use Ratear para distribuir nas vendas.");
+      await carregarPeriodo();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao lançar");
+    }
+  };
+
+  const ratear = async (id: string) => {
+    setErro("");
+    setOk("");
+    setAviso("");
+    try {
+      const res = await fetch("/api/admin/economia/periodo/ratear", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Não foi possível ratear");
+      setAviso(d.mensagem);
+      await carregarPeriodo();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao ratear");
+    }
+  };
+
+  const removerLancamento = async (id: string) => {
+    setErro("");
+    try {
+      const res = await fetch(`/api/admin/economia/periodo?id=${id}`, { method: "DELETE" });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Não foi possível remover");
+      await carregarPeriodo();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao remover");
+    }
+  };
 
   const salvar = async () => {
     setSalvando(true);
@@ -313,6 +415,128 @@ export default function EconomiaAdmin() {
             (clássico/premium); na Shopee há faixa com valor fixo. Por isso o pedido importado
             sempre manda o valor real dele.
           </Typography>
+        </Paper>
+      </Grid>
+
+      <Grid size={{ xs: 12 }}>
+        <Paper sx={{ p: 3, borderRadius: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+            Custos por período — Ads e fatura do Full
+          </Typography>
+          <Typography sx={{ fontSize: "0.8rem", color: "#666", mb: 2 }}>
+            O Mercado Livre <strong>Full</strong> não manda frete por pedido: manda fatura mensal de
+            fulfillment (e de armazenagem). Lance aqui o valor da fatura e o gasto de Ads, e o
+            sistema distribui nas vendas do período, proporcional à receita. O frete de cada venda
+            continua editável no pedido — o rateio é para o que chega depois.
+          </Typography>
+
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid size={{ xs: 12, sm: 3 }}>
+              <TextField select fullWidth size="small" label="Tipo" value={novo.tipo}
+                onChange={(e) => setNovo({ ...novo, tipo: e.target.value })}>
+                {(tiposCusto.length ? tiposCusto : [{ id: "ads", rotulo: "Publicidade (Ads)", rateia: true }]).map((t) => (
+                  <MenuItem key={t.id} value={t.id}>{t.rotulo}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 2 }}>
+              <TextField select fullWidth size="small" label="Canal" value={novo.canal}
+                onChange={(e) => setNovo({ ...novo, canal: e.target.value })}>
+                {(dados?.canais ?? []).map((c) => (
+                  <MenuItem key={c.id} value={c.id}>{c.rotulo}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid size={{ xs: 6, sm: 2 }}>
+              <TextField fullWidth size="small" label="De" type="date" value={novo.inicio}
+                slotProps={{ inputLabel: { shrink: true } }}
+                onChange={(e) => setNovo({ ...novo, inicio: e.target.value })} />
+            </Grid>
+            <Grid size={{ xs: 6, sm: 2 }}>
+              <TextField fullWidth size="small" label="Até" type="date" value={novo.fim}
+                slotProps={{ inputLabel: { shrink: true } }}
+                onChange={(e) => setNovo({ ...novo, fim: e.target.value })} />
+            </Grid>
+            <Grid size={{ xs: 6, sm: 3 }}>
+              <TextField fullWidth size="small" label="Valor da fatura (R$)" type="number" value={novo.valor}
+                slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                onChange={(e) => setNovo({ ...novo, valor: e.target.value })} />
+            </Grid>
+          </Grid>
+
+          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center", mb: 2 }}>
+            <TextField size="small" label="Observação (nº da fatura, campanha)" value={novo.observacao}
+              onChange={(e) => setNovo({ ...novo, observacao: e.target.value })}
+              sx={{ flex: 1, minWidth: 240 }} />
+            <Button variant="contained" onClick={lancarCusto} disabled={!novo.valor}
+              sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}>
+              Lançar custo
+            </Button>
+          </Box>
+
+          {aviso && <Alert severity="info" sx={{ mb: 2 }}>{aviso}</Alert>}
+
+          {lancamentos.length === 0 ? (
+            <Typography sx={{ fontSize: "0.8rem", color: "#666" }}>
+              Nenhum custo de período lançado ainda.
+            </Typography>
+          ) : (
+            <TableContainer sx={{ overflowX: "auto" }}>
+              <Table size="small" sx={{ minWidth: { xs: 300, sm: 520 } }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600 }}>Tipo</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Canal</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Período</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }} align="right">Valor</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Situação</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>Ações</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {lancamentos.map((l) => {
+                    const tipo = tiposCusto.find((t) => t.id === l.tipo);
+                    const rateia = tipo?.rateia ?? false;
+                    return (
+                      <TableRow key={l.id}>
+                        <TableCell sx={{ fontSize: { xs: "0.72rem", sm: "0.85rem" } }}>{tipo?.rotulo ?? l.tipo}</TableCell>
+                        <TableCell sx={{ fontSize: { xs: "0.72rem", sm: "0.85rem" }, display: { xs: "none", sm: "table-cell" } }}>
+                          {dados?.canais.find((c) => c.id === l.canal)?.rotulo ?? l.canal}
+                        </TableCell>
+                        <TableCell sx={{ whiteSpace: { xs: "normal", sm: "nowrap" }, fontSize: { xs: "0.7rem", sm: "0.78rem" } }}>
+                          {l.inicio.slice(8, 10)}/{l.inicio.slice(5, 7)} → {l.fim.slice(8, 10)}/{l.fim.slice(5, 7)}
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 600 }}>{formatBRL(l.valor)}</TableCell>
+                        <TableCell>
+                          {l.rateadoEm ? (
+                            <Chip size="small" label="rateado" sx={{ height: 20, fontSize: "0.65rem", backgroundColor: "#E8F5EC", color: "#0E7A3F" }} />
+                          ) : rateia ? (
+                            <Chip size="small" label="a ratear" variant="outlined" sx={{ height: 20, fontSize: "0.65rem" }} />
+                          ) : (
+                            <Chip size="small" label="custo do período" variant="outlined" sx={{ height: 20, fontSize: "0.65rem", color: "#666" }} />
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {rateia && (
+                            <Button size="small" onClick={() => ratear(l.id)}
+                              sx={{ textTransform: "none", color: "#BF360C", fontWeight: 700, minWidth: 0 }}>
+                              Ratear
+                            </Button>
+                          )}
+                          {!l.rateadoEm && (
+                            <Button size="small" onClick={() => removerLancamento(l.id)}
+                              sx={{ textTransform: "none", color: "#b3261e", minWidth: 0 }}>
+                              Remover
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </Paper>
       </Grid>
 

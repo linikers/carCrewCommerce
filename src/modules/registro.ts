@@ -210,7 +210,7 @@ export const MODULOS: Modulo[] = [
       // o cliente cadastra o que ele paga por venda.
       { rota: "/admin/economia", rotulo: "Custos e mídia", grupo: "Configuração" },
     ],
-    tabelas: [],
+    tabelas: ["custos_periodo"],
     issue: 92,
   },
 ];
