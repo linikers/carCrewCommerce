@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Container, Typography, Box, Grid, Paper } from "@mui/material";
+import { Container, Typography, Box, Grid, Paper, Button } from "@mui/material";
 import { CheckCircle } from "@mui/icons-material";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -46,13 +46,13 @@ export default function CategoriaLanding({
       <Header />
 
       {/* Hero */}
-      <Box sx={{ backgroundColor: "#1A1A1A", color: "#fff", py: { xs: 5, md: 7 } }}>
+      <Box sx={{ backgroundColor: "#1A1A1A", color: "#fff", py: { xs: 4, md: 7 } }}>
         <Container maxWidth="lg">
           <Typography
             component="h1"
             sx={{
               fontWeight: 800,
-              fontSize: { xs: "1.9rem", md: "2.75rem" },
+              fontSize: { xs: "1.8rem", md: "2.75rem" },
               lineHeight: 1.2,
               mb: 2,
               color: "#fff",
@@ -60,6 +60,45 @@ export default function CategoriaLanding({
           >
             {h1}
           </Typography>
+
+          {/* Ação na primeira tela (#164). Antes o CTA mais próximo ficava no
+              fim da página (2.977–4.332 px no celular): quem chegava do anúncio
+              não tinha o que clicar. */}
+          <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", mb: 3 }}>
+            <Button
+              // `href` (sem `component`) — este componente é de servidor e
+              // passar `component={Link}` para o Button (client) quebra o render.
+              href="#produtos"
+              variant="contained"
+              sx={{
+                backgroundColor: "#BF360C",
+                color: "#fff",
+                textTransform: "none",
+                fontWeight: 700,
+                px: 3,
+                py: 1.4,
+                "&:hover": { backgroundColor: "#8f2809" },
+              }}
+            >
+              Ver peças desta linha
+            </Button>
+            <BotaoWhatsApp
+              mensagem={whatsMessage}
+              variant="outlined"
+              sx={{
+                color: "#fff",
+                borderColor: "#fff",
+                textTransform: "none",
+                fontWeight: 600,
+                px: 3,
+                py: 1.4,
+                "&:hover": { borderColor: "#E65100", backgroundColor: "rgba(255,255,255,0.08)" },
+              }}
+            >
+              Falar no WhatsApp
+            </BotaoWhatsApp>
+          </Box>
+
           {intro.map((p, i) => (
             <Typography
               key={i}
@@ -137,6 +176,46 @@ export default function CategoriaLanding({
             </Grid>
           )}
         </Box>
+
+        {/* Segunda chamada, logo depois da grade: quem rolou até as peças
+            costuma decidir ali (#164). */}
+        <Paper
+          sx={{
+            p: { xs: 2.5, md: 3 },
+            mb: 8,
+            borderRadius: 3,
+            display: "flex",
+            alignItems: { xs: "flex-start", md: "center" },
+            justifyContent: "space-between",
+            gap: 2,
+            flexDirection: { xs: "column", md: "row" },
+            backgroundColor: "#FFF3E0",
+            border: "1px solid #FFCC80",
+          }}
+        >
+          <Box>
+            <Typography sx={{ fontWeight: 700, color: "#1A1A1A" }}>
+              Ficou na dúvida sobre qual peça serve no seu carro?
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#666" }}>
+              Manda o modelo e o ano que a gente confere a aplicação pra você.
+            </Typography>
+          </Box>
+          <BotaoWhatsApp
+            mensagem={whatsMessage}
+            variant="contained"
+            sx={{
+              backgroundColor: "#25D366",
+              color: "#fff",
+              textTransform: "none",
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+              "&:hover": { backgroundColor: "#1eb958" },
+            }}
+          >
+            Tirar dúvida
+          </BotaoWhatsApp>
+        </Paper>
 
         {/* Benefícios */}
         <Box sx={{ mb: 8 }}>
