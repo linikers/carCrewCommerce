@@ -25,6 +25,12 @@ export function formatBRL(valor: number): string {
 }
 
 /** 1.299,00 — sem o símbolo, para composições */
+/** 12,3% — percentual com vírgula, como o resto do painel */
+export function formatPercent(valor: number, casas = 1): string {
+  if (!Number.isFinite(valor)) return "0%";
+  return `${valor.toFixed(casas).replace(".", ",")}%`;
+}
+
 export function formatNumero(valor: number): string {
   if (!Number.isFinite(valor)) return "0,00";
   return numero.format(valor);

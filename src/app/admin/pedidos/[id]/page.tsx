@@ -30,6 +30,7 @@ import {
   Email,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import ResultadoDaVenda from "@/components/admin/ResultadoDaVenda";
 import { labelStatus, STATUS_COLOR } from "@/lib/pedido-status";
 import { formatBRL } from "@/lib/format";
 import { formatarDocumento } from "@/lib/documento";
@@ -41,6 +42,8 @@ interface PedidoItem {
   /** só existe no item novo (#72); pedido antigo não tem */
   sku?: string | null;
   imgUrl?: string | null;
+  /** custo da peça no fechamento (#191); null = não informado */
+  custoUnitario?: number | null;
 }
 
 interface Pedido {
@@ -54,9 +57,23 @@ interface Pedido {
     preco: number;
     quantidade: number;
     total: number;
+    custoUnitario?: number | null;
   }[];
   total: number;
   status: string;
+  // custo da venda (#191)
+  canal?: string;
+  comissao?: number | null;
+  comissaoPercent?: number | null;
+  freteVendedor?: number | null;
+  imposto?: number | null;
+  impostoPercent?: number | null;
+  embalagem?: number | null;
+  ads?: number | null;
+  resultado?: number | null;
+  margemPercent?: number | null;
+  custosOrigem?: string;
+  vendaEm?: string | null;
   createdAt: string;
   updatedAt: string;
   frete?: number | null;
@@ -468,6 +485,10 @@ export default function PedidoDetalhe() {
                   </Typography>
                 </Box>
               </Paper>
+
+
+              {/* Resultado da venda (#191) — mesma conta do relatório */}
+              <ResultadoDaVenda pedido={pedido} onAtualizado={carregarPedido} />
 
               {/* Linha do tempo (#123) — vem da auditoria, com autor e horário */}
               <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
