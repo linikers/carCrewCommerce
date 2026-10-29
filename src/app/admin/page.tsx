@@ -16,6 +16,7 @@ import {
 import AdminLayout from "@/components/admin/AdminLayout";
 import Ga4Dashboard from "@/components/admin/Ga4Dashboard";
 import { formatBRL, formatDataCurta } from "@/lib/format";
+import { Paid, Percent } from "@mui/icons-material";
 import { STATUS_LABEL, STATUS_COLOR } from "@/lib/pedido-status";
 
 export default function AdminDashboard() {
@@ -56,6 +57,8 @@ export default function AdminDashboard() {
   }
 
   const cards = [
+    { label: "Resultado do mês", value: formatBRL(stats?.resultado ?? 0), icon: <Paid />, color: (stats?.resultado ?? 0) < 0 ? "#b3261e" : "#0E7A3F", link: "/admin/relatorios" },
+    { label: "Margem", value: `${Number(stats?.margemPercent ?? 0).toFixed(1).replace(".", ",")}%`, icon: <Percent />, color: (stats?.resultado ?? 0) < 0 ? "#b3261e" : "#0E7A3F", link: "/admin/relatorios" },
     { label: "Produtos ativos", value: String(stats?.produtos ?? 0), icon: <Inventory2 />, color: "#BF360C", link: "/admin/produtos" },
     { label: "Pedidos abertos", value: String(stats?.pedidosAbertos ?? 0), icon: <ShoppingBag />, color: "#8C2A09", link: "/admin/pedidos" },
     { label: "Vendas (6 meses)", value: formatBRL(stats?.totalVendas ?? 0), icon: <TrendingUp />, color: "#0E7A3F", link: "/admin/pedidos" },
@@ -69,6 +72,8 @@ export default function AdminDashboard() {
     (STATUS_COLOR as Record<string, "warning" | "info" | "primary" | "success" | "error">)[status] || "warning";
   const rotuloStatus = (status: string) =>
     (STATUS_LABEL as Record<string, string>)[status] || status;
+
+  const alertaCusto = Number(stats?.vendasSemCusto ?? 0);
 
   return (
     <AdminLayout title="Dashboard">
@@ -96,6 +101,21 @@ export default function AdminDashboard() {
               </Paper>
             </Grid>
           ))}
+          {alertaCusto > 0 && (
+            <Grid size={{ xs: 12 }}>
+              <Alert
+                severity="warning"
+                action={
+                  <Button size="small" onClick={() => router.push("/admin/pedidos")} sx={{ textTransform: "none" }}>
+                    Ver pedidos
+                  </Button>
+                }
+              >
+                {alertaCusto} venda(s) do mês sem custo de peça — o resultado acima não inclui essas
+                vendas. Informe o custo para elas entrarem.
+              </Alert>
+            </Grid>
+          )}
         </Grid>
 
         {/* Alertas de operação — 4.6 */}
