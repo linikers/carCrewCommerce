@@ -80,14 +80,14 @@ export default function ResultadoDaVenda({
   const linhas = [
     { label: "Valor da venda", valor: pedido.total, negativo: false },
     {
-      label: `Comissão${pedido.comissaoPercent ? ` (${pedido.comissaoPercent}%)` : ""}`,
+      label: `Comissão${pedido.comissaoPercent ? ` (${formatPercent(pedido.comissaoPercent)})` : ""}`,
       valor: pedido.comissao ?? 0,
       negativo: true,
     },
     { label: "Frete pago por você", valor: pedido.freteVendedor ?? 0, negativo: true },
     { label: "Custo das peças", valor: custoItens, negativo: true },
     {
-      label: `Imposto${pedido.impostoPercent ? ` (${pedido.impostoPercent}%)` : ""}`,
+      label: `Imposto${pedido.impostoPercent ? ` (${formatPercent(pedido.impostoPercent)})` : ""}`,
       valor: pedido.imposto ?? 0,
       negativo: true,
     },
