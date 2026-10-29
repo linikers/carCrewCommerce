@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
@@ -213,7 +214,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           </Typography>
         </Box>
         {!isDesktop && (
-          <IconButton onClick={onClose} sx={{ color: "#fff" }}>
+          <IconButton aria-label="Fechar" onClick={onClose} sx={{ width: 44, height: 44, color: "#fff" }}>
             <Close />
           </IconButton>
         )}
@@ -241,7 +242,14 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
               {grupo.itens.map((item) => (
           <ListItemButton
             key={item.path}
-            onClick={() => !item.disabled && handleNav(item.path)}
+            // Link de verdade: dá para abrir em nova aba e o aviso de
+            // "alterações não salvas" (#183) consegue interceptar o clique.
+            component={(item.disabled ? "div" : Link) as React.ElementType}
+            {...(item.disabled ? {} : { href: item.path })}
+            onClick={() => {
+              if (item.disabled) return;
+              if (!isDesktop) onClose();
+            }}
             selected={
               // "/admin" com startsWith("/admin/") casava em TODAS as telas:
               // Dashboard e a tela atual ficavam destacados juntos.

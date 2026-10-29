@@ -25,6 +25,7 @@ import {
   Save,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { serializar, useAlteracoesNaoSalvas } from "@/lib/useAlteracoesNaoSalvas";
 import type { ConteudoLp } from "@/lib/lp-conteudo";
 
 interface PaginaLp {
@@ -57,6 +58,8 @@ export default function AdminLpEditorPage() {
   const [salvando, setSalvando] = useState(false);
   const [msg, setMsg] = useState("");
   const [erro, setErro] = useState("");
+  /** JSON do que veio do banco: base do aviso de alteração não salva (#183). */
+  const [snapshot, setSnapshot] = useState("");
 
   useEffect(() => {
     if (!slug) return;
@@ -72,6 +75,7 @@ export default function AdminLpEditorPage() {
         }
         setPagina(encontrada);
         setConteudo(encontrada.conteudo);
+        setSnapshot(serializar(encontrada.conteudo));
       })
       .catch(() => setErro("Não foi possível carregar a página."))
       .finally(() => setLoading(false));
@@ -148,6 +152,11 @@ export default function AdminLpEditorPage() {
     setMsg("");
   };
 
+  // Avisa antes de sair com alteração pendente (#183).
+  useAlteracoesNaoSalvas(
+    snapshot !== "" && conteudo !== null && serializar(conteudo) !== snapshot
+  );
+
   const salvar = async () => {
     if (!conteudo) return;
     setSalvando(true);
@@ -165,6 +174,7 @@ export default function AdminLpEditorPage() {
         return;
       }
       setConteudo(dados.conteudo);
+      setSnapshot(serializar(dados.conteudo));
       setPagina((p) => (p ? { ...p, personalizado: true, conteudo: dados.conteudo } : p));
       setMsg("Página salva. Abra a página no site para conferir.");
     } catch {
@@ -273,7 +283,7 @@ export default function AdminLpEditorPage() {
                         onChange={(e) => alterarNaLista("intro", indice, e.target.value)}
                       />
                       <Tooltip title="Remover parágrafo">
-                        <IconButton
+                        <IconButton sx={{ width: 44, height: 44 }}
                           onClick={() => removerDaLista("intro", indice)}
                           aria-label="Remover parágrafo"
                         >
@@ -308,7 +318,7 @@ export default function AdminLpEditorPage() {
                         </Typography>
                         <Box sx={{ flex: 1 }} />
                         <Tooltip title="Remover benefício">
-                          <IconButton
+                          <IconButton sx={{ width: 44, height: 44 }}
                             size="small"
                             color="error"
                             onClick={() => removerBeneficio(indice)}
@@ -361,7 +371,7 @@ export default function AdminLpEditorPage() {
                         placeholder="Ex.: Alinhamento e balanceamento"
                       />
                       <Tooltip title="Remover serviço">
-                        <IconButton
+                        <IconButton sx={{ width: 44, height: 44 }}
                           onClick={() => removerDaLista("servicos", indice)}
                           aria-label="Remover serviço"
                         >

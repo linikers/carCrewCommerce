@@ -33,6 +33,7 @@ import {
   Save,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { serializar, useAlteracoesNaoSalvas } from "@/lib/useAlteracoesNaoSalvas";
 import type { FaqItem } from "@/lib/faq-conteudo";
 
 /**
@@ -51,11 +52,17 @@ export default function AdminFaqPage() {
   const [aviso, setAviso] = useState("");
   const [destaque, setDestaque] = useState<string | null>(null);
   const [remover, setRemover] = useState<string | null>(null);
+  /** JSON do que veio do banco: base do aviso de alteração não salva (#183). */
+  const [snapshot, setSnapshot] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/faq")
       .then((r) => r.json())
-      .then((d) => setItens(Array.isArray(d?.itens) ? d.itens : []))
+      .then((d) => {
+        const lista = Array.isArray(d?.itens) ? d.itens : [];
+        setItens(lista);
+        setSnapshot(serializar(lista));
+      })
       .catch(() => setErro("Não foi possível carregar o FAQ."))
       .finally(() => setLoading(false));
   }, []);
@@ -120,6 +127,7 @@ export default function AdminFaqPage() {
       const dados = await res.json();
       if (!res.ok) throw new Error(dados?.error || "Não foi possível salvar.");
       setItens(dados.itens ?? itens);
+      setSnapshot(serializar(dados.itens ?? itens));
       setMsg("FAQ salvo. A página /faq já está usando este conteúdo.");
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Não foi possível salvar.");
@@ -127,6 +135,9 @@ export default function AdminFaqPage() {
       setSalvando(false);
     }
   };
+
+  // Avisa antes de sair com alteração pendente (#183).
+  useAlteracoesNaoSalvas(snapshot !== "" && serializar(itens) !== snapshot);
 
   const ativos = itens.filter((i) => i.ativo).length;
 
@@ -154,7 +165,7 @@ export default function AdminFaqPage() {
             startIcon={<Save fontSize="small" />}
             onClick={salvar}
             disabled={salvando || loading}
-            sx={{ backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
+            sx={{ minHeight: 44, backgroundColor: "#BF360C", "&:hover": { backgroundColor: "#8f2809" }, textTransform: "none" }}
           >
             Salvar
           </Button>
@@ -207,7 +218,7 @@ export default function AdminFaqPage() {
                           aria-label="Subir pergunta"
                           disabled={indice === 0}
                           onClick={() => mover(indice, -1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowUpward fontSize="small" />
                         </IconButton>
@@ -220,7 +231,7 @@ export default function AdminFaqPage() {
                           aria-label="Descer pergunta"
                           disabled={indice === itens.length - 1}
                           onClick={() => mover(indice, 1)}
-                          sx={{ width: 40, height: 40 }}
+                          sx={{ width: 44, height: 44 }}
                         >
                           <ArrowDownward fontSize="small" />
                         </IconButton>
@@ -232,7 +243,7 @@ export default function AdminFaqPage() {
                         color="error"
                         aria-label="Remover pergunta"
                         onClick={() => setRemover(item.id)}
-                        sx={{ width: 40, height: 40 }}
+                        sx={{ width: 44, height: 44 }}
                       >
                         <Delete fontSize="small" />
                       </IconButton>

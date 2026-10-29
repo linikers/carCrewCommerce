@@ -401,7 +401,7 @@ export default function OSDetalhe({ id }: { id: string }) {
                 <TableCell align="right" sx={{ fontWeight: 600 }}>{formatBRL(i.total)}</TableCell>
                 <TableCell align="right">
                   {!fechada && (
-                    <IconButton
+                    <IconButton aria-label="Remover"
                       size="small"
                       onClick={() => {
                         // remover item é destrutivo: confirma antes
@@ -409,7 +409,7 @@ export default function OSDetalhe({ id }: { id: string }) {
                           acao({ acao: "removerItem", itemId: i.id }, "Item removido.");
                         }
                       }}
-                      sx={{ color: "#b3261e" }}
+                      sx={{ width: 44, height: 44, color: "#b3261e" }}
                     >
                       <DeleteOutlined fontSize="small" />
                     </IconButton>
