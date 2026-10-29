@@ -258,6 +258,13 @@ export default function AdminMenuPage() {
 
       <Divider sx={{ my: 2 }} />
 
+      <Typography
+        variant="caption"
+        sx={{ display: { xs: "block", md: "none" }, color: "#777", mb: 1 }}
+      >
+        No celular, use as setas ↑ ↓ para mudar a ordem.
+      </Typography>
+
       {config[grupo].length === 0 ? (
         <Typography variant="body2" sx={{ color: "#666" }}>
           Nenhum item nesta parte do menu.
@@ -317,7 +324,11 @@ export default function AdminMenuPage() {
                   pt: 0.5,
                 }}
               >
-                <DragIndicator sx={{ fontSize: 18, color: "#bbb" }} />
+                <Tooltip title="Arraste para reordenar (no computador)">
+                      <DragIndicator
+                        sx={{ display: { xs: "none", md: "block" }, fontSize: 20, color: "#8d8d8d" }}
+                      />
+                    </Tooltip>
                 <Chip
                   size="small"
                   label={item.ativo ? "no menu" : "desligado"}
