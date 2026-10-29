@@ -37,12 +37,15 @@ import {
   VisibilityOff,
   Inventory2,
   LocalOffer,
+  Paid,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 interface Produto {
   sku?: string | null;
   descontoPercent?: number;
+  /** custo da peça; null/undefined = não informado (não é zero) */
+  custo?: number | null;
   id: number;
   nome: string;
   preco: number;
@@ -69,7 +72,16 @@ export default function AdminProdutos() {
   const [ordemDir, setOrdemDir] = useState<"asc" | "desc">("desc");
   // 6.3/6.4: sem visão de "sem preço" e "estoque baixo" a lista não servia
   // para trabalhar. O filtro vem também pela URL (atalho do dashboard).
-  const [filtroRapido, setFiltroRapido] = useState<"todos" | "sem-preco" | "esgotado" | "estoque-baixo">("todos");
+  const [filtroRapido, setFiltroRapido] = useState<"todos" | "sem-preco" | "esgotado" | "estoque-baixo" | "sem-custo">("todos");
+  // custos em lote (#191): a planilha do fornecedor vem por SKU
+  const [custosAberto, setCustosAberto] = useState(false);
+  const [textoCustos, setTextoCustos] = useState("");
+  const [salvandoCustos, setSalvandoCustos] = useState(false);
+  const [resultadoCustos, setResultadoCustos] = useState<{
+    mensagem: string;
+    naoEncontrados: string[];
+    erros: { linha: number; texto: string; motivo: string }[];
+  } | null>(null);
 
   const carregar = async () => {
     try {
@@ -125,6 +137,32 @@ export default function AdminProdutos() {
     }
   };
 
+  /** Custo em lote por SKU — cola da planilha (formato SKU;custo). */
+  const importarCustos = async () => {
+    setSalvandoCustos(true);
+    setResultadoCustos(null);
+    try {
+      const res = await fetch("/api/admin/produtos/custos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: textoCustos }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Falha ao gravar os custos");
+      setResultadoCustos({
+        mensagem: d.mensagem,
+        naoEncontrados: Array.isArray(d.naoEncontrados) ? d.naoEncontrados : [],
+        erros: Array.isArray(d.erros) ? d.erros : [],
+      });
+      setTextoCustos("");
+      await carregar();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Falha ao gravar os custos");
+    } finally {
+      setSalvandoCustos(false);
+    }
+  };
+
   const alternarAtivo = async (id: number, ativoAtual: boolean) => {
     try {
       const res = await fetch(`/api/admin/produtos/${id}`, {
@@ -174,6 +212,7 @@ export default function AdminProdutos() {
     )
       return false;
     if (filtroRapido === "sem-preco") return p.preco <= 0;
+    if (filtroRapido === "sem-custo") return p.custo === null || p.custo === undefined;
     if (filtroRapido === "esgotado") return p.estoque <= 0;
     if (filtroRapido === "estoque-baixo") return p.estoque > 0 && p.estoque <= 2;
     return true;
@@ -217,6 +256,7 @@ export default function AdminProdutos() {
               {produtos.length} produto(s) cadastrado(s)
             </Typography>
           </Box>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: "flex-end" }}>
           <Button
             variant="contained"
             startIcon={<Add />}
@@ -234,6 +274,16 @@ export default function AdminProdutos() {
           >
             Desconto
           </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<Paid />}
+            onClick={() => { setCustosAberto(true); setResultadoCustos(null); }}
+            sx={{ textTransform: "none", borderColor: "#BF360C", color: "#BF360C" }}
+          >
+            Custos
+          </Button>
+          </Box>
         </Box>
 
         <TextField
@@ -248,6 +298,9 @@ export default function AdminProdutos() {
           {[
             { id: "todos" as const, label: `Todos (${produtos.length})` },
             { id: "sem-preco" as const, label: `Sem preço (${produtos.filter((p) => p.preco <= 0).length})` },
+            // sem custo = sem resultado na venda; é o filtro que transforma
+            // "relatório vazio" em trabalho a fazer
+            { id: "sem-custo" as const, label: `Sem custo (${produtos.filter((p) => p.custo === null || p.custo === undefined).length})` },
             // estoque 0 é "esgotado", não "baixo" — antes os 48 entravam no
             // filtro e ele não filtrava nada
             { id: "esgotado" as const, label: `Esgotado (${produtos.filter((p) => p.estoque <= 0).length})` },
@@ -309,6 +362,7 @@ export default function AdminProdutos() {
                   <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "preco" ? ordemDir : false}>
                     <TableSortLabel active={ordemPor === "preco"} direction={ordemPor === "preco" ? ordemDir : "asc"} onClick={() => mudarOrdem("preco")}>Preço</TableSortLabel>
                   </TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Custo / margem</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Categoria</TableCell>
                   <TableCell sx={{ fontWeight: 600 }} sortDirection={ordemPor === "estoque" ? ordemDir : false}>
                     <TableSortLabel active={ordemPor === "estoque"} direction={ordemPor === "estoque" ? ordemDir : "asc"} onClick={() => mudarOrdem("estoque")}>Estoque</TableSortLabel>
@@ -355,6 +409,34 @@ export default function AdminProdutos() {
                       ) : (
                         "Sob consulta"
                       )}
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        const custo = p.custo;
+                        if (custo === null || custo === undefined) {
+                          return (
+                            <Chip
+                              label="sem custo"
+                              size="small"
+                              variant="outlined"
+                              sx={{ height: 18, fontSize: "0.62rem", borderColor: "#c98a2b", color: "#8a5a10" }}
+                            />
+                          );
+                        }
+                        const margem = p.preco > 0 ? ((p.preco - custo) / p.preco) * 100 : null;
+                        return (
+                          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+                            <Box component="span" sx={{ fontSize: "0.78rem", color: "#444" }}>
+                              {formatBRL(custo)}
+                            </Box>
+                            {margem !== null && (
+                              <Box component="span" sx={{ fontSize: "0.68rem", color: margem >= 0 ? "#0E7A3F" : "#b3261e", fontWeight: 600 }}>
+                                margem {margem.toFixed(1)}%
+                              </Box>
+                            )}
+                          </Box>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell>
                       <Chip label={p.category} size="small" variant="outlined" />
@@ -458,6 +540,59 @@ export default function AdminProdutos() {
         </DialogActions>
       </Dialog>
       </Container>
+
+      {/* Custos em lote (#191) */}
+      <Dialog open={custosAberto} onClose={() => setCustosAberto(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>Custos por SKU</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ fontSize: "0.82rem", color: "#666", mb: 2 }}>
+            Cole a lista no formato <strong>SKU;custo</strong>, uma por linha (dá para colar direto
+            do Excel, com tabulação). Custo vazio limpa o valor. O casamento é pelo SKU — nome do
+            fornecedor não serve.
+          </Typography>
+
+          <TextField
+            multiline
+            minRows={6}
+            fullWidth
+            placeholder={"AMO-007;550,00\nCEN-001;1.240,50\nBOL-012;"}
+            value={textoCustos}
+            onChange={(e) => setTextoCustos(e.target.value)}
+          />
+
+          {resultadoCustos && (
+            <Box sx={{ mt: 2 }}>
+              <Alert severity={resultadoCustos.naoEncontrados.length > 0 || resultadoCustos.erros.length > 0 ? "warning" : "success"}>
+                {resultadoCustos.mensagem}
+              </Alert>
+              {resultadoCustos.naoEncontrados.length > 0 && (
+                <Typography sx={{ fontSize: "0.75rem", color: "#666", mt: 1 }}>
+                  SKU fora do catálogo: {resultadoCustos.naoEncontrados.slice(0, 30).join(", ")}
+                  {resultadoCustos.naoEncontrados.length > 30 ? "…" : ""}
+                </Typography>
+              )}
+              {resultadoCustos.erros.length > 0 && (
+                <Typography sx={{ fontSize: "0.75rem", color: "#b3261e", mt: 1 }}>
+                  Linhas recusadas: {resultadoCustos.erros.slice(0, 10).map((e) => `${e.linha} (${e.motivo})`).join(", ")}
+                </Typography>
+              )}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setCustosAberto(false)} sx={{ textTransform: "none" }}>
+            Fechar
+          </Button>
+          <Button
+            variant="contained"
+            onClick={importarCustos}
+            disabled={salvandoCustos || textoCustos.trim() === ""}
+            sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}
+          >
+            {salvandoCustos ? "Gravando…" : "Gravar custos"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Modal excluir */}
       <Dialog open={deleteId !== null} onClose={() => setDeleteId(null)}>

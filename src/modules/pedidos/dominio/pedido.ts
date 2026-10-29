@@ -17,6 +17,8 @@ export interface ItemPedido {
   preco: number;
   quantidade: number;
   total: number;
+  /** Custo da peça no fechamento (foto de Produto.custo). null = não informado. */
+  custoUnitario?: number | null;
 }
 
 export interface EnderecoEntrega {
