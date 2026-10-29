@@ -16,6 +16,7 @@ import {
   Select,
   Table,
   TableBody,
+  TableContainer,
   TableCell,
   TableHead,
   TableRow,
@@ -182,7 +183,7 @@ export default function EconomiaAdmin() {
   ];
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} sx={{ pb: { xs: 12, md: 0 } }}>
       <Grid size={{ xs: 12 }}>
         <Alert severity="info">
           Estes números servem para <strong>simular e conferir</strong>. Quando o pedido vem do
@@ -260,18 +261,23 @@ export default function EconomiaAdmin() {
             informado&quot;, não comissão grátis.
           </Typography>
 
-          <Table size="small">
+          <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small" sx={{ minWidth: 320 }}>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Plataforma</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Comissão (%)</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Fixo por item (R$)</TableCell>
+                <TableCell sx={{ fontWeight: 600, whiteSpace: "normal", lineHeight: 1.2 }}>
+                  Fixo por item (R$)
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {(dados?.canais ?? []).map((c) => (
                 <TableRow key={c.id}>
-                  <TableCell sx={{ whiteSpace: "nowrap" }}>{c.rotulo}</TableCell>
+                  <TableCell sx={{ whiteSpace: { xs: "normal", sm: "nowrap" }, pr: { xs: 0.5, sm: 2 } }}>
+                    {c.rotulo}
+                  </TableCell>
                   <TableCell>
                     <TextField
                       size="small"
@@ -281,7 +287,7 @@ export default function EconomiaAdmin() {
                         setTextos({ ...textos, [c.id]: { ...textos[c.id], percentual: e.target.value } })
                       }
                       slotProps={{ htmlInput: { min: 0, max: 60, step: 0.01, "aria-label": `Comissão de ${c.rotulo} em %` } }}
-                      sx={{ width: 110 }}
+                      sx={{ width: { xs: 74, sm: 96 } }}
                     />
                   </TableCell>
                   <TableCell>
@@ -293,13 +299,14 @@ export default function EconomiaAdmin() {
                         setTextos({ ...textos, [c.id]: { ...textos[c.id], fixo: e.target.value } })
                       }
                       slotProps={{ htmlInput: { min: 0, step: 0.01, "aria-label": `Valor fixo de ${c.rotulo}` } }}
-                      sx={{ width: 110 }}
+                      sx={{ width: { xs: 74, sm: 96 } }}
                     />
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          </TableContainer>
 
           <Typography sx={{ fontSize: "0.75rem", color: "#666", mt: 1.5 }}>
             No Mercado Livre o percentual muda por categoria e por tipo de anúncio
@@ -408,7 +415,22 @@ export default function EconomiaAdmin() {
       {ok && <Grid size={{ xs: 12 }}><Alert severity="success">{ok}</Alert></Grid>}
 
       <Grid size={{ xs: 12 }}>
-        <Paper sx={{ position: "sticky", bottom: 0, p: 2, borderRadius: 3, display: "flex", gap: 2, alignItems: "center" }}>
+        <Paper
+          sx={{
+            // no celular a página é longa e o botão ficava fora da dobra: barra fixa
+            position: { xs: "fixed", md: "static" },
+            left: { xs: 12, md: "auto" },
+            right: { xs: 12, md: "auto" },
+            bottom: { xs: 12, md: "auto" },
+            zIndex: { xs: 1200, md: "auto" },
+            p: 2,
+            borderRadius: 3,
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            boxShadow: { xs: 4, md: 0 },
+          }}
+        >
           <Button
             variant="contained"
             onClick={salvar}
