@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { exigirModulo } from "@/modules/guard";
 import { CANAIS, CANAIS_EM_BREVE, acharCanal } from "@/modules/marketplace/dominio/canais";
+import { lerComissoes } from "@/lib/economia";
 import {
   listarCredenciais,
   removerCredencial,
@@ -24,6 +25,10 @@ export async function GET() {
     canais: CANAIS,
     emBreve: CANAIS_EM_BREVE,
     credenciais: await listarCredenciais(),
+    // comissão cadastrada para cada canal (#191). A edição vive em
+    // /admin/economia; aqui é só leitura, para a tela de integração não
+    // esconder o número que o cliente paga hoje.
+    comissoes: await lerComissoes(),
   });
 }
 

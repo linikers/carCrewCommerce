@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Lock, Storefront, CheckCircle, Schedule } from "@mui/icons-material";
+import { formatBRL } from "@/lib/format";
 
 interface Campo {
   chave: string;
@@ -59,6 +60,8 @@ export default function CanaisAdmin() {
   const [canais, setCanais] = useState<Canal[]>([]);
   const [emBreve, setEmBreve] = useState<{ nome: string; nota: string }[]>([]);
   const [credenciais, setCredenciais] = useState<Credencial[]>([]);
+  // comissão por canal (#191) — leitura; a edição vive em /admin/economia
+  const [comissoes, setComissoes] = useState<Record<string, { percentual: number; fixo: number }>>({});
   const [aba, setAba] = useState(0);
   const [valores, setValores] = useState<Record<string, Record<string, string>>>({});
   const [carregando, setCarregando] = useState(true);
@@ -77,6 +80,7 @@ export default function CanaisAdmin() {
     setCanais(d.canais);
     setEmBreve(d.emBreve);
     setCredenciais(d.credenciais);
+    setComissoes(d.comissoes ?? {});
 
     // preenche só os campos não secretos
     const inicial: Record<string, Record<string, string>> = {};
@@ -200,6 +204,36 @@ export default function CanaisAdmin() {
                   Falta: {credencialAtual.faltando.join(", ")}
                 </Typography>
               )}
+
+              {/* custo de vender neste canal (#191): leitura aqui, edição em
+                  Custos e mídia — dois lugares para gravar o mesmo número
+                  divergem na primeira vez que alguém esquece um deles */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  flexWrap: "wrap",
+                  p: 1.5,
+                  mb: 2,
+                  borderRadius: 2,
+                  backgroundColor: "#faf7f5",
+                  border: "1px solid #eadfd7",
+                }}
+              >
+                <Typography sx={{ fontSize: "0.8rem", color: "#444" }}>
+                  Comissão que esta plataforma cobra:{" "}
+                  <strong>
+                    {comissoes[canalAtual.id]?.percentual ?? 0}%
+                  </strong>
+                  {Number(comissoes[canalAtual.id]?.fixo ?? 0) > 0
+                    ? ` + ${formatBRL(Number(comissoes[canalAtual.id]?.fixo))} por item`
+                    : ""}
+                </Typography>
+                <Button size="small" href="/admin/economia" sx={{ textTransform: "none", color: "#BF360C", fontWeight: 700 }}>
+                  Editar em Custos e mídia
+                </Button>
+              </Box>
 
               <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
                 {canalAtual.campos.map((campo) => {

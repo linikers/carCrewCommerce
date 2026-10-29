@@ -36,6 +36,7 @@ import {
   Menu as MenuIcon,
   Article,
   HelpOutlined,
+  Paid,
 } from "@mui/icons-material";
 import { MODULOS } from "@/modules/registro";
 
@@ -63,6 +64,7 @@ const ICONE_POR_ROTA: Record<string, React.ReactNode> = {
   "/admin/estoque": <Inventory2 />,
   "/admin/frete": <LocalShipping />,
   "/admin/pagamentos": <Payment />,
+  "/admin/economia": <Paid />,
   "/admin/modulos": <Extension />,
 };
 
