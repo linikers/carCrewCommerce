@@ -27,6 +27,9 @@ export async function GET(
     sku: produto.sku,
     descricao: produto.descricao || "",
     preco: produto.preco,
+    // custo da peça (#191) — nulo = não informado; o formulário edita e o
+    // "salvar" não pode apagar o que estava lá
+    custo: produto.custo,
     imgUrl: produto.imgUrl || "/produtos/placeholder.svg",
     category: produto.categorySlug,
     parcelamento: produto.parcelamento,
@@ -110,6 +113,14 @@ export async function PUT(
             : existente.sku,
         descricao: body.descricao ?? existente.descricao,
         preco: body.preco !== undefined ? Number(body.preco) : existente.preco,
+        // custo da peça (#191). Campo vazio = "não informado" (null), nunca 0:
+        // custo zero finge margem de 100% no relatório.
+        custo:
+          body.custo !== undefined
+            ? body.custo === "" || body.custo === null
+              ? null
+              : Math.max(0, Number(body.custo))
+            : existente.custo,
         imgUrl: body.imgUrl ?? existente.imgUrl,
         categorySlug: body.category ?? existente.categorySlug,
         parcelamento: body.parcelamento !== undefined ? Number(body.parcelamento) : existente.parcelamento,
@@ -136,8 +147,8 @@ export async function PUT(
       entidade: "produto",
       entidadeId: atualizado.id,
       acao: "alterar",
-      antes: { preco: existente.preco, estoque: existente.estoque, ativo: existente.ativo, nome: existente.nome },
-      depois: { preco: atualizado.preco, estoque: atualizado.estoque, ativo: atualizado.ativo, nome: atualizado.nome },
+      antes: { preco: existente.preco, custo: existente.custo, estoque: existente.estoque, ativo: existente.ativo, nome: existente.nome },
+      depois: { preco: atualizado.preco, custo: atualizado.custo, estoque: atualizado.estoque, ativo: atualizado.ativo, nome: atualizado.nome },
     });
 
     return NextResponse.json({
@@ -146,6 +157,7 @@ export async function PUT(
     sku: atualizado.sku,
       descricao: atualizado.descricao || "",
       preco: atualizado.preco,
+      custo: atualizado.custo,
       imgUrl: atualizado.imgUrl || "/produtos/placeholder.svg",
       category: atualizado.categorySlug,
       parcelamento: atualizado.parcelamento,

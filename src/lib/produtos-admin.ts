@@ -9,6 +9,8 @@ export interface ProdutoData {
   sku?: string | null;
   descricao: string;
   preco: number;
+  /** Custo unitário da peça. Nulo = não informado (não é zero). */
+  custo?: number | null;
   descontoPercent?: number;
   imgUrl: string;
   category: string;
@@ -46,6 +48,7 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
     sku: p.sku,
     descricao: p.descricao || "",
     preco: p.preco,
+    custo: p.custo,
     descontoPercent: p.descontoPercent,
     imgUrl: p.imgUrl || "/produtos/placeholder.svg",
     category: p.categorySlug,
@@ -83,6 +86,47 @@ export async function aplicarDescontoEmLote(ids: number[], percentual: number) {
   return { atualizados: count, antes };
 }
 
+/**
+ * Custos em lote (#191). A planilha do fornecedor vem por SKU, não por id —
+ * casar por nome duplica produto e casa errado.
+ *
+ * `custo: null` limpa o valor (volta a "não informado"). SKU que não existe no
+ * catálogo volta em `naoEncontrados` para a tela mostrar o que ficou de fora,
+ * em vez de sumir silenciosamente.
+ */
+export async function aplicarCustosPorSku(
+  linhas: { sku: string; custo: number | null }[]
+): Promise<{ atualizados: number; naoEncontrados: string[]; antes: { sku: string; custo: number | null }[] }> {
+  const normalizados = linhas
+    .map((l) => ({ sku: String(l.sku || "").trim().toUpperCase(), custo: l.custo }))
+    .filter((l) => l.sku !== "");
+
+  const produtos = await prisma.produto.findMany({
+    where: { sku: { in: normalizados.map((l) => l.sku) } },
+    select: { id: true, sku: true, custo: true },
+  });
+  const porSku = new Map(produtos.map((p) => [p.sku as string, p]));
+
+  const naoEncontrados: string[] = [];
+  const antes: { sku: string; custo: number | null }[] = [];
+  let atualizados = 0;
+
+  await prisma.$transaction(async (tx) => {
+    for (const linha of normalizados) {
+      const produto = porSku.get(linha.sku);
+      if (!produto) {
+        naoEncontrados.push(linha.sku);
+        continue;
+      }
+      antes.push({ sku: linha.sku, custo: produto.custo });
+      await tx.produto.update({ where: { id: produto.id }, data: { custo: linha.custo } });
+      atualizados += 1;
+    }
+  });
+
+  return { atualizados, naoEncontrados, antes };
+}
+
 export async function salvarProdutos(produtos: ProdutoData[]) {
   // Upsert em lote — cria ou atualiza cada produto
   for (const p of produtos) {
@@ -99,6 +143,7 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
       unidade: p.unidade ?? "UN",
         descricao: p.descricao || null,
         preco: p.preco,
+        custo: p.custo ?? null,
       descontoPercent: p.descontoPercent ?? 0,
         imgUrl: p.imgUrl || null,
         categorySlug: p.category,
@@ -117,6 +162,7 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
         nome: p.nome,
         descricao: p.descricao || null,
         preco: p.preco,
+        custo: p.custo ?? null,
         imgUrl: p.imgUrl || null,
         categorySlug: p.category,
         peso: p.peso ?? null,

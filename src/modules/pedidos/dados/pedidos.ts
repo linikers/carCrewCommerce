@@ -92,6 +92,9 @@ export async function criarPedido({
         preco: precoFinal,
         quantidade: item.quantidade,
         total: Number((precoFinal * item.quantidade).toFixed(2)),
+        // custo no momento da venda (#191): mudar o custo do catálogo depois
+        // não reescreve o resultado de uma venda antiga
+        custoUnitario: produto.custo ?? null,
       });
     }
 

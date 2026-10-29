@@ -43,6 +43,7 @@ export default function NovoProduto() {
     sku: "",
     descricao: "",
     preco: "",
+    custo: "",
     imgUrl: "",
     galeria: [] as string[],
     galeriaPrincipal: 0,
@@ -103,6 +104,8 @@ export default function NovoProduto() {
         body: JSON.stringify({
           ...form,
           preco: parseFloat(form.preco),
+          // vazio = custo não informado (null), nunca zero
+          custo: String(form.custo).trim() === "" ? null : Number(form.custo),
           parcelamento: parseInt(form.parcelamento),
           estoque: parseInt(form.estoque),
           galeria: form.galeria,
@@ -168,6 +171,12 @@ export default function NovoProduto() {
                     helperText={fieldErrors.preco || "Use ponto para centavos: 1299.90"}
                     slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
                     onChange={(e) => setForm({ ...form, preco: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <TextField fullWidth label="Custo da peça (R$)" type="number" value={form.custo}
+                    helperText="Vazio = custo não informado (não é zero)"
+                    slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                    onChange={(e) => setForm({ ...form, custo: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <TextField fullWidth label="SKU (código interno)" value={form.sku}
