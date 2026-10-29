@@ -22,6 +22,7 @@ export type EntidadeAuditada =
   | "configuracao"
   | "menu_loja"
   | "lp_conteudo"
+  | "economia"
   | "empresa";
 
 export async function auditar(params: {
