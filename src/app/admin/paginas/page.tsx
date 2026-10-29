@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -28,6 +28,7 @@ import {
   ArrowDownward,
   ArrowUpward,
   Delete,
+  DragIndicator,
   OpenInNew,
   Save,
 } from "@mui/icons-material";
@@ -113,6 +114,26 @@ export default function AdminPaginasPage() {
         const destino = indice + direcao;
         if (destino < 0 || destino >= lista.length) return p;
         [lista[indice], lista[destino]] = [lista[destino], lista[indice]];
+        return { ...p, secoes: lista };
+      })
+    );
+    setMsg("");
+  };
+
+  // Reordenar arrastando (#183 parte 2); as setas continuam.
+  const [arrastando, setArrastando] = useState<number | null>(null);
+  const [sobre, setSobre] = useState<number | null>(null);
+  // Ref: o drop pode chegar antes do state commitar.
+  const origemArrasto = useRef<number | null>(null);
+
+  const reordenarSecao = (de: number, para: number) => {
+    if (de === para) return;
+    setPaginas((atual) =>
+      atual.map((p, i) => {
+        if (i !== aba) return p;
+        const lista = [...p.secoes];
+        const [secao] = lista.splice(de, 1);
+        lista.splice(para, 0, secao);
         return { ...p, secoes: lista };
       })
     );
@@ -247,6 +268,12 @@ export default function AdminPaginasPage() {
             </Paper>
 
             <Stack spacing={2}>
+            <Typography
+              variant="caption"
+              sx={{ display: { xs: "block", md: "none" }, color: "#777", mb: 1 }}
+            >
+              No celular, use as setas ↑ ↓ para mudar a ordem.
+            </Typography>
               {pagina.secoes.map((secao, indice) => (
                 <Paper
                   key={secao.id}
@@ -259,7 +286,48 @@ export default function AdminPaginasPage() {
                     transition: "border-color .2s ease, background-color .2s ease",
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5 }}>
+                  <Box
+                    draggable
+                    onDragStart={(e) => {
+                      origemArrasto.current = indice;
+                      setArrastando(indice);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                    }}
+                    onDragEnter={() => setSobre(indice)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (origemArrasto.current !== null) {
+                        reordenarSecao(origemArrasto.current, indice);
+                      }
+                      origemArrasto.current = null;
+                      setArrastando(null);
+                      setSobre(null);
+                    }}
+                    onDragEnd={() => {
+                      origemArrasto.current = null;
+                      setArrastando(null);
+                      setSobre(null);
+                    }}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
+                      mb: 1.5,
+                      cursor: "grab",
+                      opacity: arrastando === indice ? 0.5 : 1,
+                      borderTop: sobre === indice && arrastando !== null ? "2px dashed #BF360C" : "2px solid transparent",
+                      pt: 0.5,
+                    }}
+                  >
+                    <Tooltip title="Arraste para reordenar (no computador)">
+                      <DragIndicator
+                        sx={{ display: { xs: "none", md: "block" }, fontSize: 20, color: "#8d8d8d" }}
+                      />
+                    </Tooltip>
                     <Typography variant="caption" sx={{ color: "#888" }}>
                       Seção {indice + 1}
                     </Typography>

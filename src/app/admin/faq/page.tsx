@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -29,6 +29,7 @@ import {
   ArrowDownward,
   ArrowUpward,
   Delete,
+  DragIndicator,
   OpenInNew,
   Save,
 } from "@mui/icons-material";
@@ -91,6 +92,25 @@ export default function AdminFaqPage() {
       const destino = indice + direcao;
       if (destino < 0 || destino >= lista.length) return atual;
       [lista[indice], lista[destino]] = [lista[destino], lista[indice]];
+      return lista.map((i, n) => ({ ...i, ordem: n }));
+    });
+    setMsg("");
+  };
+
+  // Reordenar arrastando (#183 parte 2). As setas continuam para quem prefere
+  // clique — arrastar é atalho, não substituto.
+  const [arrastando, setArrastando] = useState<number | null>(null);
+  const [sobre, setSobre] = useState<number | null>(null);
+  // A origem fica em ref: eventos de arrasto podem cair no mesmo tick e o
+  // state ainda não teria commitado quando o drop chega.
+  const origemArrasto = useRef<number | null>(null);
+
+  const reordenar = (de: number, para: number) => {
+    if (de === para) return;
+    setItens((atual) => {
+      const lista = [...atual];
+      const [item] = lista.splice(de, 1);
+      lista.splice(para, 0, item);
       return lista.map((i, n) => ({ ...i, ordem: n }));
     });
     setMsg("");
@@ -188,6 +208,12 @@ export default function AdminFaqPage() {
         ) : (
           <>
             <Stack spacing={2}>
+            <Typography
+              variant="caption"
+              sx={{ display: { xs: "block", md: "none" }, color: "#777", mb: 1 }}
+            >
+              No celular, use as setas ↑ ↓ para mudar a ordem.
+            </Typography>
               {itens.map((item, indice) => (
                 <Paper
                   key={item.id}
@@ -200,7 +226,48 @@ export default function AdminFaqPage() {
                     transition: "border-color .2s ease, background-color .2s ease",
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5 }}>
+                  <Box
+                  draggable
+                  onDragStart={(e) => {
+                    origemArrasto.current = indice;
+                    setArrastando(indice);
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  }}
+                  onDragEnter={() => setSobre(indice)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (origemArrasto.current !== null) {
+                      reordenar(origemArrasto.current, indice);
+                    }
+                    origemArrasto.current = null;
+                    setArrastando(null);
+                    setSobre(null);
+                  }}
+                  onDragEnd={() => {
+                    origemArrasto.current = null;
+                    setArrastando(null);
+                    setSobre(null);
+                  }}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    mb: 1.5,
+                    cursor: "grab",
+                    opacity: arrastando === indice ? 0.5 : 1,
+                    borderTop: sobre === indice && arrastando !== null ? "2px dashed #BF360C" : "2px solid transparent",
+                    pt: 0.5,
+                  }}
+                >
+                    <Tooltip title="Arraste para reordenar (no computador)">
+                      <DragIndicator
+                        sx={{ display: { xs: "none", md: "block" }, fontSize: 20, color: "#8d8d8d" }}
+                      />
+                    </Tooltip>
                     <Chip
                       size="small"
                       label={item.ativo ? "no ar" : "desligada"}

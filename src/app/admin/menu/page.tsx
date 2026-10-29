@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Container,
   Typography,
@@ -29,6 +29,7 @@ import {
   Delete,
   ArrowUpward,
   ArrowDownward,
+  DragIndicator,
   OpenInNew,
   Save,
 } from "@mui/icons-material";
@@ -113,6 +114,23 @@ export default function AdminMenuPage() {
         item.id === id ? { ...item, [campo]: valor } : item
       ),
     }));
+    setMsg("");
+  };
+
+  // Reordenar arrastando (#183 parte 2); as setas continuam.
+  const [arrastando, setArrastando] = useState<{ grupo: Grupo; indice: number } | null>(null);
+  const [sobre, setSobre] = useState<{ grupo: Grupo; indice: number } | null>(null);
+  // Ref: o drop pode chegar antes do state commitar.
+  const origemArrasto = useRef<{ grupo: Grupo; indice: number } | null>(null);
+
+  const reordenar = (grupo: Grupo, de: number, para: number) => {
+    if (de === para) return;
+    setConfig((atual) => {
+      const lista = [...atual[grupo]];
+      const [item] = lista.splice(de, 1);
+      lista.splice(para, 0, item);
+      return { ...atual, [grupo]: lista.map((i, n) => ({ ...i, ordem: n })) };
+    });
     setMsg("");
   };
 
@@ -250,6 +268,13 @@ export default function AdminMenuPage() {
 
       <Divider sx={{ my: 2 }} />
 
+      <Typography
+        variant="caption"
+        sx={{ display: { xs: "block", md: "none" }, color: "#777", mb: 1 }}
+      >
+        No celular, use as setas ↑ ↓ para mudar a ordem.
+      </Typography>
+
       {config[grupo].length === 0 ? (
         <Typography variant="body2" sx={{ color: "#666" }}>
           Nenhum item nesta parte do menu.
@@ -268,7 +293,52 @@ export default function AdminMenuPage() {
                 transition: "border-color .2s ease, background-color .2s ease",
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+              <Box
+                draggable
+                onDragStart={(e) => {
+                  origemArrasto.current = { grupo, indice };
+                  setArrastando({ grupo, indice });
+                  e.dataTransfer.effectAllowed = "move";
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                }}
+                onDragEnter={() => setSobre({ grupo, indice })}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const origem = origemArrasto.current;
+                  if (origem && origem.grupo === grupo) {
+                    reordenar(grupo, origem.indice, indice);
+                  }
+                  origemArrasto.current = null;
+                  setArrastando(null);
+                  setSobre(null);
+                }}
+                onDragEnd={() => {
+                  origemArrasto.current = null;
+                  setArrastando(null);
+                  setSobre(null);
+                }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  mb: 1.5,
+                  cursor: "grab",
+                  opacity: arrastando?.grupo === grupo && arrastando.indice === indice ? 0.5 : 1,
+                  borderTop:
+                    sobre?.grupo === grupo && sobre.indice === indice && arrastando
+                      ? "2px dashed #BF360C"
+                      : "2px solid transparent",
+                  pt: 0.5,
+                }}
+              >
+                <Tooltip title="Arraste para reordenar (no computador)">
+                      <DragIndicator
+                        sx={{ display: { xs: "none", md: "block" }, fontSize: 20, color: "#8d8d8d" }}
+                      />
+                    </Tooltip>
                 <Chip
                   size="small"
                   label={item.ativo ? "no menu" : "desligado"}
