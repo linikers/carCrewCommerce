@@ -11,6 +11,40 @@ import prisma from "@/lib/prisma";
  * já saiu não volta para a fila).
  */
 
+const cacheIbge = new Map<string, string | null>();
+
+/** Código IBGE do município a partir do CEP (Brasil API). null = não resolveu. */
+export async function ibgePorCep(cep: string | null | undefined): Promise<string | null> {
+  const limpo = String(cep ?? "").replace(/\D/g, "");
+  if (limpo.length !== 8) return null;
+  if (cacheIbge.has(limpo)) return cacheIbge.get(limpo) ?? null;
+
+  try {
+    const res = await fetch(`https://brasilapi.com.br/api/cep/v2/${limpo}`, {
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!res.ok) {
+      cacheIbge.set(limpo, null);
+      return null;
+    }
+    const dados = (await res.json()) as { city?: string; state?: string; ibge?: string };
+    const ibge = dados.ibge ? String(dados.ibge).replace(/\D/g, "").slice(0, 7) : null;
+    cacheIbge.set(limpo, ibge && ibge.length === 7 ? ibge : null);
+    return cacheIbge.get(limpo) ?? null;
+  } catch {
+    cacheIbge.set(limpo, null);
+    return null;
+  }
+}
+
+/** CPF (11) ou CNPJ (14) a partir do documento sem máscara. */
+export function tipoDocumento(documento: string | null | undefined): "cpf" | "cnpj" | null {
+  const digitos = String(documento ?? "").replace(/\D/g, "");
+  if (digitos.length === 11) return "cpf";
+  if (digitos.length === 14) return "cnpj";
+  return null;
+}
+
 export interface ItemPacote {
   sku: string | null;
   nome: string;
@@ -60,15 +94,27 @@ export interface NotaPacote {
       cidade: string | null;
       uf: string | null;
       cep: string | null;
+      /** IBGE de 7 dígitos — exigido pelo emissor */
+      codigoMunicipio: string | null;
     };
+    /** cpf | cnpj | null (o emissor separa os campos) */
+    tipoDocumento: "cpf" | "cnpj" | null;
   };
   itens: ItemPacote[];
   frete: number;
   total: number;
   observacoes: string;
+  // campos do leiaute que o emissor precisa e o site sabe decidir
+  modelo: "55" | "65";
+  naturezaOperacao: string;
+  destinoOperacao: "1" | "2" | "3";
+  indicadorPresenca: "1" | "2" | "9";
+  modalidadeFrete: string;
+  pagamento: { forma: string; valor: number };
 }
 
 interface Endereco {
+  codigoMunicipio?: string | null;
   logradouro?: string | null;
   numero?: string | null;
   bairro?: string | null;
@@ -107,8 +153,14 @@ export async function montarPacote(opcoes: {
     orderBy: { criadoEm: "asc" },
   });
 
-  return notas.map((nota) => {
+  return Promise.all(notas.map(async (nota) => {
     const endereco = (nota.pedido.enderecoEntrega ?? {}) as Endereco;
+    const ufDestino = endereco.uf ?? null;
+    const ufEmitente = empresa?.uf ?? null;
+    // IBGE: usa o que já está gravado; se faltar, resolve pelo CEP
+    const ibge = endereco.codigoMunicipio ?? (await ibgePorCep(endereco.cep));
+    const frete = nota.pedido.frete ?? 0;
+
     return {
       pedidoId: nota.pedidoId,
       canal: nota.canal,
@@ -144,9 +196,11 @@ export async function montarPacote(opcoes: {
           numero: endereco.numero ?? null,
           bairro: endereco.bairro ?? null,
           cidade: endereco.cidade ?? null,
-          uf: endereco.uf ?? null,
+          uf: ufDestino,
           cep: endereco.cep ?? null,
+          codigoMunicipio: ibge,
         },
+        tipoDocumento: tipoDocumento(nota.pedido.clienteDocumento),
       },
       itens: nota.pedido.itens.map((i) => ({
         sku: i.sku,
@@ -159,11 +213,22 @@ export async function montarPacote(opcoes: {
         valorUnitario: i.preco,
         valorTotal: i.total,
       })),
-      frete: nota.pedido.frete ?? 0,
+      frete,
       total: nota.pedido.total,
       observacoes: `Pedido ${nota.canal} ${nota.pedidoId}`,
+      modelo: "55" as const,
+      naturezaOperacao: "Venda de mercadoria",
+      // 1 = interna, 2 = interestadual. Sem UF de destino, assume interna e o
+      // emissor recusa com o motivo — melhor do que inventar.
+      destinoOperacao: (ufDestino && ufEmitente && ufDestino.toUpperCase() !== ufEmitente.toUpperCase()
+        ? "2"
+        : "1") as "1" | "2",
+      // venda online não é presencial
+      indicadorPresenca: (nota.canal === "manual" ? "1" : "2") as "1" | "2",
+      modalidadeFrete: frete > 0 ? "0" : "9",
+      pagamento: { forma: nota.canal === "site" ? "17" : "99", valor: nota.pedido.total },
     };
-  });
+  }));
 }
 
 /** CSV: uma linha por item, com os campos do pedido repetidos. */
