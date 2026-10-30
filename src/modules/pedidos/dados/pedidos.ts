@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { calcularPreco } from "@/lib/preco";
 import { custosPadraoDoCanal, recalcularVenda } from "@/lib/custos-venda";
+import { snapshotFiscal, ufDoEmitente } from "@/lib/fiscal-item";
 import { lerPoliticaPreco, precoSiteDe } from "@/lib/politica-preco";
 import type { JsonArray, TransactionClient } from "@/generated/prisma/internal/prismaNamespace";
 import {
@@ -53,13 +54,15 @@ export async function criarPedido({
 
   return prisma.$transaction(async (tx) => {
     // 1. Lê os produtos e trava a decisão de estoque dentro da transação
-    const [produtos, politicaPreco] = await Promise.all([
+    const [produtos, politicaPreco, ufEmitente] = await Promise.all([
       tx.produto.findMany({
         where: { id: { in: itens.map((i) => i.produtoId) } },
         include: { precosCanal: true },
       }),
       lerPoliticaPreco(),
+      ufDoEmitente(),
     ]);
+    const ufDestino = (form?.uf as string | undefined) ?? null;
     const porId = new Map(produtos.map((p) => [p.id, p]));
 
     const itensPedido: ItemPedido[] = [];
@@ -96,6 +99,8 @@ export async function criarPedido({
         // custo no momento da venda (#191): mudar o custo do catálogo depois
         // não reescreve o resultado de uma venda antiga
         custoUnitario: produto.custo ?? null,
+        // dado fiscal congelado: o emissor lê daqui, não do catálogo
+        ...snapshotFiscal(produto, ufDestino, ufEmitente),
       });
     }
 
@@ -214,7 +219,10 @@ export async function criarVendaManual(args: VendaManualArgs): Promise<{ id: str
         { sku: { in: args.itens.map((i) => String(i.sku ?? "").trim().toUpperCase()).filter(Boolean) } },
       ],
     },
-    select: { id: true, nome: true, sku: true, custo: true },
+    select: {
+      id: true, nome: true, sku: true, custo: true,
+      ncm: true, cfop: true, cfopInterno: true, cfopExterno: true, cstCsosn: true, unidade: true,
+    },
   });
   const porId = new Map(produtos.map((p) => [p.id, p]));
   const porSku = new Map(produtos.map((p) => [String(p.sku ?? "").toUpperCase(), p]));
@@ -242,6 +250,7 @@ export async function criarVendaManual(args: VendaManualArgs): Promise<{ id: str
         item.custoUnitario !== undefined && item.custoUnitario !== null
           ? Number(item.custoUnitario)
           : produto?.custo ?? null,
+      ...(produto ? snapshotFiscal(produto, null, null) : {}),
     };
   });
 

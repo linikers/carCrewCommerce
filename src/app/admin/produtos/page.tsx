@@ -38,6 +38,7 @@ import {
   Inventory2,
   LocalOffer,
   Paid,
+  Receipt,
 } from "@mui/icons-material";
 import AdminLayout from "@/components/admin/AdminLayout";
 
@@ -77,6 +78,15 @@ export default function AdminProdutos() {
   const [custosAberto, setCustosAberto] = useState(false);
   const [textoCustos, setTextoCustos] = useState("");
   const [salvandoCustos, setSalvandoCustos] = useState(false);
+  // dado fiscal em lote (interface do emissor)
+  const [fiscalAberto, setFiscalAberto] = useState(false);
+  const [textoFiscal, setTextoFiscal] = useState("");
+  const [salvandoFiscal, setSalvandoFiscal] = useState(false);
+  const [resultadoFiscal, setResultadoFiscal] = useState<{
+    mensagem: string;
+    naoEncontrados: string[];
+    erros: { linha: number; texto: string; motivo: string }[];
+  } | null>(null);
   const [resultadoCustos, setResultadoCustos] = useState<{
     mensagem: string;
     naoEncontrados: string[];
@@ -160,6 +170,32 @@ export default function AdminProdutos() {
       setErro(e instanceof Error ? e.message : "Falha ao gravar os custos");
     } finally {
       setSalvandoCustos(false);
+    }
+  };
+
+  /** Dado fiscal em lote: SKU;CSOSN;CFOP interno;CFOP externo */
+  const importarFiscal = async () => {
+    setSalvandoFiscal(true);
+    setResultadoFiscal(null);
+    try {
+      const res = await fetch("/api/admin/produtos/fiscal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: textoFiscal }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Falha ao gravar o dado fiscal");
+      setResultadoFiscal({
+        mensagem: d.mensagem,
+        naoEncontrados: Array.isArray(d.naoEncontrados) ? d.naoEncontrados : [],
+        erros: Array.isArray(d.erros) ? d.erros : [],
+      });
+      setTextoFiscal("");
+      await carregar();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Falha ao gravar o dado fiscal");
+    } finally {
+      setSalvandoFiscal(false);
     }
   };
 
@@ -282,6 +318,14 @@ export default function AdminProdutos() {
             sx={{ textTransform: "none", borderColor: "#BF360C", color: "#BF360C" }}
           >
             Custos
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Receipt />}
+            onClick={() => { setFiscalAberto(true); setResultadoFiscal(null); }}
+            sx={{ textTransform: "none", borderColor: "#BF360C", color: "#BF360C" }}
+          >
+            Fiscal
           </Button>
           </Box>
         </Box>
@@ -590,6 +634,54 @@ export default function AdminProdutos() {
             sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}
           >
             {salvandoCustos ? "Gravando…" : "Gravar custos"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dado fiscal em lote (interface do emissor) */}
+      <Dialog open={fiscalAberto} onClose={() => setFiscalAberto(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>Dado fiscal por SKU</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ fontSize: "0.82rem", color: "#666", mb: 1 }}>
+            Cole no formato <strong>SKU;CSOSN;CFOP interno;CFOP externo</strong> — uma linha por peça.
+            No Simples o CSOSN de revenda costuma ser <strong>102</strong>; CFOP interno 5102 e
+            externo 6102 (confirme com o contador).
+          </Typography>
+          <TextField
+            multiline
+            minRows={6}
+            fullWidth
+            placeholder="AMO-007;102;5102;6102"
+            value={textoFiscal}
+            onChange={(e) => setTextoFiscal(e.target.value)}
+          />
+          {resultadoFiscal && (
+            <Box sx={{ mt: 2 }}>
+              <Alert severity={resultadoFiscal.naoEncontrados.length || resultadoFiscal.erros.length ? "warning" : "success"}>
+                {resultadoFiscal.mensagem}
+              </Alert>
+              {resultadoFiscal.naoEncontrados.length > 0 && (
+                <Typography sx={{ fontSize: "0.75rem", color: "#666", mt: 1 }}>
+                  SKU fora do catálogo: {resultadoFiscal.naoEncontrados.slice(0, 30).join(", ")}
+                </Typography>
+              )}
+              {resultadoFiscal.erros.length > 0 && (
+                <Typography sx={{ fontSize: "0.75rem", color: "#b3261e", mt: 1 }}>
+                  Linhas recusadas: {resultadoFiscal.erros.slice(0, 10).map((e) => `${e.linha} (${e.motivo})`).join(", ")}
+                </Typography>
+              )}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setFiscalAberto(false)} sx={{ textTransform: "none" }}>Fechar</Button>
+          <Button
+            variant="contained"
+            onClick={importarFiscal}
+            disabled={salvandoFiscal || textoFiscal.trim() === ""}
+            sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}
+          >
+            {salvandoFiscal ? "Gravando…" : "Gravar dado fiscal"}
           </Button>
         </DialogActions>
       </Dialog>

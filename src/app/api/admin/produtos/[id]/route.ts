@@ -43,6 +43,9 @@ export async function GET(
     cfop: produto.cfop,
     origem: produto.origem,
     cstIcms: produto.cstIcms,
+    cstCsosn: produto.cstCsosn,
+    cfopInterno: produto.cfopInterno,
+    cfopExterno: produto.cfopExterno,
     unidade: produto.unidade,
     // frete e galeria: o formulário de edição também depende destes
     peso: produto.peso,
@@ -104,6 +107,24 @@ export async function PUT(
             : existente.cfop,
         origem: body.origem !== undefined ? Number(body.origem) : existente.origem,
         cstIcms: body.cstIcms !== undefined ? body.cstIcms || null : existente.cstIcms,
+        cstCsosn:
+          body.cstCsosn !== undefined
+            ? body.cstCsosn
+              ? String(body.cstCsosn).replace(/\D/g, "")
+              : null
+            : existente.cstCsosn,
+        cfopInterno:
+          body.cfopInterno !== undefined
+            ? body.cfopInterno
+              ? String(body.cfopInterno).replace(/\D/g, "")
+              : null
+            : existente.cfopInterno,
+        cfopExterno:
+          body.cfopExterno !== undefined
+            ? body.cfopExterno
+              ? String(body.cfopExterno).replace(/\D/g, "")
+              : null
+            : existente.cfopExterno,
         unidade: body.unidade !== undefined ? body.unidade || "UN" : existente.unidade,
         sku:
           body.sku !== undefined
