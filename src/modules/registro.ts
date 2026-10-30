@@ -134,7 +134,7 @@ export const MODULOS: Modulo[] = [
     dependeDe: ["pedidos"],
     telas: [
       { rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" },
-      { rota: "/admin/fiscal/notas", rotulo: "Notas emitidas", grupo: "Operação", emBreve: true },
+      { rota: "/admin/fiscal/notas", rotulo: "Notas fiscais", grupo: "Operação" },
     ],
     tabelas: ["empresa_fiscal", "fiscal_notas"],
     issue: 79,
