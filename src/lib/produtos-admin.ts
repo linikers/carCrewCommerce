@@ -33,6 +33,9 @@ export interface ProdutoData {
   cfop?: string | null;
   origem?: number | null;
   cstIcms?: string | null;
+  cstCsosn?: string | null;
+  cfopInterno?: string | null;
+  cfopExterno?: string | null;
   unidade?: string | null;
 }
 
@@ -67,6 +70,9 @@ export async function lerProdutos(): Promise<ProdutoData[]> {
     cfop: p.cfop,
     origem: p.origem,
     cstIcms: p.cstIcms,
+    cstCsosn: p.cstCsosn,
+    cfopInterno: p.cfopInterno,
+    cfopExterno: p.cfopExterno,
     unidade: p.unidade,
   }));
 }
@@ -140,6 +146,9 @@ export async function salvarProdutos(produtos: ProdutoData[]) {
       cfop: p.cfop ?? null,
       origem: p.origem ?? 0,
       cstIcms: p.cstIcms ?? null,
+      cstCsosn: p.cstCsosn ?? null,
+      cfopInterno: p.cfopInterno ?? null,
+      cfopExterno: p.cfopExterno ?? null,
       unidade: p.unidade ?? "UN",
         descricao: p.descricao || null,
         preco: p.preco,

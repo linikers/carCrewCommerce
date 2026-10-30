@@ -101,6 +101,13 @@ model Produto {
   /// 0=nacional, 1=estrangeira (origem da mercadoria, tabela da SEFAZ)
   origem       Int?      @default(0)
   cstIcms      String?   @map("cst_icms")
+  /// CSOSN do Simples (102, 500…) — é o que o emissor precisa por item.
+  /// `cstIcms` fica para quem é regime normal.
+  cstCsosn     String?   @map("cst_csosn")
+  /// CFOP dentro do estado (5xxx) e fora (6xxx). O pacote escolhe pelo UF do
+  /// destinatário; `cfop` continua como legado.
+  cfopInterno  String?   @map("cfop_interno")
+  cfopExterno  String?   @map("cfop_externo")
   /// UN, CX, KG, M, PC…
   unidade      String?   @default("UN")
   descricao    String?
@@ -497,6 +504,13 @@ model PedidoItem {
   /// Custo da peça no momento da venda (foto de `Produto.custo`). Mudar o
   /// custo no cadastro depois não reescreve o resultado de venda antiga.
   custoUnitario Float? @map("custo_unitario")
+
+  // Snapshot fiscal (#191 nota fiscal): a nota de uma venda antiga não pode
+  // mudar porque o cadastro do produto foi corrigido hoje.
+  ncm       String?
+  cfop      String?
+  cstCsosn  String? @map("cst_csosn")
+  unidade   String?
 
   criadoEm DateTime @default(now()) @map("criado_em")
 

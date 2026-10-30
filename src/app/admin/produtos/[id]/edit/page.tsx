@@ -64,6 +64,9 @@ export default function EditarProduto() {
     ncm: "",
     cfop: "",
     cstIcms: "",
+    cstCsosn: "",
+    cfopInterno: "",
+    cfopExterno: "",
     unidade: "UN",
     origem: "0",
     destaque: false,
@@ -107,6 +110,9 @@ export default function EditarProduto() {
           ncm: data.ncm || "",
           cfop: data.cfop || "",
           cstIcms: data.cstIcms || "",
+          cstCsosn: data.cstCsosn || "",
+          cfopInterno: data.cfopInterno || "",
+          cfopExterno: data.cfopExterno || "",
           unidade: data.unidade || "UN",
           origem: String(data.origem ?? 0),
           estoque: String(data.estoque),
@@ -214,6 +220,21 @@ export default function EditarProduto() {
                 <Grid size={{ xs: 6, sm: 2 }}>
                   <TextField fullWidth label="CST/ICMS" value={form.cstIcms} placeholder="102"
                     onChange={(e) => setForm({ ...form, cstIcms: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="CSOSN" value={form.cstCsosn} placeholder="102"
+                    helperText="Simples"
+                    onChange={(e) => setForm({ ...form, cstCsosn: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="CFOP interno" value={form.cfopInterno} placeholder="5102"
+                    helperText="Dentro do PR"
+                    onChange={(e) => setForm({ ...form, cfopInterno: e.target.value })} />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                  <TextField fullWidth label="CFOP externo" value={form.cfopExterno} placeholder="6102"
+                    helperText="Fora do PR"
+                    onChange={(e) => setForm({ ...form, cfopExterno: e.target.value })} />
                 </Grid>
                 <Grid size={{ xs: 6, sm: 2 }}>
                   <TextField fullWidth label="Unidade" value={form.unidade} placeholder="UN"
