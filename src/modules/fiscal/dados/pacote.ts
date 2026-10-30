@@ -64,10 +64,24 @@ export interface NotaPacote {
   emitente: {
     cnpj: string;
     ie: string | null;
+    im?: string | null;
     crt: number;
     razaoSocial: string;
+    nomeFantasia?: string | null;
+    cnae?: string | null;
     uf: string | null;
     serie: number;
+    telefone?: string | null;
+    email?: string | null;
+    endereco: {
+      logradouro: string | null;
+      numero: string | null;
+      complemento?: string | null;
+      bairro: string | null;
+      cidade: string | null;
+      cep: string | null;
+      codigoMunicipio: string | null;
+    };
   };
   destinatario: {
     nome: string | null;
@@ -123,6 +137,10 @@ export async function montarPacote(opcoes: {
 }): Promise<NotaPacote[]> {
   const empresa = await prisma.empresaFiscal.findFirst();
 
+  // IBGE do emitente: o leiaute exige cMunFG de 7 dígitos e não aceita cidade
+  // em texto; resolve pelo CEP do cadastro quando não estiver gravado
+  const ibgeEmitente = empresa?.cep ? await ibgePorCep(empresa.cep) : null;
+
   const notas = await prisma.notaFiscal.findMany({
     where: {
       ...(opcoes.canal ? { canal: opcoes.canal } : {}),
@@ -150,10 +168,24 @@ export async function montarPacote(opcoes: {
       emitente: {
         cnpj: empresa?.cnpj ?? "",
         ie: empresa?.ie ?? null,
+        im: empresa?.im ?? null,
         crt: empresa?.crt ?? 1,
         razaoSocial: empresa?.razaoSocial ?? "",
+        nomeFantasia: empresa?.nomeFantasia ?? null,
+        cnae: empresa?.cnae ?? null,
         uf: empresa?.uf ?? null,
         serie: empresa?.serie ?? 1,
+        telefone: empresa?.telefone ?? null,
+        email: empresa?.email ?? null,
+        endereco: {
+          logradouro: empresa?.logradouro ?? null,
+          numero: empresa?.numero ?? null,
+          complemento: empresa?.complemento ?? null,
+          bairro: empresa?.bairro ?? null,
+          cidade: empresa?.cidade ?? null,
+          cep: empresa?.cep ?? null,
+          codigoMunicipio: ibgeEmitente,
+        },
       },
       destinatario: {
         nome: nota.pedido.clienteNome,
