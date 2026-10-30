@@ -38,6 +38,7 @@ import {
   Article,
   HelpOutlined,
   Paid,
+  Receipt,
 } from "@mui/icons-material";
 import { MODULOS } from "@/modules/registro";
 
@@ -66,6 +67,7 @@ const ICONE_POR_ROTA: Record<string, React.ReactNode> = {
   "/admin/frete": <LocalShipping />,
   "/admin/pagamentos": <Payment />,
   "/admin/economia": <Paid />,
+  "/admin/fiscal/notas": <Receipt />,
   "/admin/modulos": <Extension />,
 };
 

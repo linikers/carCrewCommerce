@@ -430,6 +430,7 @@ model Pedido {
   @@unique([canal, canalPedidoId])
 
   user User? @relation(fields: [userId], references: [id])
+  nota NotaFiscal?
 
   @@map("pedidos")
 }
@@ -545,4 +546,32 @@ model CustoPeriodo {
 
   @@index([canal, inicio, fim])
   @@map("custos_periodo")
+}
+
+/// Fila de notas fiscais (interface do emissor).
+///
+/// O site NÃO emite e NÃO transmite: guarda o estado da nota e entrega o pacote
+/// de dados para o emissor do cliente. `motivo` existe para o dono saber por que
+/// um pedido não pode entrar no lote (peça sem CSOSN, cliente sem documento…).
+model NotaFiscal {
+  id           String    @id @default(cuid())
+  pedidoId     String    @unique @map("pedido_id")
+  canal        String
+  /// pendente | pronta | exportada | autorizada | rejeitada | cancelada
+  status       String    @default("pendente")
+  /// por que ainda não pode ser emitida (null = pronta para o lote)
+  motivo       String?
+  numero       String?
+  serie        String?
+  chave        String?
+  xmlUrl       String?   @map("xml_url")
+  exportadaEm  DateTime? @map("exportada_em")
+  autorizadaEm DateTime? @map("autorizada_em")
+  criadoEm     DateTime  @default(now()) @map("criado_em")
+  atualizadoEm DateTime  @updatedAt @map("atualizado_em")
+
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+
+  @@index([status, canal])
+  @@map("notas_fiscais")
 }
