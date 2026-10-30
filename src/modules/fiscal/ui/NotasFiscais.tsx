@@ -8,6 +8,11 @@ import {
   Chip,
   CircularProgress,
   Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -79,6 +84,12 @@ export default function NotasFiscais() {
   const [gerando, setGerando] = useState(false);
   const [erro, setErro] = useState("");
   const [ok, setOk] = useState("");
+  // chave de API do emissor
+  const [chave, setChave] = useState<{ prefixo: string; criadaEm: string; ultimoUso: string | null } | null>(null);
+  const [chaveNova, setChaveNova] = useState("");
+  // retorno digitado (quando quem emite é uma pessoa)
+  const [retornoDe, setRetornoDe] = useState<Nota | null>(null);
+  const [retorno, setRetorno] = useState({ status: "autorizada", numero: "", serie: "", chaveNfe: "", motivo: "" });
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -90,6 +101,8 @@ export default function NotasFiscais() {
       if (!res.ok) throw new Error(d?.error || "Não foi possível carregar a fila");
       setNotas(Array.isArray(d.notas) ? d.notas : []);
       setContagem(d.contagem ?? {});
+      const rc = await fetch("/api/admin/fiscal/chave");
+      if (rc.ok) setChave((await rc.json()).chave ?? null);
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Erro ao carregar");
       setNotas([]);
@@ -121,6 +134,79 @@ export default function NotasFiscais() {
       setErro(e instanceof Error ? e.message : "Erro ao gerar");
     } finally {
       setGerando(false);
+    }
+  };
+
+  const criarChaveApi = async () => {
+    setErro("");
+    setOk("");
+    try {
+      const res = await fetch("/api/admin/fiscal/chave", { method: "POST" });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Não foi possível criar a chave");
+      setChaveNova(d.chave);
+      setChave({ prefixo: d.prefixo, criadaEm: new Date().toISOString(), ultimoUso: null });
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao criar a chave");
+    }
+  };
+
+  const revogarChaveApi = async () => {
+    if (!confirm("Revogar a chave? O emissor para de conseguir devolver o retorno.")) return;
+    setErro("");
+    setOk("");
+    try {
+      const res = await fetch("/api/admin/fiscal/chave", { method: "DELETE" });
+      if (!res.ok) throw new Error("Não foi possível revogar");
+      setChave(null);
+      setChaveNova("");
+      setOk("Chave revogada.");
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao revogar");
+    }
+  };
+
+  const registrarRetorno = async () => {
+    if (!retornoDe) return;
+    setErro("");
+    setOk("");
+    try {
+      const res = await fetch("/api/admin/fiscal/retorno", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pedidoId: retornoDe.pedidoId,
+          status: retorno.status,
+          numero: retorno.numero,
+          serie: retorno.serie,
+          chave: retorno.chaveNfe,
+          motivo: retorno.motivo,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Não foi possível registrar");
+      setRetornoDe(null);
+      setRetorno({ status: "autorizada", numero: "", serie: "", chaveNfe: "", motivo: "" });
+      setOk(d.jaEstava ? "Este retorno já estava registrado." : "Retorno registrado na nota.");
+      await carregar();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao registrar");
+    }
+  };
+
+  const reabrir = async (pedidoId: string) => {
+    setErro("");
+    try {
+      const res = await fetch("/api/admin/fiscal/retorno", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pedidoId }),
+      });
+      if (!res.ok) throw new Error("Não foi possível reabrir");
+      setOk("Nota voltou para o lote.");
+      await carregar();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao reabrir");
     }
   };
 
@@ -157,6 +243,36 @@ export default function NotasFiscais() {
         e entrega o pacote de dados para o <strong>seu emissor</strong>. Quem assina e transmite é
         ele — o certificado não é usado aqui.
       </Alert>
+
+      <Paper sx={{ p: 2, mb: 3, borderRadius: 3, display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center" }}>
+        <Box sx={{ flex: 1, minWidth: 240 }}>
+          <Typography sx={{ fontSize: "0.85rem", fontWeight: 700 }}>Chave de API do emissor</Typography>
+          <Typography sx={{ fontSize: "0.72rem", color: "#666" }}>
+            {chave
+              ? `Criada em ${formatDataCurta(chave.criadaEm)} · prefixo ${chave.prefixo}… · último uso ${
+                  chave.ultimoUso ? formatDataCurta(chave.ultimoUso) : "nunca"
+                }`
+              : "Nenhuma chave criada. O emissor devolve o retorno por API usando esta chave; sem ela, registre o retorno na mão pela linha do pedido."}
+          </Typography>
+        </Box>
+        <Button size="small" variant="outlined" onClick={criarChaveApi} sx={{ textTransform: "none" }}>
+          {chave ? "Gerar nova" : "Criar chave"}
+        </Button>
+        {chave && (
+          <Button size="small" onClick={revogarChaveApi} sx={{ textTransform: "none", color: "#b3261e" }}>
+            Revogar
+          </Button>
+        )}
+      </Paper>
+
+      {chaveNova && (
+        <Alert severity="success" sx={{ mb: 3 }} onClose={() => setChaveNova("")}>
+          Chave criada — copie agora, ela não é exibida de novo:
+          <Box component="code" sx={{ display: "block", mt: 1, fontSize: "0.8rem", wordBreak: "break-all" }}>
+            {chaveNova}
+          </Box>
+        </Alert>
+      )}
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid size={{ xs: 6, sm: 2.5 }}>
@@ -228,6 +344,7 @@ export default function NotasFiscais() {
                 <TableCell sx={{ fontWeight: 600 }} align="right">Total</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Situação</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>O que falta</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Retorno</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -260,12 +377,60 @@ export default function NotasFiscais() {
                   <TableCell sx={{ fontSize: "0.72rem", color: n.motivo ? "#8a5200" : "#0E7A3F", maxWidth: 260 }}>
                     {n.motivo ?? "—"}
                   </TableCell>
+                  <TableCell>
+                    <Button size="small" onClick={() => { setRetornoDe(n); setRetorno({ status: "autorizada", numero: "", serie: "", chaveNfe: "", motivo: "" }); }}
+                      sx={{ textTransform: "none", color: "#BF360C", fontWeight: 700, minWidth: 0, fontSize: "0.72rem" }}>
+                      Registrar
+                    </Button>
+                    {n.status === "rejeitada" && (
+                      <Button size="small" onClick={() => reabrir(n.pedidoId)}
+                        sx={{ textTransform: "none", color: "#666", minWidth: 0, fontSize: "0.72rem" }}>
+                        Reabrir
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       )}
+      <Dialog open={retornoDe !== null} onClose={() => setRetornoDe(null)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700 }}>Retorno da nota</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ fontSize: "0.78rem", color: "#666", mb: 2 }}>
+            Pedido {retornoDe?.pedidoId.slice(-8)} · {retornoDe?.pedido.clienteNome ?? "sem nome"}
+          </Typography>
+          <TextField select fullWidth size="small" label="Situação" value={retorno.status}
+            onChange={(e) => setRetorno({ ...retorno, status: e.target.value })} sx={{ mb: 2 }}>
+            <MenuItem value="autorizada">Autorizada</MenuItem>
+            <MenuItem value="rejeitada">Rejeitada</MenuItem>
+            <MenuItem value="cancelada">Cancelada</MenuItem>
+          </TextField>
+          {retorno.status === "autorizada" ? (
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+              <TextField size="small" label="Número" value={retorno.numero}
+                onChange={(e) => setRetorno({ ...retorno, numero: e.target.value })} />
+              <TextField size="small" label="Série" value={retorno.serie}
+                onChange={(e) => setRetorno({ ...retorno, serie: e.target.value })} />
+              <TextField size="small" label="Chave de acesso" value={retorno.chaveNfe}
+                onChange={(e) => setRetorno({ ...retorno, chaveNfe: e.target.value })}
+                sx={{ gridColumn: "1 / -1" }} />
+            </Box>
+          ) : (
+            <TextField fullWidth size="small" label="Motivo" value={retorno.motivo}
+              helperText="A nota continua na fila depois de reabrir"
+              onChange={(e) => setRetorno({ ...retorno, motivo: e.target.value })} />
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setRetornoDe(null)} sx={{ textTransform: "none" }}>Cancelar</Button>
+          <Button variant="contained" onClick={registrarRetorno}
+            sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}>
+            Salvar retorno
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
