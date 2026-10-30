@@ -124,6 +124,30 @@ export default function NotasFiscais() {
     }
   };
 
+  const exportar = async (formato: "json" | "csv") => {
+    setErro("");
+    setOk("");
+    try {
+      const q = new URLSearchParams({ de, ate, formato });
+      const res = await fetch(`/api/admin/fiscal/exportar?${q.toString()}`);
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d?.error || "Não foi possível exportar");
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `notas-${de}-a-${ate}.${formato}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setOk(`Lote exportado em ${formato.toUpperCase()}. As notas saíram da fila como "exportada".`);
+      await carregar();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao exportar");
+    }
+  };
+
   const total = Object.values(contagem).reduce((s, n) => s + n, 0);
 
   return (
@@ -153,6 +177,18 @@ export default function NotasFiscais() {
           <Button fullWidth variant="outlined" onClick={carregar}
             sx={{ textTransform: "none", borderColor: "#BF360C", color: "#BF360C", height: 40 }}>
             Atualizar
+          </Button>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 2 }}>
+          <Button fullWidth variant="outlined" onClick={() => exportar("json")}
+            sx={{ textTransform: "none", height: 40 }}>
+            Exportar JSON
+          </Button>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 2 }}>
+          <Button fullWidth variant="outlined" onClick={() => exportar("csv")}
+            sx={{ textTransform: "none", height: 40 }}>
+            Exportar CSV
           </Button>
         </Grid>
       </Grid>

@@ -136,7 +136,7 @@ export const MODULOS: Modulo[] = [
       { rota: "/admin/fiscal", rotulo: "Fiscal", grupo: "Configuração" },
       { rota: "/admin/fiscal/notas", rotulo: "Notas fiscais", grupo: "Operação" },
     ],
-    tabelas: ["empresa_fiscal", "fiscal_notas"],
+    tabelas: ["empresa_fiscal", "notas_fiscais"],
     issue: 79,
   },
   {
