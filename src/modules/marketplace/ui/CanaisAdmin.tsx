@@ -62,6 +62,10 @@ export default function CanaisAdmin() {
   const [credenciais, setCredenciais] = useState<Credencial[]>([]);
   // comissão por canal (#191) — leitura; a edição vive em /admin/economia
   const [comissoes, setComissoes] = useState<Record<string, { percentual: number; fixo: number }>>({});
+  // integração real do Mercado Livre (OAuth + import)
+  const [testando, setTestando] = useState(false);
+  const [importando, setImportando] = useState(false);
+  const [dias, setDias] = useState("7");
   const [aba, setAba] = useState(0);
   const [valores, setValores] = useState<Record<string, Record<string, string>>>({});
   const [carregando, setCarregando] = useState(true);
@@ -142,6 +146,43 @@ export default function CanaisAdmin() {
     }
   };
 
+  const testarConexao = async () => {
+    setTestando(true);
+    setErro("");
+    setOk("");
+    try {
+      const res = await fetch(`/api/admin/canais/${canalAtual?.id}/testar`, { method: "POST" });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Falha ao testar");
+      setOk(d.mensagem);
+      await carregar();
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Falha ao testar");
+    } finally {
+      setTestando(false);
+    }
+  };
+
+  const importar = async () => {
+    setImportando(true);
+    setErro("");
+    setOk("");
+    try {
+      const res = await fetch(`/api/admin/canais/${canalAtual?.id}/importar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dias: Number(dias) || 7 }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Falha ao importar");
+      setOk(d.mensagem);
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Falha ao importar");
+    } finally {
+      setImportando(false);
+    }
+  };
+
   if (carregando) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
@@ -156,8 +197,11 @@ export default function CanaisAdmin() {
       {ok && <Alert severity="success" sx={{ mb: 2 }} onClose={() => setOk("")}>{ok}</Alert>}
 
       <Alert severity="info" sx={{ mb: 3 }}>
-        Aqui você <strong>cadastra</strong> as contas. A sincronização de anúncios e pedidos
-        entra na próxima etapa — o cadastro fica pronto para quando ela rodar.
+        <strong>Mercado Livre:</strong> salve Client ID e Client Secret, clique em{" "}
+        <strong>Conectar</strong> e autorize na conta. O sistema guarda os tokens cifrados e renova
+        sozinho — não é mais preciso colar access token. Depois, <strong>Importar pedidos</strong>{" "}
+        traz as vendas com a comissão real de cada anúncio.{" "}
+        <strong>Shopee</strong> segue só com cadastro de credenciais (integração na próxima etapa).
       </Alert>
 
       <Paper sx={{ borderRadius: 3, mb: 3 }}>
@@ -234,6 +278,39 @@ export default function CanaisAdmin() {
                   Editar em Custos e mídia
                 </Button>
               </Box>
+              {canalAtual?.id === "mercado_livre" && (
+                <Box
+                  sx={{
+                    display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center",
+                    p: 1.5, mb: 2, borderRadius: 2, backgroundColor: "#f7f7f7", border: "1px solid #e6e6e6",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    href="/api/admin/canais/mercado_livre/conectar"
+                    sx={{ backgroundColor: "#BF360C", textTransform: "none", fontWeight: 700 }}
+                  >
+                    Conectar Mercado Livre
+                  </Button>
+                  <Button onClick={testarConexao} disabled={testando} sx={{ textTransform: "none" }}>
+                    {testando ? "Testando…" : "Testar conexão"}
+                  </Button>
+                  <TextField
+                    size="small" type="number" label="Dias" value={dias}
+                    onChange={(e) => setDias(e.target.value)}
+                    slotProps={{ htmlInput: { min: 1, max: 60 } }}
+                    sx={{ width: 90 }}
+                  />
+                  <Button onClick={importar} disabled={importando} sx={{ textTransform: "none", fontWeight: 700, color: "#BF360C" }}>
+                    {importando ? "Importando…" : "Importar pedidos"}
+                  </Button>
+                  <Typography sx={{ fontSize: "0.72rem", color: "#666", flexBasis: "100%" }}>
+                    Importar não baixa estoque do site e não duplica pedido já importado. No Full o
+                    frete não vem por pedido — lance a fatura em Custos e mídia.
+                  </Typography>
+                </Box>
+              )}
+
 
               <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
                 {canalAtual.campos.map((campo) => {
@@ -294,6 +371,7 @@ export default function CanaisAdmin() {
               <Typography sx={{ fontSize: "0.8rem", color: "#666", mb: 2 }}>
                 Ainda sem integração. Entram depois que o hub estiver pronto (#82).
               </Typography>
+
               <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
                 {emBreve.map((c) => (
                   <Paper key={c.nome} sx={{ p: 2, borderRadius: 2, border: "1px dashed #ddd", backgroundColor: "#fafafa" }}>
